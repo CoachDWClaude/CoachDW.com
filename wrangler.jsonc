@@ -1,0 +1,9 @@
+{
+  // Cloudflare settings for coachdw.com.
+  // The site is plain files in /public — Cloudflare serves them as they are.
+  "name": "rapid-tree-020d",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public"
+  }
+}
