@@ -24,8 +24,9 @@
   function setMenu(on) {
     state.menu = on;
     show('showMenu', on);
+    var mn = qs('#mnav'); if (mn) { mn.classList.toggle('open', on); }
     var b = qs('[data-action="toggleMenu"]');
-    if (b) { b.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+    if (b) { b.setAttribute('aria-expanded', on ? 'true' : 'false'); b.setAttribute('aria-label', on ? 'Close menu' : 'Menu'); }
   }
   function setTT(k) {
     state.tt = k;
@@ -45,7 +46,8 @@
     closeAbout: function () { setAbout(false); },
     openVideo: function (e) { e.preventDefault(); setVideo(true); },
     closeVideo: function () { setVideo(false); },
-    closeWelcome: function () { closeWelcome(); }
+    closeWelcome: function () { closeWelcome(); },
+    openWelcome: function (e) { if (e) { e.preventDefault(); } openWelcome(); }
   };
   document.addEventListener('click', function (e) {
     var el = e.target.closest ? e.target.closest('[data-action]') : null;
@@ -120,6 +122,7 @@
     drawWelcome();
     show('showWelcome', true);
   }
+  window.cdwWelcomeOpen = function () { return state.welcome; };
   function closeWelcome() {
     state.welcome = false;
     show('showWelcome', false);
@@ -129,7 +132,8 @@
     var seen = false;
     try { seen = window.localStorage.getItem('cdw_welcome_seen') === '1'; } catch (e) {}
     if (seen && !CONFIG.welcomeEveryVisit) { return; }
-    // Open 5 seconds after landing, or 2 seconds after the first scroll, whichever comes first.
+    // Opens when the hero finishes its first round (hero.js calls cdwWelcomeAuto),
+    // or 2 seconds after the first scroll, whichever comes first (25-second fallback).
     var opened = false, landTimer, scrollTimer;
     function openNow() {
       if (opened) { return; }
@@ -143,9 +147,9 @@
       scrollTimer = setTimeout(openNow, 2000);
     }
     window.addEventListener('scroll', onFirstScroll, { passive: true });
-    landTimer = setTimeout(openNow, 5000);
+    landTimer = setTimeout(openNow, 25000);
+    window.cdwWelcomeAuto = openNow;
   })();
-  setInterval(function () { if (state.welcome) { wSlide = wSlide === 2 ? 1 : 2; drawWelcome(); } }, 5000);
   setInterval(function () { if (state.welcome && wN < W_TEXT.length) { wN++; wBlink = false; drawWelcome(); } }, 140);
   setInterval(function () { if (state.welcome && wN >= W_TEXT.length) { wBlink = !wBlink; drawWelcome(); } }, 500);
 
