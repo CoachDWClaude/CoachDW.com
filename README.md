@@ -8,6 +8,8 @@ Everything the site serves lives in `public/`:
 - `site.css` — base styles (most styling sits inline on the page)
 - `site.js` — menu, pop-ups, carousel, welcome box, WhatsApp demo and typing banners
 - `images/` — logo, signature, photos and the Skool wordmark
+- `demo/index.html` — SFL App - Demo (shareable, example data) at /demo
+- `app/index.html` — SFL - NEW, the live app, at /app
 
 Quick settings (members count, welcome pop-up on every visit or first visit only,
 carousel timing, banner typing speed) are at the top of `site.js`.
