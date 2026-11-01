@@ -151,3 +151,24 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 #triple a.logbook>div::before{content:'';position:absolute;z-index:2;left:2.5cqw;top:3%;bottom:3%;width:4.5cqw;background:radial-gradient(circle at 50% 50%,#2b2b2b 0 1.3cqw,transparent 1.5cqw) 0 0/4.5cqw 6.5cqw repeat-y}
 #triple a.logbook>div>div{background:transparent!important;box-shadow:none!important;border-left:0!important;padding:0!important;border-radius:0!important}
 #triple a.logbook>div>div+div{border-top:0.5cqw dashed #b9ae94!important;padding-top:4cqw!important}
+/* ===== iLOG pop-up: the closed journal and an open page, side by side, both A5 ===== */
+.ilogshow{container-type:inline-size;display:grid;grid-template-columns:1fr 1fr;gap:5%;align-items:center;padding:3% 2% 4%;font-family:'Special Elite','Courier New',monospace}
+.ilogshow .cov,.ilogshow .pg{aspect-ratio:1/1.414;box-sizing:border-box;border-radius:2px 7px 7px 2px}
+.ilogshow .cov{background:#121212;box-shadow:0 12px 26px rgba(0,0,0,.4),inset 3.4cqw 0 0 #cc0000;transform:rotate(-4deg);display:flex;flex-direction:column;align-items:center;gap:1.2cqw;padding:6cqw 2.4cqw 0 5.4cqw;text-align:center}
+.ilogshow .cov img{width:96%;height:auto;display:block}
+.ilogshow .cov .t{color:#fff;font-size:8cqw;line-height:1}
+.ilogshow .cov .s{color:#bdbdbd;font-size:2.4cqw;letter-spacing:.12em;text-transform:uppercase}
+.ilogshow .cov svg.sfl{display:block;width:88.8%;height:auto;margin-top:1.4cqw;overflow:visible}
+.ilogshow .cov svg.sfl text{font-family:'Special Elite','Courier New',monospace;font-size:31px;fill:#cc0000}
+.ilogshow .pg{position:relative;background:#f4f0e5;box-shadow:0 12px 26px rgba(0,0,0,.3),inset 0 0 0 1px #d8cfb8;transform:rotate(2.5deg);padding:3cqw 2.4cqw 2cqw 5.6cqw;display:flex;flex-direction:column;gap:2.4cqw;color:#1a1a1a;font-size:1.9cqw;line-height:1.2;overflow:hidden}
+.ilogshow .pg::before{content:'';position:absolute;left:1.2cqw;top:3%;bottom:3%;width:2.6cqw;background:radial-gradient(circle,#2b2b2b 0 .75cqw,transparent .85cqw) 0 0/2.6cqw 3.6cqw repeat-y}
+.ilogshow .blk{display:flex;flex-direction:column;gap:.5cqw;flex:1}
+.ilogshow .blk+.blk{border-top:.3cqw dashed #b9ae94;padding-top:2cqw}
+.ilogshow .d{display:flex;justify-content:space-between;align-items:baseline;border-bottom:.3cqw solid #1a1a1a;padding-bottom:.6cqw;color:#555;font-size:.8em}
+.ilogshow .d .w{color:#cc0000;font-size:1.9em;line-height:1}
+.ilogshow .h,.ilogshow .r{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr .7fr;gap:.6cqw}
+.ilogshow .h{color:#cc0000;font-size:.7em;letter-spacing:.04em}
+.ilogshow .r{padding:.7cqw 0;border-bottom:.15cqw solid #bdb5a0}
+.ilogshow .h span:last-child,.ilogshow .r span:last-child{text-align:right}
+.ilogshow .r .hit{color:#cc0000}
+.ilogshow .n{margin-top:auto;color:#cc0000;font-size:.85em}
