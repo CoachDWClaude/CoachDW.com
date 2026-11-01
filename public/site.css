@@ -116,3 +116,6 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 /* ===== Section break: Join the tribe button on black (replaces the typing banners) ===== */
 .ctabreak{background:#000;border-top:1px solid rgba(204,0,0,.6);border-bottom:1px solid rgba(204,0,0,.6);padding:clamp(24px,3.4vw,36px) 0;position:relative;z-index:3}
 .ctabreak .jwrap{margin:0 auto}
+
+/* Brand terms always in Special Elite, even where the text around them uses another font */
+.m7{font-family:'Special Elite','Courier New',monospace!important}
