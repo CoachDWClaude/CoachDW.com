@@ -139,9 +139,14 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .vsoon-btn.soon .vsoon{opacity:1;visibility:visible;transition-delay:0s}
 .vsoon-btn.soon>span[aria-hidden]{opacity:0}
 
-/* ===== Triple Whammy: iLOG shown as a paper logbook page, not a phone ===== */
-#triple a.logbook{width:84%!important;margin:7% auto 0!important;aspect-ratio:1/1.414!important;border:0!important;border-radius:2px 6px 6px 2px!important;background:#f4f0e5!important;box-shadow:0 10px 22px rgba(0,0,0,.28),inset 0 0 0 1px #d8cfb8!important;transform:rotate(-2.5deg);position:relative;overflow:visible!important}
-#triple a.logbook::before{content:'';position:absolute;left:4%;right:4%;top:-3.5cqw;height:7cqw;background:radial-gradient(circle,#3a3a3a 0 1.3cqw,transparent 1.5cqw) 0 0/8cqw 7cqw repeat-x;z-index:2}
-#triple a.logbook>div{background:transparent!important;padding:7cqw 5cqw 4cqw!important;gap:4cqw!important;font-size:4.1cqw!important;border-radius:inherit;overflow:hidden}
+/* ===== Triple Whammy: iLOG shown as a paper logbook (closed cover behind, open page in front) ===== */
+#triple a.logbook{width:88%!important;margin:2% auto 0!important;aspect-ratio:auto!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;position:relative;overflow:visible!important;padding-top:46%;display:block}
+#triple a.logbook .lb-cover{position:absolute;top:0;left:10%;width:78%;aspect-ratio:1/1.414;background:#121212;border-radius:2px 7px 7px 2px;box-shadow:0 8px 18px rgba(0,0,0,.35),inset 4cqw 0 0 #cc0000;transform:rotate(-7deg);display:flex;flex-direction:column;align-items:center;gap:2cqw;padding:9cqw 6cqw 0 10cqw;box-sizing:border-box;z-index:0;font-family:'Special Elite','Courier New',monospace;text-align:center}
+#triple a.logbook .lb-cover img{width:88%;height:auto;display:block}
+#triple a.logbook .lb-t{color:#fff;font-size:11cqw;line-height:1}
+#triple a.logbook .lb-s{color:#bdbdbd;font-size:4cqw;letter-spacing:.12em;text-transform:uppercase}
+#triple a.logbook .lb-sfl{color:#cc0000;font-size:4.2cqw;text-transform:uppercase;letter-spacing:.06em}
+#triple a.logbook>div{position:relative;z-index:1;aspect-ratio:1/1.414;width:100%;height:auto!important;background:#f4f0e5!important;border-radius:2px 6px 6px 2px;box-shadow:0 10px 22px rgba(0,0,0,.3),inset 0 0 0 1px #d8cfb8;transform:rotate(1.5deg);padding:5cqw 4.5cqw 4cqw 11cqw!important;gap:4cqw!important;font-size:4cqw!important;overflow:hidden;box-sizing:border-box}
+#triple a.logbook>div::before{content:'';position:absolute;z-index:2;left:2.5cqw;top:3%;bottom:3%;width:4.5cqw;background:radial-gradient(circle at 50% 50%,#2b2b2b 0 1.3cqw,transparent 1.5cqw) 0 0/4.5cqw 6.5cqw repeat-y}
 #triple a.logbook>div>div{background:transparent!important;box-shadow:none!important;border-left:0!important;padding:0!important;border-radius:0!important}
 #triple a.logbook>div>div+div{border-top:0.5cqw dashed #b9ae94!important;padding-top:4cqw!important}
