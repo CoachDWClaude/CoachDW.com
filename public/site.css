@@ -112,3 +112,7 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 @keyframes shine{from{background-position:100% 0}to{background-position:0 0}}
 .wbody-join .jwrap{width:100%;margin:22px 0 0}
 @media (prefers-reduced-motion:reduce){.hx *,.jwrap *{animation:none!important;transition:none!important}}
+
+/* ===== Section break: Join the tribe button on black (replaces the typing banners) ===== */
+.ctabreak{background:#000;border-top:1px solid rgba(204,0,0,.6);border-bottom:1px solid rgba(204,0,0,.6);padding:clamp(44px,6vw,64px) 0 clamp(22px,3vw,32px)}
+.ctabreak .jwrap{margin:0 auto}
