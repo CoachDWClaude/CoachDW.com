@@ -138,3 +138,10 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .vsoon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:22px;background:rgba(0,0,0,.82);color:#fff;font-family:'Special Elite','Courier New',monospace;font-size:clamp(16px,4.6vw,20px);line-height:1.4;opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
 .vsoon-btn.soon .vsoon{opacity:1;visibility:visible;transition-delay:0s}
 .vsoon-btn.soon>span[aria-hidden]{opacity:0}
+
+/* ===== Triple Whammy: iLOG shown as a paper logbook page, not a phone ===== */
+#triple a.logbook{width:84%!important;margin:7% auto 0!important;aspect-ratio:1/1.414!important;border:0!important;border-radius:2px 6px 6px 2px!important;background:#f4f0e5!important;box-shadow:0 10px 22px rgba(0,0,0,.28),inset 0 0 0 1px #d8cfb8!important;transform:rotate(-2.5deg);position:relative;overflow:visible!important}
+#triple a.logbook::before{content:'';position:absolute;left:4%;right:4%;top:-3.5cqw;height:7cqw;background:radial-gradient(circle,#3a3a3a 0 1.3cqw,transparent 1.5cqw) 0 0/8cqw 7cqw repeat-x;z-index:2}
+#triple a.logbook>div{background:transparent!important;padding:7cqw 5cqw 4cqw!important;gap:4cqw!important;font-size:4.1cqw!important;border-radius:inherit;overflow:hidden}
+#triple a.logbook>div>div{background:transparent!important;box-shadow:none!important;border-left:0!important;padding:0!important;border-radius:0!important}
+#triple a.logbook>div>div+div{border-top:0.5cqw dashed #b9ae94!important;padding-top:4cqw!important}
