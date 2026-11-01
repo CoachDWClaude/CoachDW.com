@@ -384,8 +384,23 @@
 <div data-if="showTop" hidden>
 <a href="#top" aria-label="Back to top" style="width: 48px; height: 48px; border-radius: 50%; background: #000000; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,.4)"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></a>
 </div>
-<a href="https://wa.me/[YOUR-NUMBER]?text=Hi%20Coach%2C%20I%27ve%20got%20a%20question%20about..." target="_blank" rel="noopener" aria-label="Message Coach on WhatsApp" style="width: 60px; height: 60px; border-radius: 50%; background: #cc0000; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(0,0,0,.45)"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.5 8.5 0 1 1 21 11.5z"></path></svg></a>
+<button type="button" id="chatbtn" aria-label="Chat with Coach DW" aria-expanded="false" style="width: 60px; height: 60px; border-radius: 50%; background: #cc0000; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(0,0,0,.45); cursor: pointer; padding: 0"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.5 8.5 0 1 1 21 11.5z"></path></svg></button>
 </div>
+
+<!-- CHAT PANEL: opens from the chat button, sends the message to Danny's WhatsApp Business -->
+<div class="chatp" id="chatp" data-wa-number="[YOUR-NUMBER]" role="dialog" aria-label="Chat with Coach DW" aria-hidden="true">
+<div class="chatp-top"><img src="/images/dw-mark.png" alt="" class="chatp-av"><div><div class="chatp-name">Coach DW</div><div class="chatp-sub">Usually replies within a few hours</div></div><button type="button" class="chatp-x" id="chatx" aria-label="Close chat"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff1a1a" stroke-width="2.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button></div>
+<div class="chatp-body"><div class="chatp-msg">Hey, it's Danny 👋<br>Got a question about training, the app or the tribe? Drop me a message and I'll get back to you on WhatsApp.</div></div>
+<form class="chatp-form" id="chatf"><textarea id="chatt" rows="2" placeholder="Type your message..." aria-label="Your message"></textarea><button type="submit" aria-label="Send on WhatsApp"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z" fill="#ffffff"></path></svg></button></form>
+<div class="chatp-note">Opens WhatsApp with your message ready to send.</div>
+</div>
+<script>
+(function(){var b=document.getElementById('chatbtn'),p=document.getElementById('chatp'),t=document.getElementById('chatt');
+function set(o){p.classList.toggle('on',o);p.setAttribute('aria-hidden',o?'false':'true');b.setAttribute('aria-expanded',o?'true':'false');if(o)setTimeout(function(){t.focus()},250)}
+b.addEventListener('click',function(){set(!p.classList.contains('on'))});document.getElementById('chatx').addEventListener('click',function(){set(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false)});
+document.getElementById('chatf').addEventListener('submit',function(e){e.preventDefault();var n=p.getAttribute('data-wa-number').replace(/\D/g,''),m=t.value.trim()||"Hi Coach, I've got a question about...";window.open('https://wa.me/'+n+'?text='+encodeURIComponent(m),'_blank','noopener');set(false);t.value=''});})();
+</script>
 
 <!-- WELCOME LIGHTBOX: shows when someone first lands -->
 <div data-if="showWelcome" hidden>
