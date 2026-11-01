@@ -9,7 +9,7 @@ sections/05-membership.html
 BREAK
 sections/06-articles.html
 BREAK
-sections/07-testimonial.html
+# sections/07-testimonial.html   (hidden until real testimonials are in)
 sections/08-about.html
 sections/09-final-cta.html
 sections/10-footer.html
