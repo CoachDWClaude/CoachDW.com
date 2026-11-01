@@ -133,3 +133,8 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .chatp-form textarea{flex:1;resize:none;border:1px solid #ccc;border-radius:10px;padding:9px 10px;font:15px 'Special Elite','Courier New',monospace;min-height:42px}
 .chatp-form button{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:#cc0000;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .chatp-note{font-size:11px;color:#6b6b6b;padding:2px 12px 10px}
+
+/* ===== "Video coming soon" message on video placeholders ===== */
+.vsoon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:22px;background:rgba(0,0,0,.82);color:#fff;font-family:'Special Elite','Courier New',monospace;font-size:clamp(16px,4.6vw,20px);line-height:1.4;opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+.vsoon-btn.soon .vsoon{opacity:1;visibility:visible;transition-delay:0s}
+.vsoon-btn.soon>span[aria-hidden]{opacity:0}
