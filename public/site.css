@@ -141,12 +141,7 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 
 /* ===== Triple Whammy: iLOG shown as a paper logbook (closed cover behind, open page in front) ===== */
 #triple a.logbook{width:88%!important;margin:2% auto 0!important;aspect-ratio:auto!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;position:relative;overflow:visible!important;padding-top:84%;display:block}
-#triple a.logbook .lb-cover{position:absolute;top:0;left:-3%;width:100%;aspect-ratio:1/1.414;background:#121212;border-radius:2px 7px 7px 2px;box-shadow:0 8px 18px rgba(0,0,0,.35),inset 5cqw 0 0 #cc0000;transform:rotate(-6deg);display:flex;flex-direction:column;align-items:center;gap:2cqw;padding:11cqw 8cqw 0 13cqw;box-sizing:border-box;z-index:0;font-family:'Special Elite','Courier New',monospace;text-align:center}
-#triple a.logbook .lb-cover img{width:88%;height:auto;display:block}
-#triple a.logbook .lb-t{color:#fff;font-size:14cqw;line-height:1}
-#triple a.logbook .lb-s{color:#bdbdbd;font-size:5cqw;letter-spacing:.12em;text-transform:uppercase}
-#triple a.logbook .lb-sfl{display:flex;flex-direction:column;align-items:center;color:#cc0000;text-transform:uppercase;line-height:1.05;margin-top:2cqw}
-#triple a.logbook .lb-sfl>span{display:block;font-size:13.4cqw;letter-spacing:0;white-space:nowrap}
+#triple a.logbook .lb-cover{position:absolute;top:0;left:-3%;width:100%;aspect-ratio:1/1.414;background:#121212;border-radius:2px 7px 7px 2px;box-shadow:0 8px 18px rgba(0,0,0,.35),inset 5cqw 0 0 #cc0000;transform:rotate(-6deg);display:flex;flex-direction:column;align-items:stretch;padding:8cqw 7cqw 0 12cqw;box-sizing:border-box;z-index:0;font-family:'Special Elite','Courier New',monospace;text-align:center}
 #triple a.logbook>div{position:relative;z-index:1;aspect-ratio:1/1.414;width:100%;height:auto!important;background:#f4f0e5!important;border-radius:2px 6px 6px 2px;box-shadow:0 10px 22px rgba(0,0,0,.3),inset 0 0 0 1px #d8cfb8;transform:rotate(3.5deg) translateX(4%);padding:5cqw 4.5cqw 4cqw 11cqw!important;gap:4cqw!important;font-size:4cqw!important;overflow:hidden;box-sizing:border-box}
 #triple a.logbook>div::before{content:'';position:absolute;z-index:2;left:2.5cqw;top:3%;bottom:3%;width:4.5cqw;background:radial-gradient(circle at 50% 50%,#2b2b2b 0 1.3cqw,transparent 1.5cqw) 0 0/4.5cqw 6.5cqw repeat-y}
 #triple a.logbook>div>div{background:transparent!important;box-shadow:none!important;border-left:0!important;padding:0!important;border-radius:0!important}
@@ -154,12 +149,7 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 /* ===== iLOG pop-up: the closed journal and an open page, side by side, both A5 ===== */
 .ilogshow{container-type:inline-size;display:grid;grid-template-columns:1fr 1fr;gap:5%;align-items:center;padding:3% 2% 4%;font-family:'Special Elite','Courier New',monospace}
 .ilogshow .cov,.ilogshow .pg{aspect-ratio:1/1.414;box-sizing:border-box;border-radius:2px 7px 7px 2px}
-.ilogshow .cov{background:#121212;box-shadow:0 12px 26px rgba(0,0,0,.4),inset 3.4cqw 0 0 #cc0000;transform:rotate(-4deg);display:flex;flex-direction:column;align-items:center;gap:1.2cqw;padding:6cqw 2.4cqw 0 5.4cqw;text-align:center}
-.ilogshow .cov img{width:96%;height:auto;display:block}
-.ilogshow .cov .t{color:#fff;font-size:8cqw;line-height:1}
-.ilogshow .cov .s{color:#bdbdbd;font-size:2.4cqw;letter-spacing:.12em;text-transform:uppercase}
-.ilogshow .cov svg.sfl{display:block;width:88.8%;height:auto;margin-top:1.4cqw;overflow:visible}
-.ilogshow .cov svg.sfl text{font-family:'Special Elite','Courier New',monospace;font-size:31px;fill:#cc0000}
+.ilogshow .cov{background:#121212;justify-content:center;box-shadow:0 12px 26px rgba(0,0,0,.4),inset 3.4cqw 0 0 #cc0000;transform:rotate(-4deg);display:flex;flex-direction:column;align-items:stretch;padding:4cqw 4cqw 6cqw 8cqw;text-align:center}
 .ilogshow .pg{position:relative;background:#f4f0e5;box-shadow:0 12px 26px rgba(0,0,0,.3),inset 0 0 0 1px #d8cfb8;transform:rotate(2.5deg);padding:3cqw 2.4cqw 2cqw 5.6cqw;display:flex;flex-direction:column;gap:2.4cqw;color:#1a1a1a;font-size:1.9cqw;line-height:1.2;overflow:hidden}
 .ilogshow .pg::before{content:'';position:absolute;left:1.2cqw;top:3%;bottom:3%;width:2.6cqw;background:radial-gradient(circle,#2b2b2b 0 .75cqw,transparent .85cqw) 0 0/2.6cqw 3.6cqw repeat-y}
 .ilogshow .blk{display:flex;flex-direction:column;gap:.5cqw;flex:1}
@@ -172,3 +162,9 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .ilogshow .h span:last-child,.ilogshow .r span:last-child{text-align:right}
 .ilogshow .r .hit{color:#cc0000}
 .ilogshow .n{margin-top:auto;color:#cc0000;font-size:.85em}
+
+/* iLOG cover artwork: logo, iLOG and TRAINING JOURNAL share the same left and right edges */
+.covsvg{display:block;width:100%;height:auto;overflow:visible}
+.covsvg text{font-family:'Special Elite','Courier New',monospace}
+.covsvg .ct{font-size:150px;fill:#ffffff}
+.covsvg .cs{font-size:38px;fill:#bdbdbd}
