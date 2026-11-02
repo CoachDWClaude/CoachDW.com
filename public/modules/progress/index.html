@@ -91,6 +91,10 @@ body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
 .sflp .linkb{font:inherit;font-size:13px;color:var(--red);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline}
 .sflp .chg-edit{display:flex;gap:8px}.sflp .chg-edit input{flex:1;min-width:0;font:inherit;font-size:15px;padding:9px;border:2px solid var(--ink);border-radius:8px}
 .sflp .chg-edit button{font:inherit;font-size:14px;border:0;border-radius:8px;background:var(--red);color:#fff;padding:0 14px;cursor:pointer}
+.sflp .gl.dotl{stroke-dasharray:1 5;stroke-width:2.6}.sflp .gl.faint{opacity:.35}.sflp .gl.sel{stroke-width:3.6;opacity:1}
+.sflp .gend.red{fill:var(--red)}.sflp .gend.blk{fill:var(--ink)}
+.sflp .gend.sel{stroke:#ffb000;stroke-width:3}
+.sflp svg.g text.endlab[data-blk]{font-size:10.5px;cursor:pointer}.sflp svg.g text.endlab.sel{text-decoration:underline}
 .sflp .note{margin:0;font-size:12px;line-height:1.5;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){.sflp *{transition:none!important}}
 </style>
@@ -202,54 +206,47 @@ const SFLProgress = (() => {
       const W = 320, H = 210, L = 40, R = 70, T = 18, B = 26;
       let svg = '', below = '', view = null, scrubber = false;
 
-      if (st.mode === 'cmp') {
-        // This block v last block, both from 0% at their start, with each one's trend line run out to week 6
-        const pair = [pb, cb].filter(Boolean);
-        pair.forEach(k => { const v0 = k.ps[0].v; k.rel = k.ps.map(p => ({ ...p, d: (p.t - k.start) / DAY, pc: (p.v / v0 - 1) * 100 }));
+      if (st.mode === 'cmp' || st.mode === 'bars') {
+        // Blocks laid over each other, all from 0% at their start. This v Last: just the two. All blocks: every block in the range.
+        const last = all[all.length - 1].t, from = st.mode === 'bars' && st.range ? last - st.range * 7 * DAY : -Infinity;
+        const set = st.mode === 'cmp' ? [pb, cb].filter(Boolean) : blocks.filter(k => k.start + BLOCK * DAY > from);
+        const cls = k => k.i === cur ? 'red' : k.i === cur - 1 ? 'blk' : (cur - k.i) % 2 ? 'blk dotl' : 'red dotl';
+        const name = k => k.i === cur ? 'This' : k.i === cur - 1 ? 'Last' : 'B' + (k.i + 1);
+        set.forEach(k => { const v0 = k.ps[0].v; k.rel = k.ps.map(p => ({ ...p, d: (p.t - k.start) / DAY, pc: (p.v / v0 - 1) * 100 }));
           k.tr = d => k.fit ? ((k.fit.slope * ((k.start / DAY) + d) + k.fit.icpt) / v0 - 1) * 100 : 0; });
-        const vals = pair.flatMap(k => k.rel.map(p => p.pc).concat([k.tr(0), k.tr(BLOCK)]));
+        const keyPair = set.filter(k => k.i >= cur - 1);
+        const vals = set.flatMap(k => k.rel.map(p => p.pc)).concat(keyPair.flatMap(k => [k.tr(0), k.tr(BLOCK)]));
         const lo = Math.min(0, ...vals), hi = Math.max(1, ...vals), pad = (hi - lo) * .08;
         const xs = d => L + d * (W - L - R) / BLOCK, ys = pc => T + (hi + pad - pc) * (H - T - B) / (hi - lo + 2 * pad);
         for (let w = 0; w <= 6; w++) svg += `<line class="ax v" x1="${xs(w * 7)}" x2="${xs(w * 7)}" y1="${T}" y2="${H - B}"/><text x="${xs(w * 7)}" y="${H - 8}" text-anchor="middle">${w ? 'Wk ' + w : 'Start'}</text>`;
         [hi, 0, lo].filter((v, i, a) => a.indexOf(v) === i).forEach(v => { svg += `<line class="ax${v === 0 ? ' zero' : ''}" x1="${L}" x2="${W - R}" y1="${ys(v)}" y2="${ys(v)}"/><text x="${L - 5}" y="${ys(v) + 3}" text-anchor="end">${sgn(v, 1)}%</text>`; });
-        if (cb && pb && cb.fit && pb.fit) {         // the gap between the two trend lines, green if this block is ahead, red if behind
-          const v = verdictOf(cb.rate, pb.rate);
-          svg += `<polygon class="gap ${v}" points="${[0, BLOCK].map(d => xs(d) + ',' + ys(cb.tr(d))).join(' ')} ${[BLOCK, 0].map(d => xs(d) + ',' + ys(pb.tr(d))).join(' ')}"/>`;
+        if (cb && pb && cb.fit && pb.fit && set.includes(cb) && set.includes(pb)) {   // gap between this and last block's trend lines: green ahead, red behind
+          svg += `<polygon class="gap ${verdictOf(cb.rate, pb.rate)}" points="${[0, BLOCK].map(d => xs(d) + ',' + ys(cb.tr(d))).join(' ')} ${[BLOCK, 0].map(d => xs(d) + ',' + ys(pb.tr(d))).join(' ')}"/>`;
         }
-        pair.forEach(k => { const c = k === cb ? 'red' : 'blk';
-          if (k.fit) svg += `<line class="trend ${c}" x1="${xs(0)}" y1="${ys(k.tr(0))}" x2="${xs(BLOCK)}" y2="${ys(k.tr(BLOCK))}"/>`;
-          svg += `<polyline class="gl ${c}" points="${k.rel.map(p => xs(p.d) + ',' + ys(p.pc)).join(' ')}"/>` + k.rel.map(p => `<circle class="dot ${c}" cx="${xs(p.d)}" cy="${ys(p.pc)}" r="2.6"/>`).join(''); });
-        // labels at the right-hand end, kept apart
-        const lab = pair.filter(k => k.fit).map(k => ({ k, y: ys(k.tr(BLOCK)) }));
-        if (lab.length === 2 && Math.abs(lab[0].y - lab[1].y) < 26) { const m = (lab[0].y + lab[1].y) / 2, up = lab[0].y < lab[1].y ? 0 : 1; lab[up].y = m - 13; lab[1 - up].y = m + 13; }
-        lab.forEach(({ k, y }) => { const c = k === cb ? 'red' : 'blk';
-          svg += `<text class="endlab ${c}" x="${W - R + 6}" y="${y - 2}">${k === cb ? 'This' : 'Last'}</text><text class="endnum ${c}" x="${W - R + 6}" y="${y + 11}">${sgn(k.rate)}%</text>`; });
+        // older blocks first, so this block and last block draw on top
+        set.slice().sort((x, y) => x.i - y.i).forEach(k => { const c = cls(k), key = k.i >= cur - 1, sel = st.pick === k.i;
+          if (key && k.fit) svg += `<line class="trend ${c.split(' ')[0]}" x1="${xs(0)}" y1="${ys(k.tr(0))}" x2="${xs(BLOCK)}" y2="${ys(k.tr(BLOCK))}"/>`;
+          svg += `<polyline class="gl ${c}${sel ? ' sel' : ''}${!key && st.pick != null && !sel ? ' faint' : ''}" points="${k.rel.map(p => xs(p.d) + ',' + ys(p.pc)).join(' ')}"/>`;
+          if (key) svg += k.rel.map(p => `<circle class="dot ${c.split(' ')[0]}" cx="${xs(p.d)}" cy="${ys(p.pc)}" r="2.6"/>`).join('');
+          const e = k.rel[k.rel.length - 1];
+          svg += `<circle class="gend ${c.split(' ')[0]}${sel ? ' sel' : ''}" data-blk="${k.i}" tabindex="0" role="button" aria-label="Block ${k.i + 1}: ${k.rate == null ? 'not enough sessions' : sgn(k.rate) + '% a week'}" cx="${xs(e.d)}" cy="${ys(e.pc)}" r="5.5"/>`; });
+        // right-hand labels: name and rate, spread so they don't overlap
+        const lab = set.filter(k => k.rate != null).map(k => ({ k, y: ys(k.i >= cur - 1 && k.fit ? k.tr(BLOCK) : k.rel[k.rel.length - 1].pc) })).sort((x, y) => x.y - y.y);
+        const gapY = st.mode === 'cmp' ? 26 : 13;
+        for (let j = 1; j < lab.length; j++) if (lab[j].y - lab[j - 1].y < gapY) lab[j].y = lab[j - 1].y + gapY;
+        const over = lab.length ? lab[lab.length - 1].y - (H - B) : 0; if (over > 0) lab.forEach(l => { l.y -= over; });
+        lab.forEach(({ k, y }) => { const c = cls(k).split(' ')[0], sel = st.pick === k.i;
+          if (st.mode === 'cmp') svg += `<text class="endlab ${c}" x="${W - R + 6}" y="${y - 2}">${name(k)}</text><text class="endnum ${c}" x="${W - R + 6}" y="${y + 11}">${sgn(k.rate)}%</text>`;
+          else svg += `<text class="endlab ${c}${sel ? ' sel' : ''}" x="${W - R + 6}" y="${y + 3}" data-blk="${k.i}">${name(k)} ${sgn(k.rate)}</text>`; });
         svg += `<g id="sc"></g>`;
         const done = cb ? Math.round(cb.rel[cb.rel.length - 1].d) : 0;
-        view = { kind: 'cmp', pair, xs, ys, max: BLOCK, start: done }; scrubber = true;
-        below = cb && cb.fit && pb ? `<p class="note">Solid lines are your sessions, dashed lines the trend. <b style="color:var(--red)">This block</b> is on track for <b>${sgn(cb.tr(BLOCK), 1)}%</b> by week 6. <b>Last block</b> finished at <b>${sgn(pb.rel[pb.rel.length - 1].pc, 1)}%</b>.</p>` : '';
-      } else if (st.mode === 'bars') {
-        // Every block's rate side by side, with the change from the block before
-        const last = all[all.length - 1].t, from = st.range ? last - st.range * 7 * DAY : -Infinity;
-        const shown = blocks.filter(k => k.rate != null && k.start + BLOCK * DAY > from);
-        const avgSet = blocks.filter(k => k.rate != null && k.ps.length >= 3), avg = avgSet.length ? avgSet.reduce((a, k) => a + k.rate, 0) / avgSet.length : null;
-        const rs = shown.map(k => k.rate).concat(avg != null ? [avg] : []), lo = Math.min(0, ...rs), hi = Math.max(.5, ...rs), pad = (hi - lo) * .22;
-        const RR = 14, bw = Math.min(46, (W - L - RR) / shown.length * .62), slot = (W - L - RR) / shown.length;
-        const ys = r => T + 10 + (hi + pad - r) * (H - T - B - 22) / (hi - lo + 2 * pad), z = ys(0);
-        svg += `<line class="ax zero" x1="${L}" x2="${W - RR}" y1="${z}" y2="${z}"/><text x="${L - 5}" y="${z + 3}" text-anchor="end">0</text>`;
-        shown.forEach((k, j) => { const cx = L + slot * j + slot / 2, y = ys(k.rate), c = k.i === cur ? 'red' : k.i === cur - 1 ? 'blk' : 'old', sel = st.pick === k.i;
-          svg += `<g class="bar ${c}${sel ? ' sel' : ''}" data-blk="${k.i}" tabindex="0" role="button" aria-label="Block ${k.i + 1}: ${sgn(k.rate)}% a week">
-            <rect x="${cx - bw / 2}" y="${Math.min(y, z)}" width="${bw}" height="${Math.max(1.5, Math.abs(z - y))}" rx="3"/>
-            <text class="bnum" x="${cx}" y="${k.rate >= 0 ? y - 5 : y + 12}" text-anchor="middle">${sgn(k.rate)}${notes.get(lift.id, k.i) || changes(k, k.prev).length ? ' ✎' : ''}</text>
-            <text x="${cx}" y="${H - 16}" text-anchor="middle">${k.i === cur ? 'This' : k.i === cur - 1 ? 'Last' : 'B' + (k.i + 1)}</text>
-            ${k.prev && k.v !== 'na' ? `<text class="chg ${k.v}" x="${cx}" y="${H - 4}" text-anchor="middle">${k.v === 'up' ? '▲' : k.v === 'dn' ? '▼' : '='} ${Math.abs(k.rate - k.prev.rate).toFixed(2)}</text>` : ''}</g>`; });
-        if (avg != null) svg += `<line class="avg" x1="${L}" x2="${W - RR}" y1="${ys(avg)}" y2="${ys(avg)}"/><text class="avgt" x="${L + 2}" y="${ys(avg) - 4}">avg ${sgn(avg)}</text>`;
-        svg += `<text x="${L - 5}" y="${T + 6}" text-anchor="end">%/wk</text>`;
-        const k = blocks.find(k => k.i === st.pick) || cb;
-        below = k ? `<div class="bdet"><b>Block ${k.i + 1}${k.i === cur ? ' (this block)' : k.i === cur - 1 ? ' (last block)' : ''}</b> &middot; ${day(k.start)} to ${day(k.ps[k.ps.length - 1].t)} &middot; ${k.ps.length} sessions<br>
-          ${kg(k.ps[0].w)} kg &times; ${k.ps[0].reps} to ${kg(k.ps[k.ps.length - 1].w)} kg &times; ${k.ps[k.ps.length - 1].reps} &middot; <b>${sgn(k.rate)}%/wk</b>${k.prev ? ` (<span class="${k.v}">${k.v === 'up' ? 'faster' : k.v === 'dn' ? 'slower' : 'same pace'}</span> than block ${k.prev.i + 1}: ${sgn(k.prev.rate)}%/wk)` : ''}</div>
-          ${changePanel(lift.id, k, k.prev, st.edit)}
-          <p class="note">Each bar is one 6-week block&rsquo;s rate of progression. ▲ green: faster than the block before. ▼ red: slower. Tap a bar for its numbers.</p>` : '';
+        view = { kind: 'cmp', pair: keyPair, xs, ys, max: BLOCK, start: done }; scrubber = true;
+        if (st.mode === 'cmp') below = cb && cb.fit && pb ? `<p class="note">Solid lines are your sessions, dashed lines the trend. <b style="color:var(--red)">This block</b> is on track for <b>${sgn(cb.tr(BLOCK), 1)}%</b> by week 6. <b>Last block</b> finished at <b>${sgn(pb.rel[pb.rel.length - 1].pc, 1)}%</b>.</p>` : '';
+        else { const k = blocks.find(k => k.i === st.pick) || cb;
+          below = k ? `<div class="bdet"><b>Block ${k.i + 1}${k.i === cur ? ' (this block)' : k.i === cur - 1 ? ' (last block)' : ''}</b> &middot; ${day(k.start)} to ${day(k.ps[k.ps.length - 1].t)} &middot; ${k.ps.length} sessions<br>
+            ${kg(k.ps[0].w)} kg &times; ${k.ps[0].reps} to ${kg(k.ps[k.ps.length - 1].w)} kg &times; ${k.ps[k.ps.length - 1].reps} &middot; <b>${k.rate == null ? '–' : sgn(k.rate) + '%/wk'}</b>${k.prev && k.v !== 'na' ? ` (<span class="${k.v}">${k.v === 'up' ? '▲ faster' : k.v === 'dn' ? '▼ slower' : 'same pace'}</span> than block ${k.prev.i + 1}: ${sgn(k.prev.rate)}%/wk)` : ''}</div>
+            ${changePanel(lift.id, k, k.prev, st.edit)}
+            <p class="note">Every block from 0% at its start. <b style="color:var(--red)">This block</b> solid red, <b>last block</b> solid black, older blocks dotted. Tap any line&rsquo;s end point or label to see that block and what changed in it.</p>` : ''; }
       } else {
         // Timeline: weight over time, each block a shaded band with its rate and the change on the block before
         const last = all[all.length - 1].t, from = st.range ? last - st.range * 7 * DAY : -Infinity;
@@ -273,9 +270,9 @@ const SFLProgress = (() => {
         <label class="lift">Lift<select data-k="lift">${lifts.map(l => `<option value="${l.id}" ${l.id === st.lift ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>
         ${headline(cb, pb, lift.id)}
         ${st.mode === 'cmp' ? changePanel(lift.id, cb, pb, st.edit) : ''}
-        <div class="seg three" role="group" aria-label="View">${[['cmp', 'This v Last'], ['bars', 'Every block'], ['line', 'Timeline']].map(([m, l]) => `<button type="button" data-mode="${m}" aria-pressed="${st.mode === m}">${l}</button>`).join('')}</div>
+        <div class="seg three" role="group" aria-label="View">${[['cmp', 'This v Last'], ['bars', 'All blocks'], ['line', 'Timeline']].map(([m, l]) => `<button type="button" data-mode="${m}" aria-pressed="${st.mode === m}">${l}</button>`).join('')}</div>
         ${st.mode === 'cmp' ? '' : `<div class="seg five" role="group" aria-label="Time range">${[[6, '6 wk'], [12, '12 wk'], [18, '18 wk'], [24, '24 wk'], [0, 'All']].map(([n, l]) => `<button type="button" data-range="${n}" aria-pressed="${st.range === n}">${l}</button>`).join('')}</div>`}
-        <svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(lift.name)}: ${st.mode === 'cmp' ? 'this block against last block' : st.mode === 'bars' ? 'rate of progression for every block' : 'progress over time'}">${svg}</svg>
+        <svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(lift.name)}: ${st.mode === 'cmp' ? 'this block against last block' : st.mode === 'bars' ? 'every block from its start' : 'progress over time'}">${svg}</svg>
         ${scrubber ? `<input type="range" data-k="scrub" min="0" max="${view.max}" step="1" value="${st.scrub}" aria-label="Scroll across the graph"><div class="read" aria-live="polite"></div>` : ''}
         ${below}
       </div>`;
