@@ -113,6 +113,9 @@ body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
 .sflp .avgl{stroke-width:1.4;stroke-dasharray:5 4;opacity:.85}.sflp .avgl.red{stroke:var(--red)}.sflp .avgl.blk{stroke:var(--ink)}
 .sflp .sw.dash{background:repeating-linear-gradient(90deg,var(--ink) 0 5px,transparent 5px 9px);height:2px}
 .sflp .count{margin:-4px 0 0;font-size:13px;color:var(--mute)}.sflp .count b{font-weight:400;color:var(--red)}
+.sflp .pbar{padding:12px 14px;gap:2px 8px}
+.sflp .pbar b{font-size:24px;letter-spacing:.06em}.sflp .pbar span{font-size:16px}.sflp .pbar small{font-size:13px;margin-top:2px}
+.sflp .gl{stroke-width:3}
 .sflp .note{margin:0;font-size:12px;line-height:1.5;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){.sflp *{transition:none!important}}
 </style>
@@ -126,7 +129,7 @@ body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
     <label>Load backup file<input type="file" id="src-file" accept=".json,application/json"></label>
   </div>
   <div class="card"><div id="progress"></div></div>
-  <p class="note" style="margin-top:14px">Preview of the progress module before it goes into the app. Blocks are 6 weeks or 6 sessions, counted from each lift&rsquo;s first session. The dashed line is the average (best-fit) line through each block. The line is kilos gained since the block&rsquo;s first session (top set weight, plus a tenth of a plate step per rep). kg/wk is the trend through the block; % per session is the average gain from one session to the next.</p>
+  <p class="note" style="margin-top:14px">Preview of the progress module before it goes into the app. Each line is kilos gained since the start of the 6-week block. Dashed lines are each block&rsquo;s average; green between them means this block is faster, red means slower.</p>
 </div>
 
 <script>
@@ -188,7 +191,7 @@ const SFLProgress = (() => {
   }
 
   function mount(el, data, opt = {}) {
-    const st = { blk: opt.blk || 'week', lift: opt.lift || null, pt: null, older: false, edit: false };
+    const st = { blk: 'week', lift: opt.lift || null, pt: null, older: false, edit: false };
     const sessions = data.sessions.slice().sort((a, b) => a.t - b.t);
     const lifts = data.lifts.filter(l => sessions.some(s => s.sets[l.id]));
     if (!lifts.length) { el.innerHTML = '<p class="note">No sessions to show yet.</p>'; return; }
@@ -212,9 +215,10 @@ const SFLProgress = (() => {
     const f2 = (v, u) => v == null ? '–' : sgn(v) + u;
 
     function banner(cb, pb) {
-      const a = kgwk(cb), b2 = kgwk(pb), v = verdictOf(a, b2), arrow = v === 'up' ? '▲' : v === 'dn' ? '▼' : v === 'eq' ? '►' : '';
-      return `<div class="pbar ${v}"><b>Progression ${arrow}</b><span>${f2(a, ' kg/wk')} &middot; ${f2(sos(cb), '% per session')}</span>
-        ${pb ? `<small>Last block ${f2(b2, ' kg/wk')} &middot; ${f2(sos(pb), '% per session')}${cb && cb.ps.length < 6 ? ' &middot; early read, ' + cb.ps.length + ' of 6 sessions' : ''}</small>` : '<small>Comparison starts in your second 6-week block.</small>'}</div>`;
+      const a = kgwk(cb), b2 = kgwk(pb), v = verdictOf(a, b2);
+      if (v === 'na') return `<div class="pbar na"><b>Not enough to compare yet</b><small>Your comparison starts in your second 6-week block.</small></div>`;
+      const word = v === 'up' ? '&#9650; Faster' : v === 'dn' ? '&#9660; Slower' : 'Same pace';
+      return `<div class="pbar ${v}"><b>${word}</b><span>than last block</span><small>${f2(a, ' kg/wk')} this block &middot; ${f2(b2, ' kg/wk')} last block</small></div>`;
     }
 
     function render() {
@@ -239,11 +243,13 @@ const SFLProgress = (() => {
       const step = hi - lo > 12 ? 5 : hi - lo > 5 ? 2.5 : 1;
       for (let y = Math.ceil(lo / step) * step; y <= hi + 1e-9; y += step) svg += `<line class="ax${y === 0 ? ' zero' : ''}" x1="${L}" x2="${W - R}" y1="${ys(y)}" y2="${ys(y)}"/><text x="${L - 5}" y="${ys(y) + 3}" text-anchor="end">${y > 0 ? '+' : ''}${kg(y)}</text>`;
       svg += `<text x="${L - 5}" y="${T - 3}" text-anchor="end" class="axl">kg</text>`;
+      if (cb && pb && cb.avg && pb.avg) { const av = (k, x) => k.avg.c + k.avg.m * x;
+        svg += `<polygon class="gap ${verdictOf(kgwk(cb), kgwk(pb))}" points="${xs(x0)},${ys(av(cb, x0))} ${xs(6)},${ys(av(cb, 6))} ${xs(6)},${ys(av(pb, 6))} ${xs(x0)},${ys(av(pb, x0))}"/>`; }
       pair.filter(k => k.avg && k.i >= cur - 1).forEach(k => { const c = cls(k);
         svg += `<line class="avgl ${c}" x1="${xs(x0)}" y1="${ys(k.avg.c + k.avg.m * x0)}" x2="${xs(6)}" y2="${ys(k.avg.c + k.avg.m * 6)}"/>`; });
       pair.slice().sort((p, q) => (p.i >= cur - 1) - (q.i >= cur - 1) || p.i - q.i).forEach(k => { const c = cls(k);
         svg += `<polyline class="gl ${c}" points="${k.line.map(q => xs(q.x) + ',' + ys(q.y)).join(' ')}"/>`;
-        if (c !== 'old') svg += k.line.map((q, j) => `<circle class="dot ${c}${st.pt && st.pt[0] === k.i && st.pt[1] === j ? ' on' : ''}" data-pt="${k.i}:${j}" cx="${xs(q.x)}" cy="${ys(q.y)}" r="${st.pt && st.pt[0] === k.i && st.pt[1] === j ? 5 : 3.4}"/>`).join(''); });
+        if (c !== 'old') svg += k.line.map(q => `<circle class="dot ${c}" cx="${xs(q.x)}" cy="${ys(q.y)}" r="3.4"/>`).join(''); });
       // end labels
       const lab = pair.filter(k => k.i >= cur - 1).map(k => ({ k, y: ys(k.line[k.line.length - 1].y) })).sort((p, q) => p.y - q.y);
       if (lab.length === 2 && lab[1].y - lab[0].y < 24) { const m = (lab[0].y + lab[1].y) / 2; lab[0].y = m - 12; lab[1].y = m + 12; }
@@ -257,13 +263,8 @@ const SFLProgress = (() => {
       el.innerHTML = `<div class="sflp">
         <label class="lift">Lift<select data-k="lift">${lifts.map(l => `<option value="${l.id}" ${l.id === st.lift ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>
         ${banner(cb, pb)}
-        <div class="seg two" role="group" aria-label="Block length">${[['week', '6-week blocks'], ['session', '6-session blocks']].map(([m, l]) => `<button type="button" data-by="${m}" aria-pressed="${st.blk === m}">${l}</button>`).join('')}</div>
-        <p class="count">${cb ? (st.blk === 'week' ? `This block: <b>week ${Math.min(6, Math.floor((cb.ps[cb.ps.length - 1].t - cb.start) / DAY / 7) + 1)} of 6</b> &middot; ${cb.ps.length} session${cb.ps.length === 1 ? '' : 's'}` : `This block: <b>session ${cb.ps.length} of 6</b> &middot; week ${Math.floor((cb.ps[cb.ps.length - 1].t - cb.start) / DAY / 7) + 1}`) : ''}${pb ? ` &middot; last block ${pb.ps.length} sessions` : ''}</p>
-        <svg class="g" viewBox="0 0 ${W} ${H + 4}" role="img" aria-label="${esc(lift.name)}: this block against last block, kg gained over ${st.blk === 'week' ? '6-week' : '6-session'} blocks">${svg}</svg>
-        <p class="key"><span class="sw red"></span>This block <span class="sw blk"></span>Last block <span class="sw dash"></span>Average line${st.older ? ' <span class="sw old"></span>Older blocks' : ''}</p>
-        ${tip}
-        ${cb && pb ? changePanel(lift.id, cb, pb, st.edit) : ''}
-        <button type="button" class="linkb" data-act="older">${st.older ? 'Hide older blocks' : 'Show older blocks too'}</button>
+        <svg class="g" viewBox="0 0 ${W} ${H + 4}" role="img" aria-label="${esc(lift.name)}: this block against last block">${svg}</svg>
+        <p class="key"><span class="sw red"></span>This block <span class="sw blk"></span>Last block <span class="sw dash"></span>Average</p>
       </div>`;
     }
 
