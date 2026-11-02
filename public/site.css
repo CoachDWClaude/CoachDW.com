@@ -249,3 +249,17 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 @media (prefers-reduced-motion:reduce){.bnf-t,.bnf-i{opacity:1!important;transform:none!important;transition:none!important}}
 /* leaving view: reset instantly and quietly, so the entrance replays next time */
 .ac-list.rev:not(.in)>.ac-item,.bnf:not(.in) .bnf-t,.bnf:not(.in) .bnf-i{transition:none}
+/* slower, so the entrances are easy to see */
+.ac-list.rev.in>.ac-item{transition:opacity .7s ease,transform 1.1s cubic-bezier(.2,.9,.3,1.15)}
+.ac-list.rev.in>.ac-item:nth-child(2){transition-delay:.18s}
+.ac-list.rev.in>.ac-item:nth-child(3){transition-delay:.36s}
+.ac-list.rev.in>.ac-item:nth-child(4){transition-delay:.54s}
+.ac-list.rev.in>.ac-item:nth-child(5){transition-delay:.72s}
+.ac-list.rev.in>.ac-item:nth-child(n+6){transition-delay:.9s}
+.ac-list.rev>.ac-item{transform:translateX(-90px)}
+#all-articles .ac-list.rev>.ac-item{transform:translateX(90px)}
+.ac-list.rev.in>.ac-item,#all-articles .ac-list.rev.in>.ac-item{transform:none}
+.bnf.in .bnf-t{transition:opacity 1s ease,transform 1.1s cubic-bezier(.2,.9,.3,1.15)}
+.bnf-i{transform:translateY(-60px)}
+.bnf.in .bnf-i{transition:opacity .8s ease,transform 1.1s cubic-bezier(.2,.9,.3,1.15);transition-delay:calc(.8s + var(--n,0) * .2s)}
+.ac-list.rev:not(.in)>.ac-item,.bnf:not(.in) .bnf-t,.bnf:not(.in) .bnf-i{transition:none}

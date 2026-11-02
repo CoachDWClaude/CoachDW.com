@@ -411,30 +411,31 @@
   });
 })();
 
-/* Articles & Chapters: rows slide in each time a list scrolls into view (chapters from the left, articles from the right) */
+/* Scroll animations: play when a block reaches the middle of the screen; reset once it is fully off screen so it replays next time */
+function cdwReveal(el, onIn, onOut) {
+  if (!('IntersectionObserver' in window)) { onIn(); return; }
+  new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) onIn(); }); }, { rootMargin: '-40% 0px -40% 0px' }).observe(el);
+  new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) onOut(); }); }, { threshold: 0 }).observe(el);
+}
+
+/* Articles & Chapters: chapter rows slide in from the left, article rows from the right */
 (function () {
-  if (!('IntersectionObserver' in window)) return;
-  var lists = document.querySelectorAll('#articles .ac-list');
-  var io = new IntersectionObserver(function (es) {
-    es.forEach(function (e) { e.target.classList.toggle('in', e.isIntersecting); });   // replays every time the list comes back into view
-  }, { threshold: 0.05 });
-  lists.forEach(function (l) { l.classList.add('rev'); io.observe(l); });
+  document.querySelectorAll('#articles .ac-list').forEach(function (l) {
+    l.classList.add('rev');
+    cdwReveal(l, function () { l.classList.add('in'); }, function () { l.classList.remove('in'); });
+  });
 })();
 
 /* Member benefits: title first, then each card or item drops down in turn */
 (function () {
-  if (!('IntersectionObserver' in window)) return;
   ['free', 'membership'].forEach(function (id) {
     var sec = document.getElementById(id); if (!sec) return;
     var head = sec.querySelector('h2'); if (!head) return;
     sec.classList.add('bnf');
     head.parentElement.classList.add('bnf-t');
-    var items = sec.querySelectorAll(id === 'free' ? 'h2 ~ *, .bnf-t ~ div > div' : 'ul > li');
-    var n = 0;
-    (id === 'free' ? sec.querySelectorAll('.bnf-t + div > div') : items).forEach(function (el) { el.classList.add('bnf-i'); el.style.setProperty('--n', n++); });
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { sec.classList.toggle('in', e.isIntersecting); });   // replays every time the section comes back into view
-    }, { threshold: 0.05 });
-    io.observe(sec);
+    var items = id === 'free' ? sec.querySelectorAll('.bnf-t + div > div') : sec.querySelectorAll('ul > li');
+    items.forEach(function (el, n) { el.classList.add('bnf-i'); el.style.setProperty('--n', n); });
+    cdwReveal(head, function () { sec.classList.add('in'); }, function () {});
+    cdwReveal(sec, function () {}, function () { sec.classList.remove('in'); });
   });
 })();
