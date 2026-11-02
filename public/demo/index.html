@@ -467,7 +467,7 @@ function home() {
     <span class="eyebrow">${test ? 'Test session' : "Today you're on"} &middot; Phase ${D.S.phase}</span>
     <h1${D.next.length > 6 ? ' style="font-size:48px"' : ''}>${esc(D.next)}<i>.</i></h1>
   </section>
-  <table class="plan"><thead><tr><th>Lift</th><th>Warm-up<br>50% &times;10&ndash;12</th><th>Primer<br>75% &times;8&ndash;10</th><th>Top set<br>to failure</th></tr></thead><tbody>
+  <table class="plan"><thead><tr><th>Lift</th><th>50% &times; 12</th><th>75% &times; 10</th><th>AMRAP</th></tr></thead><tbody>
   ${todays().map(x => { const n = w => x.bw ? bwt(w - BWKG).replace(/\s+/g, '') : String(Math.round(w * 100) / 100); return `<tr><td>${esc(x.mv)}<small>${esc(x.nm)}</small></td>${test ? '<td>&ndash;</td><td>&ndash;</td><td class="top">Test<small>today</small></td>' : `<td>${n(warm(x, .5))}</td><td>${n(warm(x, .75))}</td><td class="top">${n(work(x))}<small>${x.r711 ? 'chase 11' : 'chase ' + D.S.trigger}</small></td>`}</tr>`; }).join('')}
   </tbody></table>
   <p class="note" style="margin-top:-6px">Weights in kg. BW = bodyweight.</p>
