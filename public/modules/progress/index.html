@@ -55,6 +55,42 @@ body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
 .sflp ul.legend li[aria-current=true]{background:#faf3f3}
 .sflp ul.legend .rt{margin-left:auto}
 .sflp ul.legend small{color:var(--mute);font-size:12px}
+.sflp .vcard{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;border-radius:var(--r);padding:14px;color:#fff;background:#555}
+.sflp .vcard.up{background:var(--up)}.sflp .vcard.dn{background:var(--red)}.sflp .vcard.eq{background:var(--ink)}.sflp .vcard.na{background:#fff;color:var(--ink);border:1px dashed var(--line);grid-template-columns:1fr}
+.sflp .vc-arrow{font-size:44px;line-height:1;width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+.sflp .vc-txt{display:flex;flex-direction:column;gap:2px}.sflp .vc-txt b{font-weight:400;font-size:22px;text-transform:uppercase;letter-spacing:.02em;line-height:1.05}.sflp .vc-txt span{font-size:14px;opacity:.92}
+.sflp .vc-nums{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.sflp .vc-n{background:rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;font-size:24px;line-height:1.1;display:flex;flex-direction:column}
+.sflp .vc-n small{font-size:11px;letter-spacing:.06em;opacity:.85;margin-top:2px}
+.sflp .vc-n.this{background:#fff;color:var(--ink)}
+.sflp .vc-early{grid-column:1/-1;margin:4px 0 0;font-size:12px;opacity:.9}
+.sflp .ax.v{stroke:#f0ece2}.sflp .ax.zero{stroke:#bbb}
+.sflp .gl.red{stroke:var(--red)}.sflp .gl.blk{stroke:var(--ink)}
+.sflp .dot.red{fill:var(--red)}.sflp .dot.blk{fill:var(--ink)}
+.sflp .trend{stroke-width:1.6;stroke-dasharray:5 4}.sflp .trend.red{stroke:var(--red)}.sflp .trend.blk{stroke:var(--ink)}
+.sflp .gap{opacity:.16}.sflp .gap.up{fill:var(--up)}.sflp .gap.dn{fill:var(--red)}.sflp .gap.eq{fill:#888}
+.sflp svg.g text.endlab{font-size:11px}.sflp svg.g text.endnum{font-size:14px}
+.sflp svg.g text.red{fill:var(--red)}.sflp svg.g text.blk{fill:var(--ink)}
+.sflp .bar rect{cursor:pointer}.sflp .bar.red rect{fill:var(--red)}.sflp .bar.blk rect{fill:var(--ink)}.sflp .bar.old rect{fill:#c9c3b4}
+.sflp .bar.sel rect{stroke:#ffb000;stroke-width:3}
+.sflp svg.g text.bnum{font-size:11px;fill:var(--ink)}
+.sflp svg.g text.chg{font-size:9.5px}.sflp svg.g text.chg.up,.sflp svg.g text.bandt.up{fill:var(--up)}.sflp svg.g text.chg.dn,.sflp svg.g text.bandt.dn{fill:var(--red)}.sflp svg.g text.chg.eq{fill:var(--mute)}
+.sflp .avg{stroke:var(--mute);stroke-dasharray:4 3}.sflp svg.g text.avgt{font-size:9px}
+.sflp .band{fill:#fff}.sflp .band.alt{fill:#f5f2ea}.sflp .band.cur{fill:#fbecec}
+.sflp svg.g text.bandt{font-size:10.5px;fill:var(--ink)}
+.sflp .scrubd.blk{stroke:var(--ink)}
+.sflp .read .tr{color:var(--red)}
+.sflp .bdet{font-size:13px;line-height:1.55;background:#faf8f2;border-radius:8px;padding:8px 10px}
+.sflp .vc-cause{grid-column:1/-1;margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.95}
+.sflp .chg-box{border:2px solid var(--ink);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px}
+.sflp .chg-h{font-weight:400;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.sflp .chg-box ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.sflp .chg-box li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:5px}
+.sflp .chg-v b{font-weight:400;color:var(--red)}
+.sflp .chg-note{margin:0;font-size:14px}.sflp .chg-note b{font-weight:400}
+.sflp .linkb{font:inherit;font-size:13px;color:var(--red);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline}
+.sflp .chg-edit{display:flex;gap:8px}.sflp .chg-edit input{flex:1;min-width:0;font:inherit;font-size:15px;padding:9px;border:2px solid var(--ink);border-radius:8px}
+.sflp .chg-edit button{font:inherit;font-size:14px;border:0;border-radius:8px;background:var(--red);color:#fff;padding:0 14px;cursor:pointer}
 .sflp .note{margin:0;font-size:12px;line-height:1.5;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){.sflp *{transition:none!important}}
 </style>
@@ -80,133 +116,202 @@ body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
    SFLProgress.fromApp(D) turns the app's saved state (localStorage) into that data shape.
    ===================================================================================== */
 const SFLProgress = (() => {
-  const DAY = 864e5, BLOCK = 42;
-  const STY = ['k-red', 'k-blk', 'k-red k-dot', 'k-blk k-dot'];
-  const fmtKg = v => (Math.round(v * 100) / 100).toString();
-  const pct = r => r == null ? '&ndash;' : (r >= 0 ? '+' : '&minus;') + Math.abs(r).toFixed(2) + '%/wk';
-  const plain = s => s.replace(/&minus;/g, '-').replace(/&ndash;/g, '-');
+  const DAY = 864e5, BLOCK = 42, SAME = 0.1;          // within ±0.1%/wk counts as the same pace
+  const kg = v => (Math.round(v * 100) / 100).toString();
+  const sgn = (v, dp = 2) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(dp);
   const day = t => new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-  // Straight-line trend through a block's points, as % of the block's first value, per week
-  function rate(ps) {
+  // Rate of progression: the straight trend line through a block's top sets, as % of where the block started, per week
+  function fit(ps) {
     if (ps.length < 2) return null;
     const n = ps.length, xs = ps.map(p => p.t / DAY), ys = ps.map(p => p.v), mx = xs.reduce((a, b) => a + b) / n, my = ys.reduce((a, b) => a + b) / n;
     let sxy = 0, sxx = 0; xs.forEach((x, i) => { sxy += (x - mx) * (ys[i] - my); sxx += (x - mx) ** 2; });
-    return sxx ? (sxy / sxx) * 7 / ps[0].v * 100 : null;
+    if (!sxx) return null;
+    const slope = sxy / sxx; return { slope, icpt: my - slope * mx };
   }
+  const rate = ps => { const f = fit(ps); return f ? f.slope * 7 / ps[0].v * 100 : null; };
+  const verdictOf = (a, b) => a == null || b == null ? 'na' : a - b > SAME ? 'up' : b - a > SAME ? 'dn' : 'eq';
 
   function fromApp(D) {
     const lifts = (D.ex || []).map(x => ({ id: x.id, name: x.mv + (x.nm ? ' (' + x.nm + ')' : ''), inc: x.inc || 2.5 }));
-    const sessions = (D.log || []).filter(s => !s.test).map(s => { const sets = {}; s.e.forEach(e => { sets[e.id] = { w: e.w, reps: e.reps }; }); return { t: s.t, sets }; });
+    const sessions = (D.log || []).filter(s => !s.test).map(s => { const sets = {}; s.e.forEach(e => { sets[e.id] = { w: e.w, reps: e.reps, n: e.reps4 != null ? 2 : 1 }; }); return { t: s.t, sets, rest: s.rest, sleep: s.sleep, feel: s.feel }; });
     return { lifts: lifts.filter(l => sessions.some(s => s.sets[l.id])), sessions };
   }
 
+  // What was different about a block, compared with the block before: worked out from the log and check-ins
+  const mean = (ps, f) => { const v = ps.map(f).filter(x => typeof x === 'number' && !isNaN(x)); return v.length ? v.reduce((a, b) => a + b) / v.length : null; };
+  function changes(k, prev) {
+    if (!k || !prev) return [];
+    const out = [], wks = q => Math.max(1, ((q.ps[q.ps.length - 1].t - q.ps[0].t) / DAY + 1) / 7);
+    const add = (label, a, b, min, fmt) => { if (a != null && b != null && Math.abs(a - b) >= min) out.push({ label, from: fmt(b), to: fmt(a), up: a > b }); };
+    add('Top sets per lift', mean(k.ps, p => p.n), mean(prev.ps, p => p.n), .2, v => v.toFixed(1).replace('.0', ''));
+    add('Days between sessions', mean(k.ps, p => p.rest), mean(prev.ps, p => p.rest), .3, v => v.toFixed(1));
+    add('Sessions per week (this lift)', k.ps.length / wks(k), prev.ps.length / wks(prev), .3, v => v.toFixed(1));
+    add('Sleep', mean(k.ps, p => p.sleep), mean(prev.ps, p => p.sleep), .3, v => v.toFixed(1) + '/5');
+    add('Feeling', mean(k.ps, p => p.feel), mean(prev.ps, p => p.feel), .3, v => v.toFixed(1) + '/5');
+    return out;
+  }
+  const NOTES_KEY = 'sfl-progress-notes';
+  const notes = { get: (lift, b) => { try { return (JSON.parse(localStorage.getItem(NOTES_KEY) || '{}')[lift] || {})[b] || ''; } catch (_) { return ''; } },
+    set: (lift, b, txt) => { try { const all = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'); (all[lift] = all[lift] || {})[b] = txt; localStorage.setItem(NOTES_KEY, JSON.stringify(all)); } catch (_) {} } };
+  function changePanel(liftId, k, prev, editing) {
+    if (!k || !prev) return '';
+    const ch = changes(k, prev), note = notes.get(liftId, k.i);
+    return `<div class="chg-box"><b class="chg-h">What changed in ${k.isCur ? 'this block' : 'block ' + (k.i + 1)}</b>
+      ${ch.length ? `<ul>${ch.map(c => `<li><span>${c.label}</span><span class="chg-v">${c.from} &rarr; <b>${c.to}</b></span></li>`).join('')}</ul>` : '<p class="note">No change in sets, rest days, sleep or feel picked up from your log.</p>'}
+      ${editing ? `<div class="chg-edit"><input type="text" data-k="note" maxlength="80" placeholder="e.g. Added a second top set" value="${esc(note)}" aria-label="What you changed"><button type="button" data-act="save-note">Save</button></div>`
+        : `<p class="chg-note">${note ? '&#9998; <b>' + esc(note) + '</b> ' : ''}<button type="button" class="linkb" data-act="edit-note">${note ? 'Edit' : '+ Add what you changed'}</button></p>`}
+    </div>`;
+  }
+
   function mount(el, data, opt = {}) {
-    const st = { range: opt.range ?? 12, mode: opt.mode || 'line', lift: opt.lift || null, tip: null, scrub: null, view: null };
+    const st = { range: opt.range ?? 0, mode: opt.mode || 'cmp', lift: opt.lift || null, pick: null, scrub: null, view: null, edit: false };
     const sessions = data.sessions.slice().sort((a, b) => a.t - b.t);
     const lifts = data.lifts.filter(l => sessions.some(s => s.sets[l.id]));
     if (!lifts.length) { el.innerHTML = '<p class="note">No sessions to show yet.</p>'; return; }
     if (!lifts.some(l => l.id === st.lift)) st.lift = lifts[0].id;
 
     function build() {
-      const lift = lifts.find(l => l.id === st.lift), inc = lift.inc;
-      const all = sessions.filter(s => s.sets[lift.id]).map(s => ({ t: s.t, w: s.sets[lift.id].w, reps: s.sets[lift.id].reps }));
-      all.forEach(p => { p.v = p.w + p.reps * inc / 10; });                   // weight is the whole, each rep a tenth of a plate step
+      const lift = lifts.find(l => l.id === st.lift);
+      const all = sessions.filter(s => s.sets[lift.id]).map(s => ({ t: s.t, w: s.sets[lift.id].w, reps: s.sets[lift.id].reps, n: s.sets[lift.id].n || 1, rest: s.rest, sleep: s.sleep, feel: s.feel }));
+      all.forEach(p => { p.v = p.w + p.reps * lift.inc / 10; });            // weight is the whole, each rep a tenth of a plate step
       const t0 = all[0].t; all.forEach(p => { p.b = Math.floor((p.t - t0) / DAY / BLOCK); });
-      const cur = all[all.length - 1].b;
-      const blocks = []; for (let i = 0; i <= cur; i++) { const ps = all.filter(p => p.b === i); if (ps.length) blocks.push({ i, ps, start: t0 + i * BLOCK * DAY, rate: rate(ps) }); }
-      blocks.forEach(k => { k.sty = k.i === cur ? STY[0] : k.i === cur - 1 ? STY[1] : STY[2 + ((cur - k.i) % 2 ? 1 : 0)]; });
+      const cur = all[all.length - 1].b, blocks = [];
+      for (let i = 0; i <= cur; i++) { const ps = all.filter(p => p.b === i); if (ps.length) blocks.push({ i, ps, start: t0 + i * BLOCK * DAY, rate: rate(ps), fit: fit(ps) }); }
+      blocks.forEach((k, j) => { k.prev = blocks[j - 1] || null; k.v = k.prev ? verdictOf(k.rate, k.prev.rate) : 'na'; k.isCur = k.i === cur; });
       return { lift, all, blocks, cur };
+    }
+
+    // ---- the headline: faster or slower than last block ----
+    function headline(cb, pb, liftId) {
+      if (!cb || !pb || cb.rate == null || pb.rate == null) return `<div class="vcard na"><div class="vc-txt"><b>Not enough blocks yet</b><span>Your first comparison shows once you&rsquo;re into your second 6-week block.</span></div></div>`;
+      const v = verdictOf(cb.rate, pb.rate), d = cb.rate - pb.rate;
+      const word = v === 'up' ? 'Progressing faster' : v === 'dn' ? 'Progressing slower' : 'Same pace';
+      const arrow = v === 'up' ? '&#9650;' : v === 'dn' ? '&#9660;' : '&#9654;';
+      const ch = changes(cb, pb), note = notes.get(liftId, cb.i), cause = note || (ch[0] ? ch[0].label + ' ' + ch[0].from + ' → ' + ch[0].to : '');
+      return `<div class="vcard ${v}">${cause ? `<p class="vc-cause">Since: ${esc(cause)}</p>` : ''}<div class="vc-arrow" aria-hidden="true">${arrow}</div><div class="vc-txt"><b>${word}</b>
+        <span>${v === 'eq' ? 'Within ' + SAME + '%/wk of' : (v === 'up' ? 'Up' : 'Down') + ' ' + Math.abs(d).toFixed(2) + '%/wk on'} last block</span></div>
+        <div class="vc-nums"><span class="vc-n this">${sgn(cb.rate)}<small>%/wk this block</small></span><span class="vc-n last">${sgn(pb.rate)}<small>%/wk last block</small></span></div>
+        ${cb.ps.length < 6 ? `<p class="vc-early">Early read: ${cb.ps.length} of 6 sessions into this block.</p>` : ''}</div>`;
     }
 
     function render() {
       const { lift, all, blocks, cur } = build();
-      const W = 320, H = 200, L = 42, R = 14, T = 28, B = 24;
-      const last = all[all.length - 1].t, from = st.range ? last - st.range * 7 * DAY : -Infinity;
-      let svg = '', view;
-      const tipBox = (x, y, txt, red) => { const w = plain(txt).length * 6.1 + 14, tx = Math.min(Math.max(x - w / 2, 2), W - w - 2); return `<g class="gtip ${red ? 'tr' : ''}" pointer-events="none"><rect x="${tx}" y="${y - 26}" width="${w}" height="17" rx="8.5"/><text x="${tx + w / 2}" y="${y - 14}" text-anchor="middle">${txt}</text></g>`; };
-      if (st.mode === 'line') {
-        const pts = all.filter(p => p.t >= from), shown = blocks.filter(k => k.ps.some(p => p.t >= from));
-        const lo = Math.min(...pts.map(p => p.v)), hi = Math.max(...pts.map(p => p.v)), pad = (hi - lo) * .1 || 1;
-        const x0 = pts[0].t, xs = t => L + (t - x0) * (W - L - R) / ((last - x0) || 1), ys = v => T + (hi + pad - v) * (H - T - B) / (hi - lo + 2 * pad);
-        [hi, (hi + lo) / 2, lo].forEach(v => { svg += `<line class="ax" x1="${L}" x2="${W - R}" y1="${ys(v)}" y2="${ys(v)}"/><text x="${L - 6}" y="${ys(v) + 3}" text-anchor="end">${fmtKg(Math.round(v * 10) / 10)}</text>`; });
-        shown.forEach(k => {
-          if (k.start >= x0) svg += `<line class="bdiv" x1="${xs(k.start)}" x2="${xs(k.start)}" y1="${T - 8}" y2="${H - B}"/><text class="bl" x="${xs(k.start) + 3}" y="${T - 12}">B${k.i + 1}</text>`;
-          const prev = all.filter(p => p.b === k.i - 1 && p.t >= from).pop();
-          svg += `<polyline class="gl ${k.sty}" points="${(prev ? [prev] : []).concat(k.ps.filter(p => p.t >= from)).map(p => xs(p.t) + ',' + ys(p.v)).join(' ')}"/>`;
-        });
-        svg += `<g id="sc"></g>`;
-        shown.forEach(k => { const e = k.ps[k.ps.length - 1]; if (e.t < from) return;
-          svg += `<circle class="gend ${k.sty}" data-blk="${k.i}" tabindex="0" role="button" aria-label="Block ${k.i + 1}: ${plain(pct(k.rate))}" cx="${xs(e.t)}" cy="${ys(e.v)}" r="6"/>`;
-          if (st.tip === k.i || (st.tip == null && k.i === cur)) svg += tipBox(xs(e.t), ys(e.v), pct(k.rate), k.i === cur); });
-        svg += `<text x="${L}" y="${H - 6}">${day(x0)}</text><text x="${W - R}" y="${H - 6}" text-anchor="end">${day(last)}</text>`;
-        view = { kind: 'line', pts, blocks, xs, ys, max: pts.length - 1, shown };
-      } else {
-        const shown = st.mode === 'cmp' ? blocks.filter(k => k.i >= cur - 1) : blocks.filter(k => k.start + BLOCK * DAY > from);
-        shown.forEach(k => { const v0 = k.ps[0].v; k.rel = k.ps.map(p => ({ ...p, d: (p.t - k.start) / DAY, pc: (p.v / v0 - 1) * 100 })); });
-        const pcs = shown.flatMap(k => k.rel.map(p => p.pc)), lo = Math.min(0, ...pcs), hi = Math.max(1, ...pcs), pad = (hi - lo) * .1;
+      const cb = blocks.find(k => k.i === cur), pb = blocks.find(k => k.i === cur - 1);
+      const W = 320, H = 210, L = 40, R = 70, T = 18, B = 26;
+      let svg = '', below = '', view = null, scrubber = false;
+
+      if (st.mode === 'cmp') {
+        // This block v last block, both from 0% at their start, with each one's trend line run out to week 6
+        const pair = [pb, cb].filter(Boolean);
+        pair.forEach(k => { const v0 = k.ps[0].v; k.rel = k.ps.map(p => ({ ...p, d: (p.t - k.start) / DAY, pc: (p.v / v0 - 1) * 100 }));
+          k.tr = d => k.fit ? ((k.fit.slope * ((k.start / DAY) + d) + k.fit.icpt) / v0 - 1) * 100 : 0; });
+        const vals = pair.flatMap(k => k.rel.map(p => p.pc).concat([k.tr(0), k.tr(BLOCK)]));
+        const lo = Math.min(0, ...vals), hi = Math.max(1, ...vals), pad = (hi - lo) * .08;
         const xs = d => L + d * (W - L - R) / BLOCK, ys = pc => T + (hi + pad - pc) * (H - T - B) / (hi - lo + 2 * pad);
-        [hi, (hi + lo) / 2, lo].forEach(v => { svg += `<line class="ax" x1="${L}" x2="${W - R}" y1="${ys(v)}" y2="${ys(v)}"/><text x="${L - 6}" y="${ys(v) + 3}" text-anchor="end">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}%</text>`; });
-        for (let w = 0; w <= 6; w++) svg += `<text x="${xs(w * 7)}" y="${H - 6}" text-anchor="middle">${w ? 'Wk ' + w : 'Start'}</text>`;
-        shown.forEach(k => { svg += `<polyline class="gl ${k.sty}" points="${k.rel.map(p => xs(p.d) + ',' + ys(p.pc)).join(' ')}"/>`; });
+        for (let w = 0; w <= 6; w++) svg += `<line class="ax v" x1="${xs(w * 7)}" x2="${xs(w * 7)}" y1="${T}" y2="${H - B}"/><text x="${xs(w * 7)}" y="${H - 8}" text-anchor="middle">${w ? 'Wk ' + w : 'Start'}</text>`;
+        [hi, 0, lo].filter((v, i, a) => a.indexOf(v) === i).forEach(v => { svg += `<line class="ax${v === 0 ? ' zero' : ''}" x1="${L}" x2="${W - R}" y1="${ys(v)}" y2="${ys(v)}"/><text x="${L - 5}" y="${ys(v) + 3}" text-anchor="end">${sgn(v, 1)}%</text>`; });
+        if (cb && pb && cb.fit && pb.fit) {         // the gap between the two trend lines, green if this block is ahead, red if behind
+          const v = verdictOf(cb.rate, pb.rate);
+          svg += `<polygon class="gap ${v}" points="${[0, BLOCK].map(d => xs(d) + ',' + ys(cb.tr(d))).join(' ')} ${[BLOCK, 0].map(d => xs(d) + ',' + ys(pb.tr(d))).join(' ')}"/>`;
+        }
+        pair.forEach(k => { const c = k === cb ? 'red' : 'blk';
+          if (k.fit) svg += `<line class="trend ${c}" x1="${xs(0)}" y1="${ys(k.tr(0))}" x2="${xs(BLOCK)}" y2="${ys(k.tr(BLOCK))}"/>`;
+          svg += `<polyline class="gl ${c}" points="${k.rel.map(p => xs(p.d) + ',' + ys(p.pc)).join(' ')}"/>` + k.rel.map(p => `<circle class="dot ${c}" cx="${xs(p.d)}" cy="${ys(p.pc)}" r="2.6"/>`).join(''); });
+        // labels at the right-hand end, kept apart
+        const lab = pair.filter(k => k.fit).map(k => ({ k, y: ys(k.tr(BLOCK)) }));
+        if (lab.length === 2 && Math.abs(lab[0].y - lab[1].y) < 26) { const m = (lab[0].y + lab[1].y) / 2, up = lab[0].y < lab[1].y ? 0 : 1; lab[up].y = m - 13; lab[1 - up].y = m + 13; }
+        lab.forEach(({ k, y }) => { const c = k === cb ? 'red' : 'blk';
+          svg += `<text class="endlab ${c}" x="${W - R + 6}" y="${y - 2}">${k === cb ? 'This' : 'Last'}</text><text class="endnum ${c}" x="${W - R + 6}" y="${y + 11}">${sgn(k.rate)}%</text>`; });
         svg += `<g id="sc"></g>`;
-        shown.forEach(k => { const e = k.rel[k.rel.length - 1];
-          svg += `<circle class="gend ${k.sty}" data-blk="${k.i}" tabindex="0" role="button" aria-label="Block ${k.i + 1}: ${plain(pct(k.rate))}" cx="${xs(e.d)}" cy="${ys(e.pc)}" r="6"/>`;
-          if (st.tip === k.i || (st.tip == null && (k.i === cur || (st.mode === 'cmp' && k.i === cur - 1)))) svg += tipBox(xs(e.d), ys(e.pc), 'B' + (k.i + 1) + ' ' + pct(k.rate), k.i === cur); });
-        const curRel = shown.find(k => k.i === cur);
-        view = { kind: 'rel', shown, xs, ys, max: BLOCK, start: curRel ? Math.round(curRel.rel[curRel.rel.length - 1].d) : BLOCK };
+        const done = cb ? Math.round(cb.rel[cb.rel.length - 1].d) : 0;
+        view = { kind: 'cmp', pair, xs, ys, max: BLOCK, start: done }; scrubber = true;
+        below = cb && cb.fit && pb ? `<p class="note">Solid lines are your sessions, dashed lines the trend. <b style="color:var(--red)">This block</b> is on track for <b>${sgn(cb.tr(BLOCK), 1)}%</b> by week 6. <b>Last block</b> finished at <b>${sgn(pb.rel[pb.rel.length - 1].pc, 1)}%</b>.</p>` : '';
+      } else if (st.mode === 'bars') {
+        // Every block's rate side by side, with the change from the block before
+        const last = all[all.length - 1].t, from = st.range ? last - st.range * 7 * DAY : -Infinity;
+        const shown = blocks.filter(k => k.rate != null && k.start + BLOCK * DAY > from);
+        const avgSet = blocks.filter(k => k.rate != null && k.ps.length >= 3), avg = avgSet.length ? avgSet.reduce((a, k) => a + k.rate, 0) / avgSet.length : null;
+        const rs = shown.map(k => k.rate).concat(avg != null ? [avg] : []), lo = Math.min(0, ...rs), hi = Math.max(.5, ...rs), pad = (hi - lo) * .22;
+        const RR = 14, bw = Math.min(46, (W - L - RR) / shown.length * .62), slot = (W - L - RR) / shown.length;
+        const ys = r => T + 10 + (hi + pad - r) * (H - T - B - 22) / (hi - lo + 2 * pad), z = ys(0);
+        svg += `<line class="ax zero" x1="${L}" x2="${W - RR}" y1="${z}" y2="${z}"/><text x="${L - 5}" y="${z + 3}" text-anchor="end">0</text>`;
+        shown.forEach((k, j) => { const cx = L + slot * j + slot / 2, y = ys(k.rate), c = k.i === cur ? 'red' : k.i === cur - 1 ? 'blk' : 'old', sel = st.pick === k.i;
+          svg += `<g class="bar ${c}${sel ? ' sel' : ''}" data-blk="${k.i}" tabindex="0" role="button" aria-label="Block ${k.i + 1}: ${sgn(k.rate)}% a week">
+            <rect x="${cx - bw / 2}" y="${Math.min(y, z)}" width="${bw}" height="${Math.max(1.5, Math.abs(z - y))}" rx="3"/>
+            <text class="bnum" x="${cx}" y="${k.rate >= 0 ? y - 5 : y + 12}" text-anchor="middle">${sgn(k.rate)}${notes.get(lift.id, k.i) || changes(k, k.prev).length ? ' ✎' : ''}</text>
+            <text x="${cx}" y="${H - 16}" text-anchor="middle">${k.i === cur ? 'This' : k.i === cur - 1 ? 'Last' : 'B' + (k.i + 1)}</text>
+            ${k.prev && k.v !== 'na' ? `<text class="chg ${k.v}" x="${cx}" y="${H - 4}" text-anchor="middle">${k.v === 'up' ? '▲' : k.v === 'dn' ? '▼' : '='} ${Math.abs(k.rate - k.prev.rate).toFixed(2)}</text>` : ''}</g>`; });
+        if (avg != null) svg += `<line class="avg" x1="${L}" x2="${W - RR}" y1="${ys(avg)}" y2="${ys(avg)}"/><text class="avgt" x="${L + 2}" y="${ys(avg) - 4}">avg ${sgn(avg)}</text>`;
+        svg += `<text x="${L - 5}" y="${T + 6}" text-anchor="end">%/wk</text>`;
+        const k = blocks.find(k => k.i === st.pick) || cb;
+        below = k ? `<div class="bdet"><b>Block ${k.i + 1}${k.i === cur ? ' (this block)' : k.i === cur - 1 ? ' (last block)' : ''}</b> &middot; ${day(k.start)} to ${day(k.ps[k.ps.length - 1].t)} &middot; ${k.ps.length} sessions<br>
+          ${kg(k.ps[0].w)} kg &times; ${k.ps[0].reps} to ${kg(k.ps[k.ps.length - 1].w)} kg &times; ${k.ps[k.ps.length - 1].reps} &middot; <b>${sgn(k.rate)}%/wk</b>${k.prev ? ` (<span class="${k.v}">${k.v === 'up' ? 'faster' : k.v === 'dn' ? 'slower' : 'same pace'}</span> than block ${k.prev.i + 1}: ${sgn(k.prev.rate)}%/wk)` : ''}</div>
+          ${changePanel(lift.id, k, k.prev, st.edit)}
+          <p class="note">Each bar is one 6-week block&rsquo;s rate of progression. ▲ green: faster than the block before. ▼ red: slower. Tap a bar for its numbers.</p>` : '';
+      } else {
+        // Timeline: weight over time, each block a shaded band with its rate and the change on the block before
+        const last = all[all.length - 1].t, from = st.range ? last - st.range * 7 * DAY : -Infinity;
+        const pts = all.filter(p => p.t >= from), shown = blocks.filter(k => k.ps.some(p => p.t >= from));
+        const RR = 14, x0 = pts[0].t, lo = Math.min(...pts.map(p => p.v)), hi = Math.max(...pts.map(p => p.v)), pad = (hi - lo) * .1 || 1;
+        const xs = t => L + (t - x0) * (W - L - RR) / ((last - x0) || 1), TT = T + 22, ys = v => TT + (hi + pad - v) * (H - TT - B) / (hi - lo + 2 * pad);
+        shown.forEach((k, j) => { const a = Math.max(xs(Math.max(k.start, x0)), L), b2 = Math.min(xs(Math.min(k.start + BLOCK * DAY, last + DAY)), W - RR);
+          svg += `<rect class="band${j % 2 ? ' alt' : ''}${k.i === cur ? ' cur' : ''}" x="${a}" y="${T}" width="${Math.max(0, b2 - a)}" height="${H - B - T}"/>`;
+          if (b2 - a > 30) svg += `<text class="bandt ${k.v}" x="${(a + b2) / 2}" y="${T + 11}" text-anchor="middle">${k.v === 'up' ? '▲' : k.v === 'dn' ? '▼' : ''}${k.rate == null ? '' : sgn(k.rate, 1) + '%'}</text>`; });
+        [hi, lo].forEach(v => { svg += `<text x="${L - 5}" y="${ys(v) + 3}" text-anchor="end">${kg(Math.round(v * 10) / 10)}</text>`; });
+        shown.forEach(k => { const c = k.i === cur ? 'red' : 'blk', prev = all.filter(p => p.b === k.i - 1 && p.t >= from).pop(), seg = (prev ? [prev] : []).concat(k.ps.filter(p => p.t >= from));
+          svg += `<polyline class="gl ${c}" points="${seg.map(p => xs(p.t) + ',' + ys(p.v)).join(' ')}"/>`; });
+        svg += `<text x="${L}" y="${H - 8}">${day(x0)}</text><text x="${W - RR}" y="${H - 8}" text-anchor="end">${day(last)}</text><g id="sc"></g>`;
+        view = { kind: 'line', pts, blocks, xs, ys, max: pts.length - 1, start: pts.length - 1 }; scrubber = true;
+        below = `<p class="note">Kilos on the top set over time (plus a tenth of a plate step per rep). Each shaded band is a 6-week block with its rate per week. ▲ green: faster than the block before. ▼ red: slower.</p>`;
       }
       st.view = view;
-      if (st.scrub == null || st.scrub > view.max) st.scrub = view.kind === 'line' ? view.max : view.start;
-
-      const cb = blocks.find(k => k.i === cur), pb = blocks.find(k => k.i === cur - 1);
-      let verdict = '';
-      if (cb && pb && cb.rate != null && pb.rate != null) { const dlt = cb.rate - pb.rate;
-        verdict = `<p class="verdict">This block <b>${pct(cb.rate)}</b> v last block <b>${pct(pb.rate)}</b>: <b class="${dlt >= 0 ? 'up' : 'dn'}">${dlt >= 0 ? 'faster' : 'slower'} by ${Math.abs(dlt).toFixed(2)}%/wk</b>${cb.ps.length < 6 ? ` <span class="note">Early read, ${cb.ps.length} of 6 sessions.</span>` : ''}</p>`; }
-      const legendBlocks = (st.mode === 'line' ? view.shown : view.shown).slice().reverse();
-      const allAvg = blocks.filter(k => k.rate != null && k.ps.length >= 3), avg = allAvg.length ? allAvg.reduce((a, k) => a + k.rate, 0) / allAvg.length : null;
+      if (view && (st.scrub == null || st.scrub > view.max)) st.scrub = view.start;
 
       el.innerHTML = `<div class="sflp">
-        <span class="eyebrow">Progress by session</span>
-        <label class="lift">Lift<select data-k="lift">${lifts.map(l => `<option value="${l.id}" ${l.id === st.lift ? 'selected' : ''}>${l.name}</option>`).join('')}</select></label>
-        <div class="seg five" role="group" aria-label="Time range">${[[6, '6 wk'], [12, '12 wk'], [18, '18 wk'], [24, '24 wk'], [0, 'All']].map(([n, l]) => `<button type="button" data-range="${n}" aria-pressed="${st.range === n}">${l}</button>`).join('')}</div>
-        <div class="seg three" role="group" aria-label="Comparator">${[['line', 'Timeline'], ['cmp', 'Last v This'], ['all', 'All blocks']].map(([m, l]) => `<button type="button" data-mode="${m}" aria-pressed="${st.mode === m}">${l}</button>`).join('')}</div>
-        <svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="${lift.name} progress">${svg}</svg>
-        <input type="range" data-k="scrub" min="0" max="${view.max}" step="1" value="${st.scrub}" aria-label="Scroll across the graph">
-        <div class="read" aria-live="polite"></div>
-        ${verdict}
-        <ul class="legend">${legendBlocks.map(k => `<li data-blk="${k.i}" aria-current="${st.tip === k.i}"><svg width="28" height="8" aria-hidden="true"><line class="gl ${k.sty}" x1="2" x2="26" y1="4" y2="4"/></svg><span>Block ${k.i + 1} <small>${day(k.start)}${k.i === cur ? ', this block, ' + k.ps.length + ' sessions' : ''}</small></span><b class="rt ${k.rate >= 0 ? 'up' : 'dn'}" style="font-weight:400">${pct(k.rate)}</b></li>`).join('')}
-          ${avg != null ? `<li style="cursor:default;border-top:1px solid var(--line);margin-top:4px;padding-top:8px"><span>Average across all blocks</span><b class="rt" style="font-weight:400">${pct(avg)}</b></li>` : ''}</ul>
-        <p class="note">${st.mode === 'line' ? 'One line per 6-week block. Tap a block&rsquo;s end point for its rate of progression.' : 'Every block starts from 0%, so the steeper line progressed faster. Tap an end point for its rate.'} Drag the slider to compare rates at any point.</p>
+        <label class="lift">Lift<select data-k="lift">${lifts.map(l => `<option value="${l.id}" ${l.id === st.lift ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>
+        ${headline(cb, pb, lift.id)}
+        ${st.mode === 'cmp' ? changePanel(lift.id, cb, pb, st.edit) : ''}
+        <div class="seg three" role="group" aria-label="View">${[['cmp', 'This v Last'], ['bars', 'Every block'], ['line', 'Timeline']].map(([m, l]) => `<button type="button" data-mode="${m}" aria-pressed="${st.mode === m}">${l}</button>`).join('')}</div>
+        ${st.mode === 'cmp' ? '' : `<div class="seg five" role="group" aria-label="Time range">${[[6, '6 wk'], [12, '12 wk'], [18, '18 wk'], [24, '24 wk'], [0, 'All']].map(([n, l]) => `<button type="button" data-range="${n}" aria-pressed="${st.range === n}">${l}</button>`).join('')}</div>`}
+        <svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(lift.name)}: ${st.mode === 'cmp' ? 'this block against last block' : st.mode === 'bars' ? 'rate of progression for every block' : 'progress over time'}">${svg}</svg>
+        ${scrubber ? `<input type="range" data-k="scrub" min="0" max="${view.max}" step="1" value="${st.scrub}" aria-label="Scroll across the graph"><div class="read" aria-live="polite"></div>` : ''}
+        ${below}
       </div>`;
-      scrubTo(st.scrub);
+      if (scrubber) scrubTo(st.scrub);
     }
 
     function scrubTo(n) {
-      st.scrub = n; const v = st.view, g = el.querySelector('#sc'), out = el.querySelector('.read'); if (!g || !out) return;
-      const H = 200, T = 28, B = 24;
+      st.scrub = n; const v = st.view, g = el.querySelector('#sc'), out = el.querySelector('.read'); if (!v || !g || !out) return;
+      const H = 210, T = 18, B = 26;
       if (v.kind === 'line') {
         const p = v.pts[n], k = v.blocks.find(k => k.i === p.b), sofar = rate(k.ps.filter(q => q.t <= p.t));
-        g.innerHTML = `<line class="scrubl" x1="${v.xs(p.t)}" x2="${v.xs(p.t)}" y1="${T - 6}" y2="${H - B}"/><circle class="scrubd" cx="${v.xs(p.t)}" cy="${v.ys(p.v)}" r="4"/>`;
-        out.innerHTML = `<b>${day(p.t)}</b> &middot; ${fmtKg(p.w)} kg &times; ${p.reps} &middot; Block ${p.b + 1}, week ${Math.floor((p.t - k.start) / DAY / 7) + 1}<br>So far this block <span class="num">${pct(sofar)}</span> &middot; block average ${pct(k.rate)}`;
+        g.innerHTML = `<line class="scrubl" x1="${v.xs(p.t)}" x2="${v.xs(p.t)}" y1="${T}" y2="${H - B}"/><circle class="scrubd" cx="${v.xs(p.t)}" cy="${v.ys(p.v)}" r="4"/>`;
+        out.innerHTML = `<b>${day(p.t)}</b> &middot; ${kg(p.w)} kg &times; ${p.reps} &middot; block ${p.b + 1}, week ${Math.floor((p.t - k.start) / DAY / 7) + 1}<br>Rate so far in that block <b>${sofar == null ? '–' : sgn(sofar) + '%/wk'}</b>`;
       } else {
-        g.innerHTML = `<line class="scrubl" x1="${v.xs(n)}" x2="${v.xs(n)}" y1="${T - 6}" y2="${H - B}"/>` + v.shown.map(k => { const q = k.rel.filter(q => q.d <= n).pop(); return q ? `<circle class="scrubd" cx="${v.xs(q.d)}" cy="${v.ys(q.pc)}" r="3.5"/>` : ''; }).join('');
-        out.innerHTML = `<b>Day ${n}</b> (week ${Math.min(6, Math.floor(n / 7) + 1)} of the block)<br>` + v.shown.slice().reverse().map(k => { const up = k.ps.filter(q => (q.t - k.start) / DAY <= n), q = k.rel.filter(q => q.d <= n).pop();
-          return `B${k.i + 1}: ${q ? (q.pc >= 0 ? '+' : '&minus;') + Math.abs(q.pc).toFixed(1) + '%' : 'not started'} &middot; <span class="num" style="font-size:15px">${pct(rate(up))}</span> so far (avg ${pct(k.rate)})`; }).join('<br>');
+        g.innerHTML = `<line class="scrubl" x1="${v.xs(n)}" x2="${v.xs(n)}" y1="${T}" y2="${H - B}"/>` + v.pair.map(k => { const q = k.rel.filter(q => q.d <= n).pop(); return q ? `<circle class="scrubd${k === v.pair[v.pair.length - 1] ? '' : ' blk'}" cx="${v.xs(q.d)}" cy="${v.ys(q.pc)}" r="4"/>` : ''; }).join('');
+        const row = (k, name) => { const q = k.rel.filter(q => q.d <= n).pop(), r = rate(k.ps.filter(q => (q.t - k.start) / DAY <= n)); return `<span class="${name === 'This block' ? 'tr' : 'tb'}">${name}</span>: ${q ? sgn(q.pc, 1) + '%' : 'not started'}${r != null ? ', ' + sgn(r) + '%/wk' : ''}`; };
+        const [pk, ck] = v.pair.length === 2 ? v.pair : [null, v.pair[0]];
+        out.innerHTML = `<b>Week ${Math.min(6, Math.floor(n / 7) + 1)}, day ${n}</b><br>${ck ? row(ck, 'This block') : ''}${pk ? '<br>' + row(pk, 'Last block') : ''}`;
       }
     }
 
     el.onclick = e => {
       const r = e.target.closest('[data-range]'), m = e.target.closest('[data-mode]'), b = e.target.closest('[data-blk]');
-      if (r) { st.range = +r.dataset.range; st.scrub = null; st.tip = null; render(); }
-      else if (m) { st.mode = m.dataset.mode; st.scrub = null; st.tip = null; render(); }
-      else if (b) { const n = +b.dataset.blk; st.tip = st.tip === n ? null : n; render(); }
+      const act = e.target.closest('[data-act]');
+      if (act && act.dataset.act === 'edit-note') { st.edit = true; render(); const i = el.querySelector('[data-k=note]'); i && i.focus(); return; }
+      if (act && act.dataset.act === 'save-note') { const i = el.querySelector('[data-k=note]'), { cur } = build(); notes.set(st.lift, st.mode === 'bars' && st.pick != null ? st.pick : cur, i.value.trim()); st.edit = false; render(); return; }
+      if (r) { st.range = +r.dataset.range; st.scrub = null; render(); }
+      else if (m) { st.mode = m.dataset.mode; st.scrub = null; st.pick = null; st.edit = false; render(); }
+      else if (b) { st.pick = +b.dataset.blk; st.edit = false; render(); }
     };
-    el.onkeydown = e => { const b = e.target.closest && e.target.closest('circle[data-blk]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); b.dispatchEvent(new MouseEvent('click', { bubbles: true })); } };
+    el.addEventListener('keydown', e => { if (e.target.dataset && e.target.dataset.k === 'note' && e.key === 'Enter') { e.preventDefault(); el.querySelector('[data-act=save-note]').click(); } });
+    el.onkeydown = e => { const b = e.target.closest && e.target.closest('[data-blk]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); st.pick = +b.dataset.blk; render(); } };
     el.oninput = e => { if (e.target.dataset.k === 'scrub') scrubTo(+e.target.value); };
-    el.onchange = e => { if (e.target.dataset.k === 'lift') { st.lift = e.target.value; st.scrub = null; st.tip = null; render(); } };
+    el.onchange = e => { if (e.target.dataset.k === 'lift') { st.lift = e.target.value; st.scrub = null; st.pick = null; render(); } };
     render();
-    return { set: o => { Object.assign(st, o, { scrub: null, tip: null }); render(); } };
+    return { set: o => { Object.assign(st, o, { scrub: null }); render(); } };
   }
   return { mount, fromApp, rate };
 })();
@@ -214,7 +319,7 @@ const SFLProgress = (() => {
 
 
 /* ---------- Example data: about six months of Phase 1, using the Magnificent 7 rules ----------
-   Block 3 gets a change part way (better sleep and protein in this story), so the comparator has something to show. */
+   A made-up story so the comparator has something to show: block 3 adds a second top set, block 4 sleep slips, block 5 adds a rest day. */
 function exampleData() {
   let z = 20261102; const rnd = () => (z = (z * 1103515245 + 12345) % 2147483648) / 2147483648;
   const lifts = [
@@ -228,19 +333,21 @@ function exampleData() {
   const sessions = [];
   for (let k = 0; k < WEEKS * 3; k++) {
     const wk = Math.floor(k / 3), t = end.getTime() - ((WEEKS - wk) * 7 - [0, 2, 4][k % 3]) * DAYMS;
-    const block = Math.floor(wk / 6), boost = block === 2 ? .22 : block === 4 ? -.12 : 0;   // the story: block 3 a good one, block 5 a rough patch
-    const type = k % 2 ? 'PULL' : 'PUSH', sets = {};
+    // the story: block 3 adds a second top set (faster), block 4 sleep slips (slower), block 5 adds a rest day between sessions (faster)
+    const block = Math.floor(wk / 6), boost = block === 2 ? .2 : block === 3 ? -.18 : block === 4 ? .22 : 0;
+    const type = k % 2 ? 'PULL' : 'PUSH', sets = {}, nTop = block >= 2 ? 2 : 1;
+    const rest = block === 4 ? 3 : 2, sleep = block === 3 ? (rnd() < .6 ? 2 : 3) : (rnd() < .5 ? 4 : 3), feel = block === 3 ? 3 : (rnd() < .5 ? 4 : 3);
     days[type].forEach(id => {
       const l = lifts.find(x => x.id === id), s = state[id];
       // first go at a new weight: 5 or 6 reps; then most sessions add a rep until 7 earns the next jump
       let reps = s.last == null ? (rnd() < .3 + boost ? 6 : 5) : Math.min(8, s.last + (rnd() < .42 + boost ? 1 : 0));
       if (rnd() < .05) reps = Math.max(4, reps - 1);                       // the odd off day
-      sets[id] = { w: s.w, reps };
+      sets[id] = { w: s.w, reps, n: nTop };
       if (reps >= 7) { s.w += Math.max(l.inc, Math.floor(s.w * .025 / l.inc) * l.inc); s.last = null; }   // up, never more than 5%, rounded down
       else if (reps <= 4) { s.w = Math.round(s.w * .95 / l.inc) * l.inc; s.last = null; }
       else s.last = reps;
     });
-    sessions.push({ t, sets });
+    sessions.push({ t, sets, rest, sleep, feel });
   }
   return { lifts: lifts.map(({ id, name, inc }) => ({ id, name, inc })), sessions };
 }
