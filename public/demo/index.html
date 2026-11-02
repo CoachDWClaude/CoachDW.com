@@ -826,7 +826,7 @@ function coach() {
     <p class="note">Health check and house rules: ${D.agreed ? 'agreed ' + new Date(D.agreed.at).toLocaleDateString('en-GB') : 'not done'}.</p>
     <p class="note">PB share cards: ${(D.tribe || {}).pb === false ? 'off' : 'on'}. Tribe: ${(D.tribe || {}).joined ? 'joined' : 'not joined yet'}.</p>
     <button class="btn ghost" id="tribe-open">Join the tribe &amp; PB cards</button>
-    <button class="btn ghost" id="hair-toggle">Squat hair-up reminder: ${D.hair ? 'on' : 'off'}</button>
+    <button class="btn ghost" id="hair-toggle">Squat hair-up reminder: ${D.hair !== false ? 'on' : 'off'}</button>
     <button class="btn ghost" id="redo-parq">Redo health check</button>
     <button class="btn ghost" id="retest">Run both test sessions again</button>
     <button class="btn ghost" id="reset">${armed ? 'Tap again to wipe everything' : 'Reset to example data'}</button>
@@ -940,7 +940,7 @@ const SAFE_ALL = ['Clear space around you. Floor dry, nothing to trip on.', 'Sto
 const kindOf = ex => { const n = (ex.nm || '').toLowerCase(); return /leg press/.test(n) ? 'legpress' : /machine/.test(n) ? 'machine' : /cable|pulley|pulldown/.test(n) ? 'cable' : /dumbbell|\bdb\b/.test(n) ? 'db' : ex.bw ? 'bw' : /kettlebell/.test(n) ? 'db' : 'bar'; };
 const HAIR_CUE = 'LADIES - PUT YOUR F**KING HAIR UP!';   // Danny's exact wording, keep as written
 const SQUAT_VIDEO = '';                          // placeholder: Danny's squat video file or link goes here
-const hairOn = ex => ex && ex.id === 'squat' && D.hair === true;
+const hairOn = ex => ex && ex.id === 'squat' && D.hair !== false;   // on by default; they can switch it off
 const hairBox = () => `<p class="hair" role="alert">LADIES - PUT YOUR F**KING <b>HAIR UP!</b></p>`;
 function squatVideo() {
   return SQUAT_VIDEO ? `<video controls playsinline src="${SQUAT_VIDEO}"></video>`
@@ -950,8 +950,8 @@ function safeModal() {
   const ex = lst()[cur.i]; if (!ex) return '';
   const k = kindOf(ex), cues = [...(ex.cust ? ['Set the equipment to your size and check every adjustment is locked before you load it.'] : SAFE_LIFT[ex.id + ' ' + k] || []), ...SAFE_KIND[k], ...SAFE_ALL];
   return `<div class="safe" role="dialog" aria-modal="true" aria-labelledby="safe-h"><div class="safe-c">
-    ${ex.id === 'squat' && D.hair == null ? `<span class="eyebrow">Quick one, before your first squat</span><p style="margin:0;font-size:16px">Ladies only: want me to remind you to put your hair up before every squat set?</p><div class="grid2"><button class="btn red" id="hair-yes">Yes, remind me</button><button class="btn ghost" id="hair-no">Not for me</button></div>` : ''}
-    ${hairOn(ex) ? hairBox() : ''}
+    ${ex.id === 'squat' && D.hair == null ? `<span class="eyebrow">Squat safety for ladies</span><p style="margin:0;font-size:17px;line-height:1.4">Ladies, you will be reminded to put your hair up before each set&hellip; I recommend leaving it on.</p><div class="grid2"><button class="btn red" id="hair-yes">Done</button><button class="btn ghost" id="hair-no">Switch off</button></div>` : ''}
+    ${hairOn(ex) && D.hair != null ? hairBox() : ''}
     ${ex.id === 'squat' && !cur.sqVid ? `<span class="eyebrow">Watch this before your first set</span>${squatVideo()}` : ''}
     <h2 id="safe-h">Safety first</h2><p class="sub">${esc(ex.mv)} &middot; ${esc(ex.nm)}</p>
     <ul>${cues.map(c => `<li>${c}</li>`).join('')}</ul>
@@ -991,10 +991,10 @@ document.addEventListener('click', ev => {
     case 'tg-next': cur.tg.p++; break;
     case 'tg-back': cur.tg.p--; break;
     case 'tg-start': cur.tg = { k: 'var' }; break;
-    case 'safe-ok': { const ex = lst()[cur.i]; if (ex && ex.id === 'squat') { if (D.hair == null) return; cur.sqVid = true; } cur.safe = false; break; }
+    case 'safe-ok': { const ex = lst()[cur.i]; if (ex && ex.id === 'squat') { if (D.hair == null) { D.hair = true; save(); } cur.sqVid = true; } cur.safe = false; break; }
     case 'hair-yes': D.hair = true; save(); break;
     case 'hair-no': D.hair = false; save(); break;
-    case 'hair-toggle': D.hair = !D.hair; save(); break;
+    case 'hair-toggle': D.hair = D.hair === false; save(); break;
     case 'st-take': case 'st-test2': stAsk = false; cur = { i: 0, rest: restDays(), feel: 3, sleep: 3, notes: '', e: [], test: true, grp: D.next }; startLift(); cur.tg = { k: 'intro', p: 0 }; view = 'tguide'; window.scrollTo(0, 0); break;
     case 'st-manual': stAsk = false; view = 'manual'; window.scrollTo(0, 0); break;
     case 'st-save': if (!D.log.length) D.ex.forEach(x => { x.lastW = null; x.lastReps = null; }); D.test = D.test || {}; Object.keys(prog().days).forEach(d => { D.test[d] = true; }); D.example = false; D.manual = Date.now(); save(); view = 'home'; window.scrollTo(0, 0); break;
