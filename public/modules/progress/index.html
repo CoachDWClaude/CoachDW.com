@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SFL Progress Module</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+/* ================= SFL PROGRESS MODULE: styles (copy with the module when plugging into the app) ================= */
+:root{--red:#cc0000;--ink:#111;--paper:#fff;--line:#ddd;--mute:#777;--up:#12963a;--r:10px;--display:'Special Elite','Courier New',monospace}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
+.wrap{max-width:520px;margin:0 auto;padding:0 16px 40px}
+.top{background:#000;color:#fff;padding:14px 16px;border-bottom:1px solid rgba(204,0,0,.6)}
+.top .in{max-width:520px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.top b{font-weight:400;font-size:20px;letter-spacing:.04em}.top b i{font-style:normal;color:#ff3b3b}
+.top span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#bbb}
+.src{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 4px;font-size:13px;color:var(--mute)}
+.src button,.src label{font:inherit;font-size:13px;border:1px solid var(--ink);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer;color:var(--ink)}
+.src button[aria-pressed=true]{background:var(--ink);color:#fff}
+.src input{display:none}
+.card{background:#fff;border:1px solid #ded7c4;border-radius:var(--r);padding:16px;margin-top:12px}
+
+.sflp{display:flex;flex-direction:column;gap:12px}
+.sflp .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.sflp label.lift{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+.sflp select{font:inherit;font-size:17px;padding:10px;border:2px solid var(--ink);border-radius:var(--r);background:#fff;color:var(--ink)}
+.sflp .seg{display:grid;gap:6px}
+.sflp .seg.five{grid-template-columns:repeat(5,1fr)}.sflp .seg.three{grid-template-columns:repeat(3,1fr)}
+.sflp .seg button{font:inherit;font-size:14px;padding:10px 2px;border:2px solid var(--ink);background:#fff;color:var(--ink);border-radius:var(--r);cursor:pointer}
+.sflp .seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.sflp .seg.three button[aria-pressed=true]{background:var(--red);border-color:var(--red)}
+.sflp svg.g{width:100%;height:auto;display:block;overflow:visible}
+.sflp svg.g text{font-family:var(--display);font-size:10px;fill:var(--mute)}
+.sflp .ax{stroke:var(--line);stroke-width:1}
+.sflp .bdiv{stroke:var(--line);stroke-width:1;stroke-dasharray:3 3}
+.sflp text.bl{font-size:9px}
+.sflp .gl{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.sflp .k-red{stroke:var(--red)}.sflp .k-blk{stroke:var(--ink)}.sflp .k-dot{stroke-dasharray:1 5;stroke-width:3}
+.sflp .gend{stroke:#fff;stroke-width:2;cursor:pointer}.sflp .gend.k-red{fill:var(--red)}.sflp .gend.k-blk{fill:var(--ink)}
+.sflp .gend:focus{outline:none;stroke:#ffb000}
+.sflp .gtip rect{fill:var(--ink)}.sflp .gtip.tr rect{fill:var(--red)}.sflp .gtip text{fill:#fff;font-size:10px}
+.sflp .scrubl{stroke:var(--red);stroke-width:1.2;stroke-dasharray:2 2}
+.sflp .scrubd{fill:#fff;stroke:var(--red);stroke-width:2}
+.sflp input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--line);margin:6px 0}
+.sflp input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--red);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.sflp input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--red);border:3px solid #fff}
+.sflp .read{font-size:13px;line-height:1.55;min-height:3.2em;background:#faf8f2;border-radius:8px;padding:8px 10px}
+.sflp .read .num{font-size:20px;color:var(--red)}
+.sflp .verdict{margin:0;font-size:15px;line-height:1.4}
+.sflp .up{color:var(--up)}.sflp .dn{color:var(--red)}
+.sflp ul.legend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;font-size:14px}
+.sflp ul.legend li{display:flex;align-items:center;gap:8px;padding:6px 4px;border-radius:6px;cursor:pointer}
+.sflp ul.legend li[aria-current=true]{background:#faf3f3}
+.sflp ul.legend .rt{margin-left:auto}
+.sflp ul.legend small{color:var(--mute);font-size:12px}
+.sflp .note{margin:0;font-size:12px;line-height:1.5;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.sflp *{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><b>Strength For Life <i>&middot;</i> Progress</b><span>Module preview</span></div></div>
+<div class="wrap">
+  <div class="src" id="src">Data:
+    <button type="button" data-src="example" aria-pressed="true">Example (6 months)</button>
+    <button type="button" data-src="app" id="src-app" hidden>My app data</button>
+    <label>Load backup file<input type="file" id="src-file" accept=".json,application/json"></label>
+  </div>
+  <div class="card"><div id="progress"></div></div>
+  <p class="note" style="margin-top:14px">Preview of the progress module before it goes into the app. Blocks are 6 weeks from each lift&rsquo;s first session. Rate = the trend line through the block&rsquo;s top sets, as a % of where the block started, per week.</p>
+</div>
+
+<script>
+/* =====================================================================================
+   SFL PROGRESS MODULE
+   Plug-in API:  SFLProgress.mount(element, data, options)
+     data    = { lifts: [{ id, name, inc }], sessions: [{ t: ms, sets: { liftId: { w: kg, reps } } }] }   (any order)
+     options = { range: 12, mode: 'line', lift: 'squat', unit: 'kg' }   all optional
+   SFLProgress.fromApp(D) turns the app's saved state (localStorage) into that data shape.
+   ===================================================================================== */
+const SFLProgress = (() => {
+  const DAY = 864e5, BLOCK = 42;
+  const STY = ['k-red', 'k-blk', 'k-red k-dot', 'k-blk k-dot'];
+  const fmtKg = v => (Math.round(v * 100) / 100).toString();
+  const pct = r => r == null ? '&ndash;' : (r >= 0 ? '+' : '&minus;') + Math.abs(r).toFixed(2) + '%/wk';
+  const plain = s => s.replace(/&minus;/g, '-').replace(/&ndash;/g, '-');
+  const day = t => new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+  // Straight-line trend through a block's points, as % of the block's first value, per week
+  function rate(ps) {
+    if (ps.length < 2) return null;
+    const n = ps.length, xs = ps.map(p => p.t / DAY), ys = ps.map(p => p.v), mx = xs.reduce((a, b) => a + b) / n, my = ys.reduce((a, b) => a + b) / n;
+    let sxy = 0, sxx = 0; xs.forEach((x, i) => { sxy += (x - mx) * (ys[i] - my); sxx += (x - mx) ** 2; });
+    return sxx ? (sxy / sxx) * 7 / ps[0].v * 100 : null;
+  }
+
+  function fromApp(D) {
+    const lifts = (D.ex || []).map(x => ({ id: x.id, name: x.mv + (x.nm ? ' (' + x.nm + ')' : ''), inc: x.inc || 2.5 }));
+    const sessions = (D.log || []).filter(s => !s.test).map(s => { const sets = {}; s.e.forEach(e => { sets[e.id] = { w: e.w, reps: e.reps }; }); return { t: s.t, sets }; });
+    return { lifts: lifts.filter(l => sessions.some(s => s.sets[l.id])), sessions };
+  }
+
+  function mount(el, data, opt = {}) {
+    const st = { range: opt.range ?? 12, mode: opt.mode || 'line', lift: opt.lift || null, tip: null, scrub: null, view: null };
+    const sessions = data.sessions.slice().sort((a, b) => a.t - b.t);
+    const lifts = data.lifts.filter(l => sessions.some(s => s.sets[l.id]));
+    if (!lifts.length) { el.innerHTML = '<p class="note">No sessions to show yet.</p>'; return; }
+    if (!lifts.some(l => l.id === st.lift)) st.lift = lifts[0].id;
+
+    function build() {
+      const lift = lifts.find(l => l.id === st.lift), inc = lift.inc;
+      const all = sessions.filter(s => s.sets[lift.id]).map(s => ({ t: s.t, w: s.sets[lift.id].w, reps: s.sets[lift.id].reps }));
+      all.forEach(p => { p.v = p.w + p.reps * inc / 10; });                   // weight is the whole, each rep a tenth of a plate step
+      const t0 = all[0].t; all.forEach(p => { p.b = Math.floor((p.t - t0) / DAY / BLOCK); });
+      const cur = all[all.length - 1].b;
+      const blocks = []; for (let i = 0; i <= cur; i++) { const ps = all.filter(p => p.b === i); if (ps.length) blocks.push({ i, ps, start: t0 + i * BLOCK * DAY, rate: rate(ps) }); }
+      blocks.forEach(k => { k.sty = k.i === cur ? STY[0] : k.i === cur - 1 ? STY[1] : STY[2 + ((cur - k.i) % 2 ? 1 : 0)]; });
+      return { lift, all, blocks, cur };
+    }
+
+    function render() {
+      const { lift, all, blocks, cur } = build();
+      const W = 320, H = 200, L = 42, R = 14, T = 28, B = 24;
+      const last = all[all.length - 1].t, from = st.range ? last - st.range * 7 * DAY : -Infinity;
+      let svg = '', view;
+      const tipBox = (x, y, txt, red) => { const w = plain(txt).length * 6.1 + 14, tx = Math.min(Math.max(x - w / 2, 2), W - w - 2); return `<g class="gtip ${red ? 'tr' : ''}" pointer-events="none"><rect x="${tx}" y="${y - 26}" width="${w}" height="17" rx="8.5"/><text x="${tx + w / 2}" y="${y - 14}" text-anchor="middle">${txt}</text></g>`; };
+      if (st.mode === 'line') {
+        const pts = all.filter(p => p.t >= from), shown = blocks.filter(k => k.ps.some(p => p.t >= from));
+        const lo = Math.min(...pts.map(p => p.v)), hi = Math.max(...pts.map(p => p.v)), pad = (hi - lo) * .1 || 1;
+        const x0 = pts[0].t, xs = t => L + (t - x0) * (W - L - R) / ((last - x0) || 1), ys = v => T + (hi + pad - v) * (H - T - B) / (hi - lo + 2 * pad);
+        [hi, (hi + lo) / 2, lo].forEach(v => { svg += `<line class="ax" x1="${L}" x2="${W - R}" y1="${ys(v)}" y2="${ys(v)}"/><text x="${L - 6}" y="${ys(v) + 3}" text-anchor="end">${fmtKg(Math.round(v * 10) / 10)}</text>`; });
+        shown.forEach(k => {
+          if (k.start >= x0) svg += `<line class="bdiv" x1="${xs(k.start)}" x2="${xs(k.start)}" y1="${T - 8}" y2="${H - B}"/><text class="bl" x="${xs(k.start) + 3}" y="${T - 12}">B${k.i + 1}</text>`;
+          const prev = all.filter(p => p.b === k.i - 1 && p.t >= from).pop();
+          svg += `<polyline class="gl ${k.sty}" points="${(prev ? [prev] : []).concat(k.ps.filter(p => p.t >= from)).map(p => xs(p.t) + ',' + ys(p.v)).join(' ')}"/>`;
+        });
+        svg += `<g id="sc"></g>`;
+        shown.forEach(k => { const e = k.ps[k.ps.length - 1]; if (e.t < from) return;
+          svg += `<circle class="gend ${k.sty}" data-blk="${k.i}" tabindex="0" role="button" aria-label="Block ${k.i + 1}: ${plain(pct(k.rate))}" cx="${xs(e.t)}" cy="${ys(e.v)}" r="6"/>`;
+          if (st.tip === k.i || (st.tip == null && k.i === cur)) svg += tipBox(xs(e.t), ys(e.v), pct(k.rate), k.i === cur); });
+        svg += `<text x="${L}" y="${H - 6}">${day(x0)}</text><text x="${W - R}" y="${H - 6}" text-anchor="end">${day(last)}</text>`;
+        view = { kind: 'line', pts, blocks, xs, ys, max: pts.length - 1, shown };
+      } else {
+        const shown = st.mode === 'cmp' ? blocks.filter(k => k.i >= cur - 1) : blocks.filter(k => k.start + BLOCK * DAY > from);
+        shown.forEach(k => { const v0 = k.ps[0].v; k.rel = k.ps.map(p => ({ ...p, d: (p.t - k.start) / DAY, pc: (p.v / v0 - 1) * 100 })); });
+        const pcs = shown.flatMap(k => k.rel.map(p => p.pc)), lo = Math.min(0, ...pcs), hi = Math.max(1, ...pcs), pad = (hi - lo) * .1;
+        const xs = d => L + d * (W - L - R) / BLOCK, ys = pc => T + (hi + pad - pc) * (H - T - B) / (hi - lo + 2 * pad);
+        [hi, (hi + lo) / 2, lo].forEach(v => { svg += `<line class="ax" x1="${L}" x2="${W - R}" y1="${ys(v)}" y2="${ys(v)}"/><text x="${L - 6}" y="${ys(v) + 3}" text-anchor="end">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}%</text>`; });
+        for (let w = 0; w <= 6; w++) svg += `<text x="${xs(w * 7)}" y="${H - 6}" text-anchor="middle">${w ? 'Wk ' + w : 'Start'}</text>`;
+        shown.forEach(k => { svg += `<polyline class="gl ${k.sty}" points="${k.rel.map(p => xs(p.d) + ',' + ys(p.pc)).join(' ')}"/>`; });
+        svg += `<g id="sc"></g>`;
+        shown.forEach(k => { const e = k.rel[k.rel.length - 1];
+          svg += `<circle class="gend ${k.sty}" data-blk="${k.i}" tabindex="0" role="button" aria-label="Block ${k.i + 1}: ${plain(pct(k.rate))}" cx="${xs(e.d)}" cy="${ys(e.pc)}" r="6"/>`;
+          if (st.tip === k.i || (st.tip == null && (k.i === cur || (st.mode === 'cmp' && k.i === cur - 1)))) svg += tipBox(xs(e.d), ys(e.pc), 'B' + (k.i + 1) + ' ' + pct(k.rate), k.i === cur); });
+        const curRel = shown.find(k => k.i === cur);
+        view = { kind: 'rel', shown, xs, ys, max: BLOCK, start: curRel ? Math.round(curRel.rel[curRel.rel.length - 1].d) : BLOCK };
+      }
+      st.view = view;
+      if (st.scrub == null || st.scrub > view.max) st.scrub = view.kind === 'line' ? view.max : view.start;
+
+      const cb = blocks.find(k => k.i === cur), pb = blocks.find(k => k.i === cur - 1);
+      let verdict = '';
+      if (cb && pb && cb.rate != null && pb.rate != null) { const dlt = cb.rate - pb.rate;
+        verdict = `<p class="verdict">This block <b>${pct(cb.rate)}</b> v last block <b>${pct(pb.rate)}</b>: <b class="${dlt >= 0 ? 'up' : 'dn'}">${dlt >= 0 ? 'faster' : 'slower'} by ${Math.abs(dlt).toFixed(2)}%/wk</b>${cb.ps.length < 6 ? ` <span class="note">Early read, ${cb.ps.length} of 6 sessions.</span>` : ''}</p>`; }
+      const legendBlocks = (st.mode === 'line' ? view.shown : view.shown).slice().reverse();
+      const allAvg = blocks.filter(k => k.rate != null && k.ps.length >= 3), avg = allAvg.length ? allAvg.reduce((a, k) => a + k.rate, 0) / allAvg.length : null;
+
+      el.innerHTML = `<div class="sflp">
+        <span class="eyebrow">Progress by session</span>
+        <label class="lift">Lift<select data-k="lift">${lifts.map(l => `<option value="${l.id}" ${l.id === st.lift ? 'selected' : ''}>${l.name}</option>`).join('')}</select></label>
+        <div class="seg five" role="group" aria-label="Time range">${[[6, '6 wk'], [12, '12 wk'], [18, '18 wk'], [24, '24 wk'], [0, 'All']].map(([n, l]) => `<button type="button" data-range="${n}" aria-pressed="${st.range === n}">${l}</button>`).join('')}</div>
+        <div class="seg three" role="group" aria-label="Comparator">${[['line', 'Timeline'], ['cmp', 'Last v This'], ['all', 'All blocks']].map(([m, l]) => `<button type="button" data-mode="${m}" aria-pressed="${st.mode === m}">${l}</button>`).join('')}</div>
+        <svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="${lift.name} progress">${svg}</svg>
+        <input type="range" data-k="scrub" min="0" max="${view.max}" step="1" value="${st.scrub}" aria-label="Scroll across the graph">
+        <div class="read" aria-live="polite"></div>
+        ${verdict}
+        <ul class="legend">${legendBlocks.map(k => `<li data-blk="${k.i}" aria-current="${st.tip === k.i}"><svg width="28" height="8" aria-hidden="true"><line class="gl ${k.sty}" x1="2" x2="26" y1="4" y2="4"/></svg><span>Block ${k.i + 1} <small>${day(k.start)}${k.i === cur ? ', this block, ' + k.ps.length + ' sessions' : ''}</small></span><b class="rt ${k.rate >= 0 ? 'up' : 'dn'}" style="font-weight:400">${pct(k.rate)}</b></li>`).join('')}
+          ${avg != null ? `<li style="cursor:default;border-top:1px solid var(--line);margin-top:4px;padding-top:8px"><span>Average across all blocks</span><b class="rt" style="font-weight:400">${pct(avg)}</b></li>` : ''}</ul>
+        <p class="note">${st.mode === 'line' ? 'One line per 6-week block. Tap a block&rsquo;s end point for its rate of progression.' : 'Every block starts from 0%, so the steeper line progressed faster. Tap an end point for its rate.'} Drag the slider to compare rates at any point.</p>
+      </div>`;
+      scrubTo(st.scrub);
+    }
+
+    function scrubTo(n) {
+      st.scrub = n; const v = st.view, g = el.querySelector('#sc'), out = el.querySelector('.read'); if (!g || !out) return;
+      const H = 200, T = 28, B = 24;
+      if (v.kind === 'line') {
+        const p = v.pts[n], k = v.blocks.find(k => k.i === p.b), sofar = rate(k.ps.filter(q => q.t <= p.t));
+        g.innerHTML = `<line class="scrubl" x1="${v.xs(p.t)}" x2="${v.xs(p.t)}" y1="${T - 6}" y2="${H - B}"/><circle class="scrubd" cx="${v.xs(p.t)}" cy="${v.ys(p.v)}" r="4"/>`;
+        out.innerHTML = `<b>${day(p.t)}</b> &middot; ${fmtKg(p.w)} kg &times; ${p.reps} &middot; Block ${p.b + 1}, week ${Math.floor((p.t - k.start) / DAY / 7) + 1}<br>So far this block <span class="num">${pct(sofar)}</span> &middot; block average ${pct(k.rate)}`;
+      } else {
+        g.innerHTML = `<line class="scrubl" x1="${v.xs(n)}" x2="${v.xs(n)}" y1="${T - 6}" y2="${H - B}"/>` + v.shown.map(k => { const q = k.rel.filter(q => q.d <= n).pop(); return q ? `<circle class="scrubd" cx="${v.xs(q.d)}" cy="${v.ys(q.pc)}" r="3.5"/>` : ''; }).join('');
+        out.innerHTML = `<b>Day ${n}</b> (week ${Math.min(6, Math.floor(n / 7) + 1)} of the block)<br>` + v.shown.slice().reverse().map(k => { const up = k.ps.filter(q => (q.t - k.start) / DAY <= n), q = k.rel.filter(q => q.d <= n).pop();
+          return `B${k.i + 1}: ${q ? (q.pc >= 0 ? '+' : '&minus;') + Math.abs(q.pc).toFixed(1) + '%' : 'not started'} &middot; <span class="num" style="font-size:15px">${pct(rate(up))}</span> so far (avg ${pct(k.rate)})`; }).join('<br>');
+      }
+    }
+
+    el.onclick = e => {
+      const r = e.target.closest('[data-range]'), m = e.target.closest('[data-mode]'), b = e.target.closest('[data-blk]');
+      if (r) { st.range = +r.dataset.range; st.scrub = null; st.tip = null; render(); }
+      else if (m) { st.mode = m.dataset.mode; st.scrub = null; st.tip = null; render(); }
+      else if (b) { const n = +b.dataset.blk; st.tip = st.tip === n ? null : n; render(); }
+    };
+    el.onkeydown = e => { const b = e.target.closest && e.target.closest('circle[data-blk]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); b.dispatchEvent(new MouseEvent('click', { bubbles: true })); } };
+    el.oninput = e => { if (e.target.dataset.k === 'scrub') scrubTo(+e.target.value); };
+    el.onchange = e => { if (e.target.dataset.k === 'lift') { st.lift = e.target.value; st.scrub = null; st.tip = null; render(); } };
+    render();
+    return { set: o => { Object.assign(st, o, { scrub: null, tip: null }); render(); } };
+  }
+  return { mount, fromApp, rate };
+})();
+/* ================================ end of module ================================ */
+
+
+/* ---------- Example data: about six months of Phase 1, using the Magnificent 7 rules ----------
+   Block 3 gets a change part way (better sleep and protein in this story), so the comparator has something to show. */
+function exampleData() {
+  let z = 20261102; const rnd = () => (z = (z * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const lifts = [
+    { id: 'squat', name: 'Squat (Back Squat)', inc: 2.5, w: 80 }, { id: 'ohp', name: 'Shoulder Press (BB)', inc: 2.5, w: 40 },
+    { id: 'chest', name: 'Chest Press (Flat DB)', inc: 2, w: 26 }, { id: 'dips', name: 'Dips (BW + load)', inc: 2.5, w: 85 },
+    { id: 'hinge', name: 'Deficit Hinge', inc: 2.5, w: 90 }, { id: 'pull', name: 'Pull Up (BW + load)', inc: 2.5, w: 85 },
+    { id: 'row', name: 'Row', inc: 2.5, w: 55 }, { id: 'upright', name: 'Upright Row', inc: 2.5, w: 35 }];
+  const days = { PUSH: ['squat', 'ohp', 'chest', 'dips'], PULL: ['hinge', 'pull', 'row', 'upright'] };
+  const state = {}; lifts.forEach(l => { state[l.id] = { w: l.w, last: null }; });
+  const WEEKS = 27, DAYMS = 864e5, end = new Date(); end.setHours(18, 0, 0, 0);
+  const sessions = [];
+  for (let k = 0; k < WEEKS * 3; k++) {
+    const wk = Math.floor(k / 3), t = end.getTime() - ((WEEKS - wk) * 7 - [0, 2, 4][k % 3]) * DAYMS;
+    const block = Math.floor(wk / 6), boost = block === 2 ? .22 : block === 4 ? -.12 : 0;   // the story: block 3 a good one, block 5 a rough patch
+    const type = k % 2 ? 'PULL' : 'PUSH', sets = {};
+    days[type].forEach(id => {
+      const l = lifts.find(x => x.id === id), s = state[id];
+      // first go at a new weight: 5 or 6 reps; then most sessions add a rep until 7 earns the next jump
+      let reps = s.last == null ? (rnd() < .3 + boost ? 6 : 5) : Math.min(8, s.last + (rnd() < .42 + boost ? 1 : 0));
+      if (rnd() < .05) reps = Math.max(4, reps - 1);                       // the odd off day
+      sets[id] = { w: s.w, reps };
+      if (reps >= 7) { s.w += Math.max(l.inc, Math.floor(s.w * .025 / l.inc) * l.inc); s.last = null; }   // up, never more than 5%, rounded down
+      else if (reps <= 4) { s.w = Math.round(s.w * .95 / l.inc) * l.inc; s.last = null; }
+      else s.last = reps;
+    });
+    sessions.push({ t, sets });
+  }
+  return { lifts: lifts.map(({ id, name, inc }) => ({ id, name, inc })), sessions };
+}
+
+/* ---------- Preview page wiring: example data, the app's saved data on the same site, or a backup file ---------- */
+(function () {
+  const box = document.getElementById('progress');
+  const APP_KEYS = ['sfl-live-v1', 'sfl-new-v1', 'sfl-dw-v1', 'sfl-demo-v2'];
+  let appD = null;
+  try { for (const k of APP_KEYS) { const raw = localStorage.getItem(k); if (raw) { const d = JSON.parse(raw); if (d && d.log && d.log.length) { appD = d; break; } } } } catch (_) {}
+  const btnApp = document.getElementById('src-app'); if (appD) btnApp.hidden = false;
+  const show = (src, data) => { document.querySelectorAll('#src [data-src]').forEach(b => b.setAttribute('aria-pressed', b.dataset.src === src)); SFLProgress.mount(box, data); };
+  document.getElementById('src').addEventListener('click', e => { const b = e.target.closest('[data-src]'); if (!b) return; if (b.dataset.src === 'example') show('example', exampleData()); if (b.dataset.src === 'app' && appD) show('app', SFLProgress.fromApp(appD)); });
+  document.getElementById('src-file').addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; f.text().then(txt => { try { const d = JSON.parse(txt); show('file', d.log ? SFLProgress.fromApp(d) : d); } catch (_) { box.innerHTML = '<p class="note">That file isn&rsquo;t an app backup. Export it from the app&rsquo;s Coach tab and try again.</p>'; } }); });
+  show(appD ? 'app' : 'example', appD ? SFLProgress.fromApp(appD) : exampleData());
+})();
+</script>
+</body>
+</html>
