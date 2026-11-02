@@ -236,3 +236,14 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 
 /* "Coming soon" tag on benefits that aren't running yet */
 .soon{display:inline-block;vertical-align:.25em;margin-left:.4em;font-size:.48em;letter-spacing:.12em;text-transform:uppercase;color:#ff3b3b;border:1px solid rgba(255,59,59,.7);border-radius:999px;padding:.25em .7em .2em;white-space:nowrap}
+
+/* Articles come in from the right, chapters from the left */
+#all-articles .ac-list.rev>.ac-item{transform:translateX(60px)}
+#all-articles .ac-list.rev.in>.ac-item{transform:none}
+
+/* Member benefits: the title appears, then the content drops down into place */
+.bnf-t{opacity:0;transform:scale(.94);transform-origin:left center;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.9,.3,1.2)}
+.bnf.in .bnf-t{opacity:1;transform:none}
+.bnf-i{opacity:0;transform:translateY(-34px)}
+.bnf.in .bnf-i{opacity:1;transform:none;transition:opacity .4s ease,transform .55s cubic-bezier(.2,.9,.3,1.25);transition-delay:calc(.35s + var(--n,0) * .09s)}
+@media (prefers-reduced-motion:reduce){.bnf-t,.bnf-i{opacity:1!important;transform:none!important;transition:none!important}}

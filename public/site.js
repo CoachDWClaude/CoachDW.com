@@ -420,3 +420,21 @@
   }, { threshold: 0.15 });
   lists.forEach(function (l) { l.classList.add('rev'); io.observe(l); });
 })();
+
+/* Member benefits: title first, then each card or item drops down in turn */
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  ['free', 'membership'].forEach(function (id) {
+    var sec = document.getElementById(id); if (!sec) return;
+    var head = sec.querySelector('h2'); if (!head) return;
+    sec.classList.add('bnf');
+    head.parentElement.classList.add('bnf-t');
+    var items = sec.querySelectorAll(id === 'free' ? 'h2 ~ *, .bnf-t ~ div > div' : 'ul > li');
+    var n = 0;
+    (id === 'free' ? sec.querySelectorAll('.bnf-t + div > div') : items).forEach(function (el) { el.classList.add('bnf-i'); el.style.setProperty('--n', n++); });
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { sec.classList.add('in'); io.disconnect(); } });
+    }, { threshold: 0.12 });
+    io.observe(sec);
+  });
+})();
