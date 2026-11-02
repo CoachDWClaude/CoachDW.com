@@ -152,7 +152,13 @@ textarea{min-height:76px;resize:vertical}
 #app.introing .hero.today .eyebrow{font-size:30.8px}
 #app.introing .hero.today h1{font-size:118px}
 #app.introing .hero.today h1.long{font-size:76px}
-#app.introing .hero.today{opacity:0;transform:translateY(24px)}
+#app.introing .fitbtn{position:relative;overflow:hidden;padding-left:14px;padding-right:14px;line-height:1.1}
+.fitbtn .fbt{display:inline-block;white-space:nowrap;letter-spacing:.04em;margin-right:-.04em}
+.fitbtn::after{content:'';position:absolute;top:-20%;bottom:-20%;left:0;width:45%;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.5) 50%,rgba(255,255,255,0) 100%);transform:translateX(-120%) skewX(-18deg);pointer-events:none}
+.fitbtn.shine::after{animation:btnShine 1.4s cubic-bezier(.45,0,.55,1)}
+@keyframes btnShine{to{transform:translateX(330%) skewX(-18deg)}}
+@media (prefers-reduced-motion:reduce){.fitbtn.shine::after{animation:none}}
+.hero.today{opacity:0;transform:translateY(24px)}
 #app.introing.show2 .hero.today{opacity:1;transform:none;transition:opacity .5s,transform .5s cubic-bezier(.2,1.4,.4,1)}
 #app.shrink .intro,#app.shrink .greet .hi,#app.shrink .hero.today .eyebrow,#app.shrink .hero.today .eyebrow,#app.shrink .hero.today h1{transition:height .9s cubic-bezier(.6,0,.2,1),font-size .9s cubic-bezier(.6,0,.2,1)}
 @media (max-width:380px){#app.introing .greet .hi{font-size:34px}#app.introing .hero.today h1{font-size:104px}#app.introing .hero.today .eyebrow{font-size:27.1px}}
@@ -516,7 +522,7 @@ function home() {
   <table class="plan"><thead><tr><th>Lift</th><th>50% &times; 12</th><th>75% &times; 10</th><th>AMRAP</th></tr></thead><tbody>
   ${todays().map(x => { const n = w => x.bw ? bwt(w - BWKG).replace(/\s+/g, '') : String(Math.round(w * 100) / 100); return `<tr><td>${esc(x.mv)}<small>${esc(x.nm)}</small></td>${test ? '<td>&ndash;</td><td>&ndash;</td><td class="top">Test<small>today</small></td>' : `<td>${n(warm(x, .5))}</td><td>${n(warm(x, .75))}</td><td class="top">${n(work(x))}<small>${x.r711 ? 'chase 11' : 'chase ' + D.S.trigger}</small></td>`}</tr>`; }).join('')}
   </tbody></table>
-  <button class="btn red" id="start">Let's get you checked in&hellip;</button>
+  <button class="btn red fitbtn" id="start"><span class="fbt">Let's get you checked in&hellip;</span></button>
   <p class="note" style="margin-top:-12px;font-size:12px">Weights in kg. BW = bodyweight.</p>
   ${DEMO ? '' : stCard(false)}
   ${D.tribe && D.tribe.joined ? '' : `<div class="jwrap inapp"><span class="pt" aria-hidden="true">👉</span><a class="join" href="https://www.skool.com/strengthforlife-5963" target="_blank" rel="noopener"><span class="jt">Join the Tribe <b>FREE</b> on <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjc4MyA5MDUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI3ODMiIGhlaWdodD0iOTA1Ij48cGF0aCBkPSJNNDI5IDQwMy42QzQyNC42IDQxMC40IDQyMCA0MTUuNCA0MTUuMiA0MTguNkM0MTAuOCA0MjEuNCA0MDQuNiA0MjIuOCAzOTYuNiA0MjIuOEMzODguNiA0MjIuOCAzODAuNCA0MjAuOCAzNzIgNDE2LjhDMzYzLjYgNDEyLjggMzU0LjIgNDA4LjYgMzQzLjggNDA0LjJDMzMzLjQgMzk5LjQgMzIxLjQgMzk1IDMwNy44IDM5MUMyOTQuNiAzODcgMjc5LjIgMzg1IDI2MS42IDM4NUMyMzQuOCAzODUgMjE0IDM5MC42IDE5OS4yIDQwMS44QzE4NC40IDQxMi42IDE3NyA0MjcgMTc3IDQ0NUMxNzcgNDU3LjQgMTgxLjIgNDY3LjggMTg5LjYgNDc2LjJDMTk4IDQ4NC42IDIwOSA0OTIgMjIyLjYgNDk4LjRDMjM2LjYgNTA0LjQgMjUyLjQgNTEwLjIgMjcwIDUxNS44QzI4Ny42IDUyMSAzMDUuNiA1MjYuOCAzMjQgNTMzLjJDMzQyLjggNTM5LjYgMzYxIDU0NyAzNzguNiA1NTUuNEMzOTYuMiA1NjMuOCA0MTEuOCA1NzQuNCA0MjUuNCA1ODcuMkM0MzkuNCA1OTkuNiA0NTAuNiA2MTQuOCA0NTkgNjMyLjhDNDY3LjQgNjUwLjQgNDcxLjYgNjcxLjggNDcxLjYgNjk3QzQ3MS42IDcyNyA0NjYgNzU0LjggNDU0LjggNzgwLjRDNDQ0IDgwNS42IDQyOCA4MjcuNCA0MDYuOCA4NDUuOEMzODUuNiA4NjQuMiAzNTkuMiA4NzguNiAzMjcuNiA4ODlDMjk2IDg5OS40IDI1OS42IDkwNC42IDIxOC40IDkwNC42QzE5Ny4yIDkwNC42IDE3Ni4yIDkwMi42IDE1NS40IDg5OC42QzEzNC42IDg5NSAxMTQuOCA4ODkuOCA5NiA4ODNDNzcuMiA4NzUuOCA1OS42IDg2Ny42IDQzLjIgODU4LjRDMjYuOCA4NDkuMiAxMi42IDgzOS4yIDAuNjAwMDAxIDgyOC40TDM5IDc2Ni42QzQzLjQgNzU5LjQgNDguOCA3NTMuOCA1NS4yIDc0OS44QzYyIDc0NS44IDcwLjYgNzQzLjggODEgNzQzLjhDOTEgNzQzLjggMTAwLjIgNzQ2LjQgMTA4LjYgNzUxLjZDMTE3IDc1Ni40IDEyNi40IDc2MS44IDEzNi44IDc2Ny44QzE0Ny4yIDc3My40IDE1OS40IDc3OC44IDE3My40IDc4NEMxODcuOCA3ODguOCAyMDUuNiA3OTEuMiAyMjYuOCA3OTEuMkMyNDIuOCA3OTEuMiAyNTYuNiA3ODkuNCAyNjguMiA3ODUuOEMyNzkuOCA3ODIuMiAyODkuMiA3NzcuNCAyOTYuNCA3NzEuNEMzMDMuNiA3NjUgMzA4LjggNzU4IDMxMiA3NTAuNEMzMTUuNiA3NDIuNCAzMTcuNCA3MzQuMiAzMTcuNCA3MjUuOEMzMTcuNCA3MTIuMiAzMTMgNzAxLjIgMzA0LjIgNjkyLjhDMjk1LjggNjg0IDI4NC42IDY3Ni40IDI3MC42IDY3MEMyNTcgNjYzLjYgMjQxLjIgNjU3LjggMjIzLjIgNjUyLjZDMjA1LjIgNjQ3LjQgMTg2LjggNjQxLjYgMTY4IDYzNS4yQzE0OS42IDYyOC44IDEzMS40IDYyMS4yIDExMy40IDYxMi40Qzk1LjggNjAzLjYgODAgNTkyLjYgNjYgNTc5LjRDNTIuNCA1NjUuOCA0MS4yIDU0OS4yIDMyLjQgNTI5LjZDMjQgNTEwIDE5LjggNDg2LjIgMTkuOCA0NTguMkMxOS44IDQzMi42IDI0LjggNDA4LjQgMzQuOCAzODUuNkM0NC44IDM2Mi40IDU5LjggMzQyIDc5LjggMzI0LjRDOTkuOCAzMDYuOCAxMjQuNiAyOTIuOCAxNTQuMiAyODIuNEMxODQuMiAyNzIgMjE4LjggMjY2LjggMjU4IDI2Ni44QzMwMiAyNjYuOCAzNDIgMjc0IDM3OCAyODguNEM0MTQgMzAyLjggNDQzLjYgMzIxLjYgNDY2LjggMzQ0LjhMNDI5IDQwMy42WiIgZmlsbD0iIzI2MzM5NyI+PC9wYXRoPjxwYXRoIGQ9Ik03NDAuODU5IDAuMzk5OTY2VjUwOEg3NjguNDU5Qzc3OC44NTkgNTA4IDc4Ny4wNTkgNTA2LjYgNzkzLjA1OSA1MDMuOEM3OTkuMDU5IDUwMC42IDgwNS4wNTkgNDk1IDgxMS4wNTkgNDg3TDk0Ny44NTkgMzA0LjZDOTU0LjY1OSAyOTUuNCA5NjIuMjU5IDI4OC40IDk3MC42NTkgMjgzLjZDOTc5LjQ1OSAyNzguOCA5OTAuNDU5IDI3Ni40IDEwMDMuNjYgMjc2LjRIMTE1NC44Nkw5NzcuMjU5IDUwMkM5NjMuMjU5IDUyMC44IDk0Ny4wNTkgNTM1LjYgOTI4LjY1OSA1NDYuNEM5MzcuODU5IDU1Mi44IDk0NS44NTkgNTYwLjIgOTUyLjY1OSA1NjguNkM5NTkuNDU5IDU3NyA5NjYuMDU5IDU4Ni40IDk3Mi40NTkgNTk2LjhMMTE2My44NiA4OTVIMTAxNS4wNkMxMDAyLjI2IDg5NSA5OTEuMjU5IDg5MyA5ODIuMDU5IDg4OUM5NzIuODU5IDg4NC42IDk2NS4yNTkgODc3IDk1OS4yNTkgODY2LjJMODIwLjA1OSA2MzguOEM4MTQuNDU5IDYyOS4yIDgwOC42NTkgNjIzIDgwMi42NTkgNjIwLjJDNzk2LjY1OSA2MTcuNCA3ODcuNjU5IDYxNiA3NzUuNjU5IDYxNkg3NDAuODU5Vjg5NUg1NzUuMjU5VjAuMzk5OTY2SDc0MC44NTlaIiBmaWxsPSIjRDM1MTNFIj48L3BhdGg+PHBhdGggZD0iTTE1MDkuMzQgMjY2LjhDMTU1NS43NCAyNjYuOCAxNTk3Ljk0IDI3NC4yIDE2MzUuOTQgMjg5QzE2NzMuOTQgMzAzLjggMTcwNi41NCAzMjUgMTczMy43NCAzNTIuNkMxNzYwLjk0IDM3OS44IDE3ODEuOTQgNDEzIDE3OTYuNzQgNDUyLjJDMTgxMS41NCA0OTEuNCAxODE4Ljk0IDUzNS42IDE4MTguOTQgNTg0LjhDMTgxOC45NCA2MzQgMTgxMS41NCA2NzguNCAxNzk2Ljc0IDcxOEMxNzgxLjk0IDc1Ny4yIDE3NjAuOTQgNzkwLjYgMTczMy43NCA4MTguMkMxNzA2LjU0IDg0NS44IDE2NzMuOTQgODY3IDE2MzUuOTQgODgxLjhDMTU5Ny45NCA4OTYuNiAxNTU1Ljc0IDkwNCAxNTA5LjM0IDkwNEMxNDYyLjU0IDkwNCAxNDE5Ljk0IDg5Ni42IDEzODEuNTQgODgxLjhDMTM0My41NCA4NjcgMTMxMC45NCA4NDUuOCAxMjgzLjc0IDgxOC4yQzEyNTYuNTQgNzkwLjYgMTIzNS4zNCA3NTcuMiAxMjIwLjE0IDcxOEMxMjA1LjM0IDY3OC40IDExOTcuOTQgNjM0IDExOTcuOTQgNTg0LjhDMTE5Ny45NCA1MzUuNiAxMjA1LjM0IDQ5MS40IDEyMjAuMTQgNDUyLjJDMTIzNS4zNCA0MTMgMTI1Ni41NCAzNzkuOCAxMjgzLjc0IDM1Mi42QzEzMTAuOTQgMzI1IDEzNDMuNTQgMzAzLjggMTM4MS41NCAyODlDMTQxOS45NCAyNzQuMiAxNDYyLjU0IDI2Ni44IDE1MDkuMzQgMjY2LjhaTTE1MDkuMzQgNzc5LjhDMTU1Ni41NCA3NzkuOCAxNTkxLjU0IDc2My42IDE2MTQuMzQgNzMxLjJDMTYzNy4xNCA2OTguNCAxNjQ4LjU0IDY0OS44IDE2NDguNTQgNTg1LjRDMTY0OC41NCA1MjEuNCAxNjM3LjE0IDQ3My4yIDE2MTQuMzQgNDQwLjhDMTU5MS41NCA0MDggMTU1Ni41NCAzOTEuNiAxNTA5LjM0IDM5MS42QzE0NjAuOTQgMzkxLjYgMTQyNS4zNCA0MDggMTQwMi41NCA0NDAuOEMxMzc5Ljc0IDQ3My4yIDEzNjguMzQgNTIxLjQgMTM2OC4zNCA1ODUuNEMxMzY4LjM0IDY0OS44IDEzNzkuNzQgNjk4LjQgMTQwMi41NCA3MzEuMkMxNDI1LjM0IDc2My42IDE0NjAuOTQgNzc5LjggMTUwOS4zNCA3NzkuOFoiIGZpbGw9IiNFMEI0NjciPjwvcGF0aD48cGF0aCBkPSJNMjIwMS45MiAyNjYuOEMyMjQ4LjMyIDI2Ni44IDIyOTAuNTIgMjc0LjIgMjMyOC41MiAyODlDMjM2Ni41MiAzMDMuOCAyMzk5LjEyIDMyNSAyNDI2LjMyIDM1Mi42QzI0NTMuNTIgMzc5LjggMjQ3NC41MiA0MTMgMjQ4OS4zMiA0NTIuMkMyNTA0LjEyIDQ5MS40IDI1MTEuNTIgNTM1LjYgMjUxMS41MiA1ODQuOEMyNTExLjUyIDYzNCAyNTA0LjEyIDY3OC40IDI0ODkuMzIgNzE4QzI0NzQuNTIgNzU3LjIgMjQ1My41MiA3OTAuNiAyNDI2LjMyIDgxOC4yQzIzOTkuMTIgODQ1LjggMjM2Ni41MiA4NjcgMjMyOC41MiA4ODEuOEMyMjkwLjUyIDg5Ni42IDIyNDguMzIgOTA0IDIyMDEuOTIgOTA0QzIxNTUuMTIgOTA0IDIxMTIuNTIgODk2LjYgMjA3NC4xMiA4ODEuOEMyMDM2LjEyIDg2NyAyMDAzLjUyIDg0NS44IDE5NzYuMzIgODE4LjJDMTk0OS4xMiA3OTAuNiAxOTI3LjkyIDc1Ny4yIDE5MTIuNzIgNzE4QzE4OTcuOTIgNjc4LjQgMTg5MC41MiA2MzQgMTg5MC41MiA1ODQuOEMxODkwLjUyIDUzNS42IDE4OTcuOTIgNDkxLjQgMTkxMi43MiA0NTIuMkMxOTI3LjkyIDQxMyAxOTQ5LjEyIDM3OS44IDE5NzYuMzIgMzUyLjZDMjAwMy41MiAzMjUgMjAzNi4xMiAzMDMuOCAyMDc0LjEyIDI4OUMyMTEyLjUyIDI3NC4yIDIxNTUuMTIgMjY2LjggMjIwMS45MiAyNjYuOFpNMjIwMS45MiA3NzkuOEMyMjQ5LjEyIDc3OS44IDIyODQuMTIgNzYzLjYgMjMwNi45MiA3MzEuMkMyMzI5LjcyIDY5OC40IDIzNDEuMTIgNjQ5LjggMjM0MS4xMiA1ODUuNEMyMzQxLjEyIDUyMS40IDIzMjkuNzIgNDczLjIgMjMwNi45MiA0NDAuOEMyMjg0LjEyIDQwOCAyMjQ5LjEyIDM5MS42IDIyMDEuOTIgMzkxLjZDMjE1My41MiAzOTEuNiAyMTE3LjkyIDQwOCAyMDk1LjEyIDQ0MC44QzIwNzIuMzIgNDczLjIgMjA2MC45MiA1MjEuNCAyMDYwLjkyIDU4NS40QzIwNjAuOTIgNjQ5LjggMjA3Mi4zMiA2OTguNCAyMDk1LjEyIDczMS4yQzIxMTcuOTIgNzYzLjYgMjE1My41MiA3NzkuOCAyMjAxLjkyIDc3OS44WiIgZmlsbD0iIzZCQjdFRSI+PC9wYXRoPjxwYXRoIGQ9Ik0yNzgyLjI5IDAuMzk5OTY2Vjg5NUgyNjE2LjY5VjAuMzk5OTY2SDI3ODIuMjlaIiBmaWxsPSIjQzQ1OTQ2Ij48L3BhdGg+PC9zdmc+" alt="Skool"></span></a></div>`}
@@ -954,11 +960,19 @@ function fitToday() {
   const ls = (target - nat) / (n - 1) / fs;
   e.style.letterSpacing = ls + 'em'; e.style.marginRight = (-ls) + 'em';
 }
+// "Let's get you checked in..." sized to fill the button edge to edge, with the header's shimmer when it appears
+function fitStart() {
+  const b = $('start'), t = b && b.querySelector('.fbt'); if (!t) return;
+  const cs = getComputedStyle(b), w = b.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  t.style.fontSize = '18px'; const nat = t.getBoundingClientRect().width; if (nat) t.style.fontSize = (18 * w / nat) + 'px';
+}
+function shineStart(delay) { setTimeout(() => { const b = $('start'); if (!b) return; b.classList.remove('shine'); void b.offsetWidth; b.classList.add('shine'); }, delay || 0); }
+addEventListener('resize', () => { fitStart(); fitToday(); });
 function typeHi() {
   const el = document.getElementById('hi'), app = $('app'); if (!el) { app.classList.remove('introing', 'show2', 'shrink'); return; }
   const fitLater = () => document.fonts && document.fonts.ready ? document.fonts.ready.then(fitToday) : fitToday();
   const key = el.getAttribute('aria-label');
-  if (hiDone === key || matchMedia('(prefers-reduced-motion: reduce)').matches) { hiDone = key; app.classList.remove('introing', 'show2', 'shrink'); fitToday(); fitLater(); return; }
+  if (hiDone === key || matchMedia('(prefers-reduced-motion: reduce)').matches) { hiDone = key; app.classList.remove('introing', 'show2', 'shrink'); fitToday(); fitStart(); fitLater(); document.fonts && document.fonts.ready.then(fitStart); shineStart(350); return; }
   hiDone = key;
   const intro = $('intro');
   // full-screen start: fill the space between the header and the bottom tabs
@@ -967,7 +981,7 @@ function typeHi() {
   const tabs = [...document.querySelectorAll('nav')].find(n => getComputedStyle(n).position === 'fixed' && n.getBoundingClientRect().top > innerHeight / 2);
   const bigH = Math.max(intro.scrollHeight, (tabs ? tabs.getBoundingClientRect().top : innerHeight) - intro.getBoundingClientRect().top - 24);
   intro.style.height = bigH + 'px';
-  fitToday(); fitLater();
+  fitToday(); fitStart(); fitLater(); document.fonts && document.fonts.ready.then(fitStart);
   const cs = []; const walk = n => [...n.childNodes].forEach(k => { if (k.nodeType === 3) { const f = document.createDocumentFragment(); [...k.textContent].forEach(ch => { const sp = document.createElement('span'); sp.className = 'c'; sp.textContent = ch; f.appendChild(sp); cs.push(sp); }); k.replaceWith(f); } else walk(k); });
   walk(el); const cur = document.createElement('span'); cur.className = 'cur'; el.appendChild(cur);
   const alive = () => document.body.contains(intro);
@@ -976,7 +990,7 @@ function typeHi() {
     app.classList.remove('introing'); const smallH = intro.scrollHeight;   // measure the normal size...
     app.classList.add('introing'); void intro.offsetHeight;                // ...then go back and animate down to it
     app.classList.add('shrink'); app.classList.remove('introing', 'show2'); intro.style.height = smallH + 'px';
-    setTimeout(() => { if (!alive()) return; intro.style.height = ''; app.classList.remove('shrink'); fitToday(); }, 950);
+    setTimeout(() => { if (!alive()) return; intro.style.height = ''; app.classList.remove('shrink'); fitToday(); fitStart(); shineStart(350); }, 950);
   };
   let i = 0; (function step() {
     if (!alive()) return;
