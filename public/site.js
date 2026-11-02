@@ -410,3 +410,13 @@
     }
   });
 })();
+
+/* Articles & Chapters: rows slide in from the left the first time each list scrolls into view */
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  var lists = document.querySelectorAll('#articles .ac-list');
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  lists.forEach(function (l) { l.classList.add('rev'); io.observe(l); });
+})();
