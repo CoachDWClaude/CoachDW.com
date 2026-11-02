@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<title>The Deload Is an Insurance Policy | CoachDW</title>
+<meta name="description" content="If your programme needs a week off every month to stop you falling apart, the programme is the problem. The deload is the bill for it.">
+<style>
+  :root{
+    --black:#0a0a0a;
+    --red:#cc0000;
+    --paper:#f9f7f2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{
+    background:var(--paper);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Page-break guide: solid colours only — wkhtmltopdf's renderer paints
+     any transparent/alpha stop in a repeating-linear-gradient as solid
+     black, so #ecb2ae is --paper blended with red at ~28% by hand. If
+     --paper changes, recalculate this blend to match. */
+  body{
+    background-color:var(--paper);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      #f9f7f2 0,
+      #f9f7f2 10.986in,
+      #ecb2ae 10.986in,
+      #ecb2ae 11in
+    );
+    min-height:100vh;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-family:'Special Elite','Courier New',monospace;
+  }
+  *{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:var(--black);
+    padding:8px 20px;
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .header img.sig{ height:auto; width:74%; max-width:550px; flex:1 1 74%; min-width:0; object-fit:contain; display:block; }
+  .header img.logo{ height:auto; width:74%; max-width:550px; flex:1 1 74%; min-width:0; object-fit:contain; display:block; }
+
+  .placeholder-content{ padding:60px 20px; color:#999; font-size:14px; }
+
+  .title-block{ padding:20px 20px 20px; }
+  .title-block .kicker{ color:#e6772e; font-family:'Share Tech Mono','Courier New',monospace; font-size:13px; letter-spacing:1px; text-transform:uppercase; }
+  .title-block .book-title{ color:var(--red); font-size:24px; line-height:1.2; margin-top:6px; }
+  .title-block .series-title{ color:#e6772e; font-size:20px; margin-top:4px; }
+
+  .title-block .book-title .dw-mark-img{ height:1.8em; vertical-align:-0.4em; margin-left:6px; }
+  .title-block .tagline{ color:#4a4a4a; font-size:16px; line-height:1.6; margin-top:8px; }
+  .title-block .item-title{ color:var(--red); font-size:18px; margin-top:18px; line-height:1.3; white-space:nowrap; }
+  .title-block .item-meta{ color:#666; font-size:13px; margin-top:6px; letter-spacing:1px; text-transform:uppercase; }
+
+  
+  .pull-quote{ margin:25px 0; }
+  .pull-quote .quote-rule-img{ width:100%; height:auto; display:block; }
+  .pull-quote .rule-row{ display:flex; align-items:center; gap:14px; }
+  .pull-quote .rule-row.top{ justify-content:flex-start; }
+  .pull-quote .rule-row.bottom{ justify-content:flex-end; }
+  .pull-quote .rule-row .plain-line{ flex:1 1 auto; height:2px; background:var(--red); }
+  .pull-quote .rule-row img.quote-mark{ flex:0 0 auto; height:30px; width:auto; display:block; }
+  .pull-quote .rule-row img.quote-signature{ flex:0 0 auto; height:32px; width:auto; display:block; }
+  .pull-quote .quote-text{ font-size:18px; font-weight:500; color:var(--black); line-height:1.5; text-align:left; padding:8px 6px; }
+  .body-content{ padding:0 20px 40px; }
+  .body-content p{ font-size:15px; line-height:1.7; color:#2b2b2b; margin-bottom:18px; }
+  .body-content .p-num{ font-family:'Special Elite','Courier New',monospace; font-weight:normal; color:var(--red); font-size:12px; opacity:0.65; float:left; margin-right:4px; margin-top:4px; }
+
+  .page-footer{ text-align:center; padding:30px 20px 40px; border-top:1px solid #ddd6c4; margin-top:10px; }
+  .page-footer img{ height:60px; }
+
+  .punct-demo{ padding:0 20px 30px; }
+  .punct-demo p{ font-size:15px; line-height:1.7; color:#2b2b2b; }
+  .punct-demo .red-punct{ color:var(--red); }
+
+  .drop-cap{ font-size:32px; float:left; line-height:0.8; padding:2px 6px 0 0; color:var(--red); }
+  .img-full{ margin:28px 0; }
+  .img-full .img-box{ width:100%; position:relative; padding-bottom:80%; background:#e2ddc9; border:1px dashed #b5ae95; }
+  .img-full .img-box .img-label{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Share Tech Mono','Courier New',monospace; font-size:12px; color:#8a8468; letter-spacing:1px; text-transform:uppercase; text-align:center; width:80%; }
+  .img-full .img-caption{ font-family:'Share Tech Mono','Courier New',monospace; font-size:11px; color:#8a8468; margin-top:8px; text-align:center; }
+
+  /* Skool CTA button design pending — removed fabricated placeholder CSS.
+     Real design not yet locked (see: Skool banner, on the horizon). */
+
+  .body-content .cite{ color:var(--red); font-size:0.85em; }
+  .body-content h2{ color:var(--red); font-size:20px; margin:30px 0 14px; }
+  .references{ padding:0 20px 30px; border-top:1px solid #ddd6c4; margin-top:20px; }
+  .references h3{ color:var(--black); font-size:15px; margin:20px 0 12px; }
+  .references p{ font-size:12px; color:#666; line-height:1.6; margin-bottom:8px; }
+  .references .cite{ color:var(--red); }
+
+  .para-break{ display:flex; align-items:center; gap:12px; margin:26px 0 4px; }
+  .para-break::before{ content:""; flex:0 0 24px; height:1px; background:var(--red); opacity:0.5; }
+  .para-break .eyebrow{ font-family:'Share Tech Mono','Courier New',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--red); opacity:0.85; }
+
+  .split-block{ display:flex; gap:28px; margin:28px 0; align-items:flex-start; }
+  .split-block.img-right{ flex-direction:row-reverse; }
+  .split-block .split-img{ flex:0 0 50%; border:1px solid var(--red); overflow:hidden; }
+  .split-block .split-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .split-block .split-img .img-placeholder{ width:100%; position:relative; padding-bottom:125%; background:#e2ddc9; }
+  .split-block .split-img .img-label{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Share Tech Mono','Courier New',monospace; font-size:10px; color:#8a8468; letter-spacing:1px; text-transform:uppercase; text-align:center; width:80%; }
+  .split-block .split-text{ flex:1; font-size:14px; line-height:1.6; color:#2b2b2b; }
+
+  /* coachdw.com additions: readable width on desktop, Special Elite everywhere */
+  .title-block,.body-content,.references,.art-back{max-width:760px;margin-left:auto;margin-right:auto}
+  .title-block .kicker,.para-break .eyebrow,.img-full .img-caption{font-family:'Special Elite','Courier New',monospace}
+  .title-block .book-title{font-size:clamp(24px,5vw,40px)}
+  .title-block .tagline{font-size:clamp(16px,2vw,19px)}
+  .body-content p,.body-content li{font-size:clamp(15px,1.9vw,18px)}
+  .body-content h2{font-size:clamp(20px,2.6vw,26px)}
+  .body-content h3{color:var(--black);font-size:clamp(17px,2.2vw,21px);font-weight:400;margin:24px 0 10px}
+  .body-content ul,.body-content ol{margin:0 0 18px 1.3em;color:#2b2b2b;line-height:1.7}
+  .body-content li{margin-bottom:8px}
+  .body-content b{color:var(--black)}
+  .body-content a,.references a{color:var(--red)}
+  .body-content .signoff{text-align:center;color:var(--black);margin:6px 0}
+  .pull-quote .quote-text{font-size:clamp(18px,2.4vw,22px)}
+  body{background-image:none!important}
+  .header{padding:8px max(16px,calc((100% - 1200px)/2 + 16px))}
+  .header img.sig,.header img.logo{max-width:min(46%,320px)}
+  .header a{display:contents}
+  .art-back{padding:0 20px 34px}
+  .art-back a{display:inline-flex;align-items:center;gap:8px;color:var(--black);text-decoration:none;border:2px solid var(--red);border-radius:10px;background:#fff;padding:12px 16px;font-size:16px}
+  .art-back a span{color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- HEADER — do not modify -->
+<div class="header"><a href="/" aria-label="CoachDW.com home">
+  <img class="sig" src="/articles/img/signature.png" alt="Danny Williams signature">
+  <img class="logo" src="/articles/img/logo.png" alt="CoachDW.com Strength For Life">
+</a></div>
+
+<div class="title-block">
+  <div class="kicker">CoachDW Article · Training</div>
+  <div class="book-title">The Deload Is an Insurance Policy</div>
+  <div class="tagline">If your programme needs a week off every month to stop you falling apart, the programme is the problem. The deload is the bill for it.</div>
+  <div class="item-meta">Deep Dive &middot; 9 minute read &middot; 18 October 2026</div>
+</div>
+
+<div class="body-content">
+  <h2>Paying the Premium on a Bad Policy</h2>
+  <div class="pull-quote"><div class="rule-row top"><img class="quote-mark" src="/articles/img/quote-mark.png" alt=""><span class="plain-line"></span></div><div class="quote-text">A deload is an insurance policy taken out by poor PTs and coaches against poor programming and recovery management.</div><div class="rule-row bottom"><span class="plain-line"></span><img class="quote-signature" src="/articles/img/quote-signature.png" alt=""></div></div>
+  <p><span class="drop-cap">Y</span>ou pay the premium every fourth, fifth or sixth week, and what you are insured against is the programme itself.</p>
+  <p><span class="p-num">2</span>That is the uncomfortable truth most coaches skip. If the training is built right and moved right, recovery happens inside the week, inside the session order, inside the decisions you make every morning. There is no debt piling up, so there is nothing to pay off.</p>
+  <p><span class="p-num">3</span>I have been training for 40 years and coaching for 35... beginners, front row forwards, fighters cutting weight, World Championship and Olympic medallists. The athletes who needed a scheduled week off were almost always the ones whose plan had been dug into a hole by somebody else. Fix the plan and the hole stops appearing.</p>
+  <p><span class="p-num">4</span>This article lays out why. Where the deload came from, what overreaching and overtraining actually are, what the research says when somebody finally tested it, why so much of the muscle high-volume training appears to build is swelling, and how the Strength For Life Protocol recovers as it goes with no deload needed.</p>
+  <h2>Where the Deload Came From</h2>
+  <p><span class="p-num">5</span>The deload is a habit, not a law. It rests on Hans Selye's <b>general adaptation syndrome</b>, a 1936 description of how rats responded to harmful stressors... alarm, resistance, then exhaustion if the stress kept coming <span class="cite">[1]</span>. Coaches borrowed that curve and built training calendars around it.</p>
+  <p><span class="p-num">6</span>The calendars hardened into tradition. Kiely's review of periodisation asked the obvious question, is this evidence-led or tradition-driven, and found far more tradition than evidence behind the fixed block structures most programmes still use <span class="cite">[2]</span>.</p>
+  <p><span class="p-num">7</span>The deload rode in on those blocks. When researchers interviewed 18 strength and physique coaches, deloads were typically five to seven days long and placed every four to six weeks, though timing varied wildly from coach to coach <span class="cite">[3]</span>. A 2023 expert consensus went further and admitted the practice is everywhere yet barely researched <span class="cite">[4]</span>.</p>
+  <p><span class="p-num">8</span>So the most common recovery tool in the gym is scheduled by the calendar, not by the athlete. Ask yourself why your body would need rescuing on week five, every time, regardless of what weeks one to four actually did to it.</p>
+  <h2>How Bad Programmes Run Up the Debt</h2>
+  <p><span class="p-num">9</span>Every deload is repaying something. What it repays is accumulated fatigue the programme allowed to build faster than the athlete could clear it.</p>
+  <p><span class="p-num">10</span>The European and American sports medicine bodies laid out the spectrum in a joint consensus <span class="cite">[5]</span>...</p>
+  <ul>
+  <li><b>Functional overreaching</b>... a short spike in load that drops performance for days to a couple of weeks, then rebounds higher.</li>
+  <li><b>Non-functional overreaching</b>... the same spike pushed too far, with performance down for weeks to months and no rebound worth having.</li>
+  <li><b>Overtraining syndrome</b>... a long-term collapse in performance and wellbeing that can take months or longer to come back from.</li>
+  </ul>
+  <p><span class="p-num">11</span>Read that list again. Only the first rung is useful, and it only works when recovery follows quickly. Everything past it is damage.</p>
+  <p><span class="p-num">12</span>Bad programmes slide athletes down the ladder in predictable ways...</p>
+  <ol>
+  <li><b>Volume added on the calendar, not on readiness.</b> Sets go up every week because the spreadsheet says so, whether the athlete slept four hours or nine.</li>
+  <li><b>Junk volume.</b> Set after set taken hard, ten or twenty working sets a muscle, when one set to strict technical failure had already done the job. Every extra set adds fatigue faster than it adds muscle.</li>
+  <li><b>Copy and paste plans.</b> A programme written for a full-time athlete handed to a plasterer with two kids and a mortgage.</li>
+  <li><b>Life stress ignored.</b> Stults-Kolehmainen and Bartholomew showed people under high psychological stress recovered strength more slowly after the same session <span class="cite">[6]</span>. Your job, your relationships and your sleep all draw from the same account.</li>
+  <li><b>Too many high-cost sessions stacked back to back.</b> Heavy legs, sprints and a conditioning finisher on consecutive days, then surprise when everything aches.</li>
+  </ol>
+  <p><span class="p-num">13</span>The deload then arrives on schedule to clear the mess. It works, because rest works. But it is treating the symptom. The cause is upstream, in how the training was written and how it was moved through the week.</p>
+  <h2>What Happened When Someone Tested It</h2>
+  <p><span class="p-num">14</span>When researchers finally put a deload under a controlled test, it did not deliver the payout everyone expected. Coleman and colleagues split trained lifters into two groups on a nine-week, high-volume programme. One group took week five completely off; the other trained straight through <span class="cite">[7]</span>.</p>
+  <p><span class="p-num">15</span>The researchers expected the deload group to grow more, on the theory that time off re-sensitises muscle. It did not. Muscle growth, power and muscular endurance came out the same. The group that kept training gained more lower body strength, and reported slightly better readiness to train <span class="cite">[7]</span>.</p>
+  <p><span class="p-num">16</span>One study is not the final word. The deload here was a full week of nothing, not a reduced week, and the programme was nine weeks long. But look at what it tells you. A week of rest did not make anyone better. It cost strength in the group that took it, and gave nothing back for the time spent.</p>
+  <div class="pull-quote"><div class="rule-row top"><img class="quote-mark" src="/articles/img/quote-mark.png" alt=""><span class="plain-line"></span></div><div class="quote-text">That is exactly what you would expect if the deload is insurance. When nothing went wrong, the premium was wasted.</div><div class="rule-row bottom"><span class="plain-line"></span><img class="quote-signature" src="/articles/img/quote-signature.png" alt=""></div></div>
+  <h2>The Swelling Trap</h2>
+  <p><span class="p-num">17</span>High-volume training can look like it builds more muscle. A lot of what it builds is water.</p>
+  <p><span class="p-num">18</span>Damas and colleagues scanned the thighs of new trainees through ten weeks of training. Muscle size jumped by week three, but so did markers of muscle damage and swelling on the scans. The researchers warned that early size gains should not be called hypertrophy without checking for swelling first <span class="cite">[8]</span>.</p>
+  <p><span class="p-num">19</span>Haun and colleagues pushed trained young men through six weeks of rapidly climbing volume. In the lifters who responded, muscle fibres grew 23% bigger. Yet the concentration of actin and myosin, the contractile proteins that actually produce force, fell by around 30%. The growth was mostly sarcoplasmic... fluid and energy proteins filling the space, not more engine <span class="cite">[9]</span>.</p>
+  <p><span class="p-num">20</span>Then Barbalho and colleagues compared 5, 10, 15 and 20 sets per muscle over 24 weeks in trained women. The 5 and 10 set groups gained more strength and more muscle thickness than the higher-volume groups, and the 20 set group came last on every measure <span class="cite">[10]</span>.</p>
+  <p><span class="p-num">21</span>That matches what I see in my own client data. <b>There are plenty of ways to get a little stronger in the short term, or to look bigger.</b> Pile on volume and frequency and the tape measure moves. But cumulative fatigue catches up, the injury comes, and the layoff that follows wipes out the gain.</p>
+  <p><span class="p-num">22</span>The extra size was intramuscular swelling and inflammation. It subsides, and it leaves no more contractile tissue than a lower volume, lower frequency programme would have built. That is a conclusion drawn from reams of client data over years, not one block of one programme.</p>
+  <h2>The Strength For Life Model</h2>
+  <p><span class="p-num">23</span>This is the model I build every client on, and it is the training method at the heart of the Strength For Life Protocol.</p>
+  <ol>
+  <li><b>Primer one.</b> 50% of your 7RM for 10 to 12 reps.</li>
+  <li><b>Primer two.</b> 75% of your 7RM for 8 to 10 reps.</li>
+  <li><b>The work set.</b> One set at your 7RM, taken to strict technical failure... the last rep you can complete with perfect form at the set tempo, and not one rep more.</li>
+  </ol>
+  <p><span class="p-num">24</span>That is it. Compound lifts only, built on the Essential 8 movement patterns... squat, hinge, overhead press, chest press, vertical pull, horizontal row, dips and upright row. Each pattern is trained every 3 to 4 days, with Push and Pull sessions alternating and recovery, cardio or full rest days in between.</p>
+  <p><span class="p-num">25</span>In my experience this is the sweet spot for strength and hypertrophy. One set to strict technical failure is enough stimulus to drive adaptation. The two primers prepare the joints and nervous system without stealing from the work set. Three to four days between exposures gives the muscle time to recover and grow before it is loaded again.</p>
+  <h3>The progression algorithm</h3>
+  <ul>
+  <li><b>7 or more reps.</b> Add load next session, never more than 5%, always rounded down.</li>
+  <li><b>5 or 6 reps.</b> Hold the load and beat the reps next time.</li>
+  <li><b>Fewer than 5 reps.</b> Drop the load by 5% and build back.</li>
+  </ul>
+  <h3>The Red Flag Rule</h3>
+  <p><span class="p-num">26</span>If any set falls short of what you did on the same set last session, you do not do another set. Matching last time is fine, because the same reps can be a cleaner, stricter rep. Falling short is the early warning of under recovery, and the session stops there.</p>
+  <p><span class="p-num">27</span>Strict technical failure is what makes this work. The rep count is objective... no guesswork, no feelings, just data. The programme spots fatigue in the session it appears and adjusts before it can compound.</p>
+  <h3>18 months without a deload</h3>
+  <p><span class="p-num">28</span>I have run trainees on straight linear progression for 18 months, the longest for 21, without changing a thing apart from strictly following that algorithm. No deload weeks. No planned breaks. No new block every six weeks.</p>
+  <div class="pull-quote"><div class="rule-row top"><img class="quote-mark" src="/articles/img/quote-mark.png" alt=""><span class="plain-line"></span></div><div class="quote-text">Fatigue never piles up because each work set is one set, the sessions are spaced for recovery, and the Red Flag Rule stops a session the moment recovery falls behind. There is no debt to pay off, so there is no premium to pay.</div><div class="rule-row bottom"><span class="plain-line"></span><img class="quote-signature" src="/articles/img/quote-signature.png" alt=""></div></div>
+  <h2>Where Reduced Training Still Earns Its Place</h2>
+  <p><span class="p-num">29</span>This is not a case for never easing off. It is a case for easing off on purpose, for a reason, instead of on a timetable.</p>
+  <ul>
+  <li><b>A taper before competition.</b> Cutting load before a fight, a meet or a race is about peaking on one day. That is a performance tool, not a recovery rescue, and it should stay.</li>
+  <li><b>Planned overreaching.</b> Some coaches deliberately push an athlete into functional overreaching for a short block, then pull back to collect the rebound <span class="cite">[5]</span>. Done well, the easy week afterwards is not insurance... it is the second half of a planned move.</li>
+  <li><b>Life blowing up.</b> A new baby, a bereavement, a court case, a house move. Recovery drops, the Red Flag Rule catches it, and the session ends early. That is the system bending, not breaking.</li>
+  <li><b>Illness and injury.</b> No programme overrides a virus or a torn muscle. You train around what you can and rest what you must.</li>
+  <li><b>Programmes nobody is tracking.</b> A coach writing high-volume plans for remote clients with no recorded reps may choose a scheduled deload as a blunt safety net. Fair enough, but call it what it is... a premium paid because the feedback loop is missing.</li>
+  </ul>
+  <h3>The volume research, read straight</h3>
+  <p><span class="p-num">30</span>Plenty of researchers would push back on this model. A widely cited meta-analysis by Schoenfeld and colleagues found muscle growth rose with weekly sets, with 10 or more sets a week beating fewer than 5 <span class="cite">[11]</span>. That deserves a straight answer, not a dismissal.</p>
+  <p><span class="p-num">31</span>Most of those studies measure size with ultrasound or scans over a few weeks, and as Damas and Haun showed, swelling and fluid inflate exactly those measures <span class="cite">[8]</span> <span class="cite">[9]</span>. Barbalho found the opposite trend over 24 weeks in trained lifters <span class="cite">[10]</span>. The research is not settled. My position comes from what holds up over 18 months and more in real clients, not from what shows on a scan after six weeks.</p>
+  <p><span class="p-num">32</span>The coaches in the Delphi study defined deloading as reduced training stress to manage fatigue and prepare for what comes next <span class="cite">[4]</span>. Read that carefully. Every reason on that list is fatigue the programme created. Manage the fatigue in every session and most of the reasons go.</p>
+  <h2>Stop Paying for Bad Programming</h2>
+  <p><span class="p-num">33</span>If your programme needs a week off every month to stop you falling apart, the programme is the problem. The deload is the bill for it.</p>
+  <p><span class="p-num">34</span>The Strength For Life Protocol is built so that bill never arrives. Two primers, one set to strict technical failure at your 7RM, the Essential 8 every 3 to 4 days, and a progression algorithm that tells you exactly what to do next. Strength is earned. Progress is measured. Consistency is rewarded.</p>
+  <p class="signoff">Train right. Eat well. Recover stronger.</p>
+  <p class="signoff">F**k fake. Get real. Results.</p>
+  <!-- SKOOL CTA — locked brand asset, real banner image, real clickable link.
+       Swap the href for the correct destination URL per article/chapter if it ever differs. -->
+  <p style="text-align:center;margin:32px 0;">
+    <a href="https://www.skool.com/strengthforlife-5963" target="_blank" rel="noopener" style="display:inline-block;">
+      <img src="/articles/img/skool-banner.png" alt="Click here to join #StrengthForLife on skool.com — free for a limited time" style="width:100%;max-width:380px;height:auto;display:block;margin:0 auto;">
+    </a>
+  </p>
+</div>
+<div class="references">
+    <h3>References</h3>
+    <p><span class="cite">[1]</span> Selye H. A syndrome produced by diverse nocuous agents. <i>Nature</i>. 1936;138:32.</p>
+    <p><span class="cite">[2]</span> Kiely J. Periodization paradigms in the 21st century: evidence-led or tradition-driven? <i>International Journal of Sports Physiology and Performance</i>. 2012;7(3):242-250.</p>
+    <p><span class="cite">[3]</span> Bell L, Nolan D, Immonen V, et al. Coaches' perceptions, practices and experiences of deloading in strength and physique sports. <i>Frontiers in Sports and Active Living</i>. 2022. <a href="https://doi.org/10.3389/fspor.2022.1073223" target="_blank" rel="noopener">doi:10.3389/fspor.2022.1073223</a></p>
+    <p><span class="cite">[4]</span> Bell L, Strafford BW, Coleman M, Androulakis Korakakis P, Nolan D. Integrating deloading into strength and physique sports training programmes: an international Delphi consensus approach. <i>Sports Medicine Open</i>. 2023;9:87. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10511399/" target="_blank" rel="noopener">PMC10511399</a></p>
+    <p><span class="cite">[5]</span> Meeusen R, Duclos M, Foster C, et al. Prevention, diagnosis and treatment of the overtraining syndrome: joint consensus statement of the ECSS and ACSM. <i>Medicine and Science in Sports and Exercise</i>. 2013;45(1):186-205.</p>
+    <p><span class="cite">[6]</span> Stults-Kolehmainen MA, Bartholomew JB. Psychological stress impairs short-term muscular recovery from resistance exercise. <i>Medicine and Science in Sports and Exercise</i>. 2012;44(11):2220-2227.</p>
+    <p><span class="cite">[7]</span> Coleman M, Burke R, Augustin F, et al. Gaining more from doing less? The effects of a one-week deload period during supervised resistance training on muscular adaptations. <i>PeerJ</i>. 2024;12:e16777. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10809978/" target="_blank" rel="noopener">PMC10809978</a></p>
+    <p><span class="cite">[8]</span> Damas F, Phillips SM, Lixandrão ME, et al. Early resistance training-induced increases in muscle cross-sectional area are concomitant with edema-induced muscle swelling. <i>European Journal of Applied Physiology</i>. 2016;116(1):49-56. <a href="https://doi.org/10.1007/s00421-015-3243-4" target="_blank" rel="noopener">doi:10.1007/s00421-015-3243-4</a></p>
+    <p><span class="cite">[9]</span> Haun CT, Vann CG, Osburn SC, et al. Muscle fiber hypertrophy in response to 6 weeks of high-volume resistance training in trained young men is largely attributed to sarcoplasmic hypertrophy. <i>PLoS ONE</i>. 2019;14(6):e0215267. <a href="https://doaj.org/article/5609fad6814542e5a3420673eeba47d2" target="_blank" rel="noopener">DOAJ</a></p>
+    <p><span class="cite">[10]</span> Barbalho M, Coswig VS, Steele J, Fisher JP, Paoli A, Gentil P. Evidence for an upper threshold for resistance training volume in trained women. <i>Medicine and Science in Sports and Exercise</i>. 2019;51(3):515-522. <a href="https://doi.org/10.1249/MSS.0000000000001818" target="_blank" rel="noopener">doi:10.1249/MSS.0000000000001818</a></p>
+    <p><span class="cite">[11]</span> Schoenfeld BJ, Ogborn D, Krieger JW. Dose-response relationship between weekly resistance training volume and increases in muscle mass: a systematic review and meta-analysis. <i>Journal of Sports Sciences</i>. 2017;35(11):1073-1082.</p>
+  </div>
+<div class="art-back"><a href="/#all-articles"><span aria-hidden="true">&larr;</span> Back to Articles &amp; Chapters</a></div>
+
+<!-- FOOTER — do not modify -->
+<div class="page-footer">
+  <img src="/articles/img/footer-signature.png" alt="Danny Williams">
+</div>
+
+</body>
+</html>

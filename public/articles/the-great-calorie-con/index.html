@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<title>The Great Calorie Con | CoachDW</title>
+<meta name="description" content="The calorie is a real unit of energy. The trouble is what it was asked to do.">
+<style>
+  :root{
+    --black:#0a0a0a;
+    --red:#cc0000;
+    --paper:#f9f7f2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{
+    background:var(--paper);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Page-break guide: solid colours only — wkhtmltopdf's renderer paints
+     any transparent/alpha stop in a repeating-linear-gradient as solid
+     black, so #ecb2ae is --paper blended with red at ~28% by hand. If
+     --paper changes, recalculate this blend to match. */
+  body{
+    background-color:var(--paper);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      #f9f7f2 0,
+      #f9f7f2 10.986in,
+      #ecb2ae 10.986in,
+      #ecb2ae 11in
+    );
+    min-height:100vh;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-family:'Special Elite','Courier New',monospace;
+  }
+  *{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:var(--black);
+    padding:8px 20px;
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .header img.sig{ height:auto; width:74%; max-width:550px; flex:1 1 74%; min-width:0; object-fit:contain; display:block; }
+  .header img.logo{ height:auto; width:74%; max-width:550px; flex:1 1 74%; min-width:0; object-fit:contain; display:block; }
+
+  .placeholder-content{ padding:60px 20px; color:#999; font-size:14px; }
+
+  .title-block{ padding:20px 20px 20px; }
+  .title-block .kicker{ color:#e6772e; font-family:'Share Tech Mono','Courier New',monospace; font-size:13px; letter-spacing:1px; text-transform:uppercase; }
+  .title-block .book-title{ color:var(--red); font-size:24px; line-height:1.2; margin-top:6px; }
+  .title-block .series-title{ color:#e6772e; font-size:20px; margin-top:4px; }
+
+  .title-block .book-title .dw-mark-img{ height:1.8em; vertical-align:-0.4em; margin-left:6px; }
+  .title-block .tagline{ color:#4a4a4a; font-size:16px; line-height:1.6; margin-top:8px; }
+  .title-block .item-title{ color:var(--red); font-size:18px; margin-top:18px; line-height:1.3; white-space:nowrap; }
+  .title-block .item-meta{ color:#666; font-size:13px; margin-top:6px; letter-spacing:1px; text-transform:uppercase; }
+
+  
+  .pull-quote{ margin:25px 0; }
+  .pull-quote .quote-rule-img{ width:100%; height:auto; display:block; }
+  .pull-quote .rule-row{ display:flex; align-items:center; gap:14px; }
+  .pull-quote .rule-row.top{ justify-content:flex-start; }
+  .pull-quote .rule-row.bottom{ justify-content:flex-end; }
+  .pull-quote .rule-row .plain-line{ flex:1 1 auto; height:2px; background:var(--red); }
+  .pull-quote .rule-row img.quote-mark{ flex:0 0 auto; height:30px; width:auto; display:block; }
+  .pull-quote .rule-row img.quote-signature{ flex:0 0 auto; height:32px; width:auto; display:block; }
+  .pull-quote .quote-text{ font-size:18px; font-weight:500; color:var(--black); line-height:1.5; text-align:left; padding:8px 6px; }
+  .body-content{ padding:0 20px 40px; }
+  .body-content p{ font-size:15px; line-height:1.7; color:#2b2b2b; margin-bottom:18px; }
+  .body-content .p-num{ font-family:'Special Elite','Courier New',monospace; font-weight:normal; color:var(--red); font-size:12px; opacity:0.65; float:left; margin-right:4px; margin-top:4px; }
+
+  .page-footer{ text-align:center; padding:30px 20px 40px; border-top:1px solid #ddd6c4; margin-top:10px; }
+  .page-footer img{ height:60px; }
+
+  .punct-demo{ padding:0 20px 30px; }
+  .punct-demo p{ font-size:15px; line-height:1.7; color:#2b2b2b; }
+  .punct-demo .red-punct{ color:var(--red); }
+
+  .drop-cap{ font-size:32px; float:left; line-height:0.8; padding:2px 6px 0 0; color:var(--red); }
+  .img-full{ margin:28px 0; }
+  .img-full .img-box{ width:100%; position:relative; padding-bottom:80%; background:#e2ddc9; border:1px dashed #b5ae95; }
+  .img-full .img-box .img-label{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Share Tech Mono','Courier New',monospace; font-size:12px; color:#8a8468; letter-spacing:1px; text-transform:uppercase; text-align:center; width:80%; }
+  .img-full .img-caption{ font-family:'Share Tech Mono','Courier New',monospace; font-size:11px; color:#8a8468; margin-top:8px; text-align:center; }
+
+  /* Skool CTA button design pending — removed fabricated placeholder CSS.
+     Real design not yet locked (see: Skool banner, on the horizon). */
+
+  .body-content .cite{ color:var(--red); font-size:0.85em; }
+  .body-content h2{ color:var(--red); font-size:20px; margin:30px 0 14px; }
+  .references{ padding:0 20px 30px; border-top:1px solid #ddd6c4; margin-top:20px; }
+  .references h3{ color:var(--black); font-size:15px; margin:20px 0 12px; }
+  .references p{ font-size:12px; color:#666; line-height:1.6; margin-bottom:8px; }
+  .references .cite{ color:var(--red); }
+
+  .para-break{ display:flex; align-items:center; gap:12px; margin:26px 0 4px; }
+  .para-break::before{ content:""; flex:0 0 24px; height:1px; background:var(--red); opacity:0.5; }
+  .para-break .eyebrow{ font-family:'Share Tech Mono','Courier New',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--red); opacity:0.85; }
+
+  .split-block{ display:flex; gap:28px; margin:28px 0; align-items:flex-start; }
+  .split-block.img-right{ flex-direction:row-reverse; }
+  .split-block .split-img{ flex:0 0 50%; border:1px solid var(--red); overflow:hidden; }
+  .split-block .split-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .split-block .split-img .img-placeholder{ width:100%; position:relative; padding-bottom:125%; background:#e2ddc9; }
+  .split-block .split-img .img-label{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Share Tech Mono','Courier New',monospace; font-size:10px; color:#8a8468; letter-spacing:1px; text-transform:uppercase; text-align:center; width:80%; }
+  .split-block .split-text{ flex:1; font-size:14px; line-height:1.6; color:#2b2b2b; }
+
+  /* coachdw.com additions: readable width on desktop, Special Elite everywhere */
+  .title-block,.body-content,.references,.art-back{max-width:760px;margin-left:auto;margin-right:auto}
+  .title-block .kicker,.para-break .eyebrow,.img-full .img-caption{font-family:'Special Elite','Courier New',monospace}
+  .title-block .book-title{font-size:clamp(24px,5vw,40px)}
+  .title-block .tagline{font-size:clamp(16px,2vw,19px)}
+  .body-content p,.body-content li{font-size:clamp(15px,1.9vw,18px)}
+  .body-content h2{font-size:clamp(20px,2.6vw,26px)}
+  .body-content h3{color:var(--black);font-size:clamp(17px,2.2vw,21px);font-weight:400;margin:24px 0 10px}
+  .body-content ul,.body-content ol{margin:0 0 18px 1.3em;color:#2b2b2b;line-height:1.7}
+  .body-content li{margin-bottom:8px}
+  .body-content b{color:var(--black)}
+  .body-content a,.references a{color:var(--red)}
+  .body-content .signoff{text-align:center;color:var(--black);margin:6px 0}
+  .pull-quote .quote-text{font-size:clamp(18px,2.4vw,22px)}
+  body{background-image:none!important}
+  .header{padding:8px max(16px,calc((100% - 1200px)/2 + 16px))}
+  .header img.sig,.header img.logo{max-width:min(46%,320px)}
+  .header a{display:contents}
+  .art-back{padding:0 20px 34px}
+  .art-back a{display:inline-flex;align-items:center;gap:8px;color:var(--black);text-decoration:none;border:2px solid var(--red);border-radius:10px;background:#fff;padding:12px 16px;font-size:16px}
+  .art-back a span{color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- HEADER — do not modify -->
+<div class="header"><a href="/" aria-label="CoachDW.com home">
+  <img class="sig" src="/articles/img/signature.png" alt="Danny Williams signature">
+  <img class="logo" src="/articles/img/logo.png" alt="CoachDW.com Strength For Life">
+</a></div>
+
+<div class="title-block">
+  <div class="kicker">CoachDW Article · Nutrition</div>
+  <div class="book-title">The Great Calorie Con</div>
+  <div class="tagline">The calorie is a real unit of energy. The trouble is what it was asked to do.</div>
+  <div class="item-meta">Quick Read &middot; 3 minute read &middot; 11 October 2026</div>
+</div>
+
+<div class="body-content">
+  <h2>The calorie is real</h2>
+  <p><span class="drop-cap">T</span>he calorie is a real unit of energy, and energy balance is real physics. Eat more than you use and you store the difference; eat less and you draw on what you have stored. Nothing here disputes that.</p>
+  <p><span class="p-num">2</span>The problem is the claim that the sum can tell you what a particular person will weigh, and that the answer is simply to cut a little and move a little more. That claim was never validated for individuals. The numbers behind it are averages. The Atwater factors, 4 kcal per gram of carbohydrate and protein and 9 kcal per gram of fat, date from the late 1800s and early 1900s and are estimates. Food labels can legitimately be out by a sizeable margin in either direction.</p>
+  <p><span class="p-num">3</span>Your body also adapts. Cut intake and your expenditure tends to fall, your appetite tends to rise, and the deficit you planned on paper shrinks in real life.</p>
+  <h2>Who benefited from the simple version?</h2>
+  <p><span class="p-num">4</span>The simple version suited a lot of companies. Food and calorie-counting products, diet foods and supplement brands all gained from a world where the number on the label was treated as the whole story.</p>
+  <p><span class="p-num">5</span>Researchers funded by the food and drinks industry were a documented part of the picture too. A group called the Global Energy Balance Network, reported in 2015 to have been funded by Coca-Cola, promoted the message that activity mattered more than diet while the sugar question was being argued. A 2016 review by Kearns and colleagues looked at internal sugar industry documents and found that the industry had shaped research agendas to play down sugar's role in heart disease.</p>
+  <div class="pull-quote"><div class="rule-row top"><img class="quote-mark" src="/articles/img/quote-mark.png" alt=""><span class="plain-line"></span></div><div class="quote-text">That is the con. Not that the calorie is false, but that a unit was turned into a moral story about the individual, and the environment that makes eating more easy was left out of the sentence.</div><div class="rule-row bottom"><span class="plain-line"></span><img class="quote-signature" src="/articles/img/quote-signature.png" alt=""></div></div>
+  <h2>What the environment does</h2>
+  <p><span class="p-num">6</span>In a controlled inpatient study, Hall and colleagues (2019) gave volunteers ultra-processed or unprocessed diets matched for calories, sugar, fat, fibre and macronutrients, with each person free to eat as much as they liked. On the ultra-processed diet people ate roughly 500 kcal more a day and gained weight.</p>
+  <p><span class="p-num">7</span>Same calorie-matched food on paper, different result in the body. The calorie count did not predict the outcome on its own; food quality, satiety and eating speed did a lot of the work.</p>
+  <h2>So what are calories good for?</h2>
+  <div class="pull-quote"><div class="rule-row top"><img class="quote-mark" src="/articles/img/quote-mark.png" alt=""><span class="plain-line"></span></div><div class="quote-text">Calories are a beacon, not a map. Use them to learn the lay of the land, then put them down.</div><div class="rule-row bottom"><span class="plain-line"></span><img class="quote-signature" src="/articles/img/quote-signature.png" alt=""></div></div>
+  <p><span class="p-num">8</span>The best way to avoid tracking calories and macros for years is to track them closely for a short period. You will rarely eat something new; most of what you eat repeats every few weeks. Track closely for three or four weeks and you will know the calories and macros of most of your usual meals and ingredients by instinct. At that point the tracking has done its job, and you can stop.</p>
+  <p><span class="p-num">9</span>Keep an eye on a few things while you do it:</p>
+  <ul>
+  <li>Your weight trend over two to four weeks matters more than any single day or weigh-in.</li>
+  <li>If your weight is steady, you are roughly in balance. If it is moving the wrong way for your goal, adjust, then wait and watch the trend.</li>
+  <li>Protein helps keep you full and supports muscle, which is what you want to hold onto when you are trying to lose fat or build size.</li>
+  </ul>
+  <p><span class="p-num">10</span>If tracking starts to feel compulsive, anxious or hard to stop, that is a sign to stop now, not to push on. Talk to a doctor or dietitian if it is already running your day.</p>
+  <h2>The point</h2>
+  <p><span class="p-num">11</span>Use the calorie to learn the ground, then watch your step. Don't let it become a verdict on your willpower, and don't let a company's slogan decide where you put your feet.</p>
+  <!-- SKOOL CTA — locked brand asset, real banner image, real clickable link.
+       Swap the href for the correct destination URL per article/chapter if it ever differs. -->
+  <p style="text-align:center;margin:32px 0;">
+    <a href="https://www.skool.com/strengthforlife-5963" target="_blank" rel="noopener" style="display:inline-block;">
+      <img src="/articles/img/skool-banner.png" alt="Click here to join #StrengthForLife on skool.com — free for a limited time" style="width:100%;max-width:380px;height:auto;display:block;margin:0 auto;">
+    </a>
+  </p>
+</div>
+<div class="references">
+    <h3>References</h3>
+    <p><span class="cite">[1]</span> Kearns CE, Schmidt LA, Glantz SA (2016). Sugar industry and coronary heart disease research. <i>JAMA Internal Medicine</i>.</p>
+    <p><span class="cite">[2]</span> Global Energy Balance Network funding: 2015 press coverage.</p>
+    <p><span class="cite">[3]</span> Atwater factors: W. O. Atwater and colleagues, late 1800s to early 1900s.</p>
+    <p><span class="cite">[4]</span> Hall KD et al. (2019). Ultra-processed diets cause excess calorie intake and weight gain. <i>Cell Metabolism</i>.</p>
+  </div>
+<div class="art-back"><a href="/#all-articles"><span aria-hidden="true">&larr;</span> Back to Articles &amp; Chapters</a></div>
+
+<!-- FOOTER — do not modify -->
+<div class="page-footer">
+  <img src="/articles/img/footer-signature.png" alt="Danny Williams">
+</div>
+
+</body>
+</html>

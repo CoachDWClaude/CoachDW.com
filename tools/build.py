@@ -47,6 +47,7 @@ if __name__ == '__main__':
         html = build(preview=True)
         html = html.replace('href="/site.css"', 'href="site.css"').replace('src="/site.js"', 'src="site.js"').replace('src="/hero.js"', 'src="hero.js"')
         html = html.replace('"/images/', '"images/').replace('href="/demo/"', 'href="https://appdemo-7yy.pages.dev/demo/"')
+        html = re.sub(r'href="/articles/([^"/]+)/"', r'href="articles/\1/index.html"', html)
         extra = open(os.path.join(ROOT, 'tools', 'preview-extras.html'), encoding='utf-8').read()
         head_extra, body_extra = extra.split('<!-- BODY -->')
         html = html.replace('</head>', head_extra + '</head>', 1)
@@ -57,6 +58,17 @@ if __name__ == '__main__':
         for fn in ('site.css', 'site.js', 'hero.js'):
             shutil.copy(os.path.join(ROOT, 'public', fn), os.path.join(out, fn))
         shutil.copytree(os.path.join(ROOT, 'public', 'images'), os.path.join(out, 'images'), dirs_exist_ok=True)
+        # article pages, with paths made relative to articles/<slug>/
+        art = os.path.join(ROOT, 'public', 'articles')
+        if os.path.isdir(art):
+            import shutil
+            shutil.copytree(os.path.join(art, 'img'), os.path.join(out, 'articles', 'img'), dirs_exist_ok=True)
+            for slug in os.listdir(art):
+                f = os.path.join(art, slug, 'index.html')
+                if not os.path.isfile(f): continue
+                a = open(f, encoding='utf-8').read().replace('"/articles/img/', '"../img/').replace('href="/#all-articles"', 'href="../../index.html#all-articles"').replace('href="/"', 'href="../../index.html"')
+                os.makedirs(os.path.join(out, 'articles', slug), exist_ok=True)
+                open(os.path.join(out, 'articles', slug, 'index.html'), 'w', encoding='utf-8').write(a)
         print('preview written to', out)
     else:
         with open(os.path.join(ROOT, 'public', 'index.html'), 'w', encoding='utf-8') as f: f.write(build())

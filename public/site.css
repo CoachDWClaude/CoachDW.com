@@ -213,3 +213,11 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .ac-cta.two b{color:#cc0000}
 .ac-cta.two .l2 b{margin-left:.15em}
 .ac-read svg{width:28px;height:28px}
+
+/* Chapter drop-downs open like the main menu: the panel unrolls down, then the paragraph and button slide in from the right */
+.ac-body{animation:none!important;overflow:hidden}
+.ac-body>*{opacity:0;transform:translateX(60px);transition:opacity .2s,transform .2s}
+.ac-item.show .ac-body>*{opacity:1;transform:none;transition:opacity .35s,transform .45s cubic-bezier(.2,.9,.3,1.25)}
+.ac-item.show .ac-body>*:nth-child(1){transition-delay:.15s}
+.ac-item.show .ac-body>*:nth-child(2){transition-delay:.22s}
+@media (prefers-reduced-motion:reduce){.ac-body>*{opacity:1;transform:none;transition:none}}
