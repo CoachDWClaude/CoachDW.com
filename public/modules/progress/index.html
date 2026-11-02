@@ -116,6 +116,9 @@ body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
 .sflp .pbar{padding:12px 14px;gap:2px 8px}
 .sflp .pbar b{font-size:24px;letter-spacing:.06em}.sflp .pbar span{font-size:16px}.sflp .pbar small{font-size:13px;margin-top:2px}
 .sflp .gl{stroke-width:3}
+.sflp hr.split{border:0;border-top:1px solid var(--line);margin:8px 0 2px}
+.sflp .nowband{fill:#fbecec}
+.sflp svg.g tspan.u{font-size:8px}
 .sflp .note{margin:0;font-size:12px;line-height:1.5;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){.sflp *{transition:none!important}}
 </style>
@@ -129,7 +132,7 @@ body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
     <label>Load backup file<input type="file" id="src-file" accept=".json,application/json"></label>
   </div>
   <div class="card"><div id="progress"></div></div>
-  <p class="note" style="margin-top:14px">Preview of the progress module before it goes into the app. Each line is kilos gained since the start of the 6-week block. Dashed lines are each block&rsquo;s average; green between them means this block is faster, red means slower.</p>
+  <p class="note" style="margin-top:14px">Preview of the progress module before it goes into the app. Top: this 6-week block against last block, kilos gained since each block started. Bottom: your last 24 sessions, the latest 6 in red against the 18 before in black; the black average carries on dashed, so red above it means faster. Green shading = faster, red = slower.</p>
 </div>
 
 <script>
@@ -221,8 +224,43 @@ const SFLProgress = (() => {
       return `<div class="pbar ${v}"><b>${word}</b><span>than last block</span><small>${f2(a, ' kg/wk')} this block &middot; ${f2(b2, ' kg/wk')} last block</small></div>`;
     }
 
+    // Second graph: the 18 sessions before, running straight into the latest 6
+    function runGraph(all) {
+      const N = 6, M = 18, pts = all.slice(-(N + M));
+      if (pts.length < N + 3) return `<div class="pbar na"><b>Not enough sessions yet</b><small>This comparison needs at least ${N + 3} sessions of this lift.</small></div>`;
+      const pre = pts.slice(0, -N), now = pts.slice(-N), base = pts[0].v;
+      const q = pts.map((p, j) => ({ x: j + 1, y: p.v - base, p }));
+      const slopeX = arr => { const n = arr.length, mx = arr.reduce((a, r) => a + r.x, 0) / n, my = arr.reduce((a, r) => a + r.y, 0) / n; let sxy = 0, sxx = 0; arr.forEach(r => { sxy += (r.x - mx) * (r.y - my); sxx += (r.x - mx) ** 2; }); const m = sxx ? sxy / sxx : 0; return { m, at: x => my + m * (x - mx) }; };
+      const qPre = q.slice(0, pre.length), qNow = q.slice(pre.length - 1);            // red joins on from the last black point
+      const sp = slopeX(qPre), sn = slopeX(q.slice(pre.length - 1)), xb = pre.length;
+      const fPre = sp.at, fNow = x => sp.at(xb) + sn.m * (x - xb);                   // red average starts where the black average reached, so red above black = faster
+      const a = sn.m, b = sp.m, v = Math.abs(a - b) < 0.02 ? 'eq' : a > b ? 'up' : 'dn';
+      const W = 320, H = 200, L = 36, R = 70, T = 14, B = 26, n = q.length;
+      const ys0 = q.map(r => r.y).concat([fPre(1), fPre(n), fNow(n)]), lo = Math.min(0, ...ys0), hi = Math.max(2.5, ...ys0), pad = (hi - lo) * .1;
+      const xs = x => L + (x - 1) * (W - L - R) / (n - 1), ys = y => T + (hi + pad - y) * (H - T - B) / (hi - lo + 2 * pad);
+      let g = '';
+      const step = hi - lo > 12 ? 5 : hi - lo > 5 ? 2.5 : 1;
+      for (let y = Math.ceil(lo / step) * step; y <= hi + 1e-9; y += step) g += `<line class="ax${y === 0 ? ' zero' : ''}" x1="${L}" x2="${W - R}" y1="${ys(y)}" y2="${ys(y)}"/><text x="${L - 5}" y="${ys(y) + 3}" text-anchor="end">${y > 0 ? '+' : ''}${kg(y)}</text>`;
+      g += `<text x="${L - 5}" y="${T - 3}" text-anchor="end" class="axl">kg</text>`;
+      g += `<rect class="nowband" x="${xs(pre.length + .5)}" y="${T}" width="${W - R - xs(pre.length + .5)}" height="${H - B - T}"/>`;
+      [1, Math.round(pre.length / 2), pre.length, n].forEach(x => { g += `<text x="${xs(x)}" y="${H - 9}" text-anchor="middle">${x}</text>`; });
+      g += `<text x="${(L + W - R) / 2}" y="${H + 2}" text-anchor="middle" class="axl">session</text>`;
+      const x1 = xb;
+      g += `<polygon class="gap ${v}" points="${xs(x1)},${ys(fNow(x1))} ${xs(n)},${ys(fNow(n))} ${xs(n)},${ys(fPre(n))} ${xs(x1)},${ys(fPre(x1))}"/>`;
+      g += `<line class="avgl blk" x1="${xs(1)}" y1="${ys(fPre(1))}" x2="${xs(n)}" y2="${ys(fPre(n))}"/><line class="avgl red" x1="${xs(x1)}" y1="${ys(fNow(x1))}" x2="${xs(n)}" y2="${ys(fNow(n))}"/>`;
+      g += `<polyline class="gl blk" points="${qPre.map(r => xs(r.x) + ',' + ys(r.y)).join(' ')}"/><polyline class="gl red" points="${qNow.map(r => xs(r.x) + ',' + ys(r.y)).join(' ')}"/>`;
+      g += q.map((r, j) => `<circle class="dot ${j < pre.length ? 'blk' : 'red'}" cx="${xs(r.x)}" cy="${ys(r.y)}" r="${n > 16 ? 2.6 : 3.4}"/>`).join('');
+      const lab = [{ c: 'red', t: 'Last ' + N, y: ys(fNow(n)), val: a }, { c: 'blk', t: 'Prev ' + pre.length, y: ys(fPre(n)), val: b }].sort((p, r) => p.y - r.y);
+      if (lab[1].y - lab[0].y < 24) { const m = (lab[0].y + lab[1].y) / 2; lab[0].y = m - 12; lab[1].y = m + 12; }
+      lab.forEach(l => { g += `<text class="endlab ${l.c}" x="${W - R + 8}" y="${l.y - 1}">${l.t}</text><text class="endnum ${l.c}" x="${W - R + 8}" y="${l.y + 11}">${sgn(l.val, 2)}<tspan class="u">kg</tspan></text>`; });
+      const word = v === 'up' ? '&#9650; Faster' : v === 'dn' ? '&#9660; Slower' : v === 'eq' ? 'Same pace' : '–';
+      return `<div class="pbar ${v}"><b>${word}</b><span>latest ${N} sessions v the ${pre.length} before</span><small>${sgn(a, 2)} kg per session latest ${N} &middot; ${sgn(b, 2)} kg per session the ${pre.length} before</small></div>
+        <svg class="g" viewBox="0 0 ${W} ${H + 4}" role="img" aria-label="Latest ${N} sessions against the ${pre.length} before">${g}</svg>
+        <p class="key"><span class="sw red"></span>Latest ${N} <span class="sw blk"></span>${pre.length} before <span class="sw dash"></span>Average per session</p>`;
+    }
+
     function render() {
-      const { lift, blocks, cur } = build();
+      const { lift, all, blocks, cur } = build();
       const cb = blocks.find(k => k.i === cur), pb = blocks.find(k => k.i === cur - 1);
       const W = 320, H = 200, L = 40, R = 58, T = 14, B = 26;
       const pair = st.older ? blocks.slice() : [pb, cb].filter(Boolean);
@@ -262,9 +300,13 @@ const SFLProgress = (() => {
 
       el.innerHTML = `<div class="sflp">
         <label class="lift">Lift<select data-k="lift">${lifts.map(l => `<option value="${l.id}" ${l.id === st.lift ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>
+        <span class="eyebrow">Block v block (6 weeks)</span>
         ${banner(cb, pb)}
         <svg class="g" viewBox="0 0 ${W} ${H + 4}" role="img" aria-label="${esc(lift.name)}: this block against last block">${svg}</svg>
         <p class="key"><span class="sw red"></span>This block <span class="sw blk"></span>Last block <span class="sw dash"></span>Average</p>
+        <hr class="split">
+        <span class="eyebrow">Last 24 sessions</span>
+        ${runGraph(all)}
       </div>`;
     }
 
