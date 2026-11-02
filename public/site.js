@@ -411,6 +411,10 @@
   });
 })();
 
+/* Which way the page is scrolling, for entrances that follow the scroll direction */
+var cdwScrollUp = false;
+(function () { var y = window.scrollY; addEventListener('scroll', function () { var n = window.scrollY; if (n !== y) cdwScrollUp = n < y; y = n; }, { passive: true }); })();
+
 /* Scroll animations: play when a block reaches the middle of the screen; reset once it is fully off screen so it replays next time */
 function cdwReveal(el, onIn, onOut) {
   if (!('IntersectionObserver' in window)) { onIn(); return; }
@@ -435,7 +439,12 @@ function cdwReveal(el, onIn, onOut) {
     head.parentElement.classList.add('bnf-t');
     var items = id === 'free' ? sec.querySelectorAll('.bnf-t + div > div') : sec.querySelectorAll('ul > li');
     items.forEach(function (el, n) { el.classList.add('bnf-i'); el.style.setProperty('--n', n); });
-    cdwReveal(head, function () { sec.classList.add('in'); }, function () {});
+    cdwReveal(head, function () {
+      if (sec.classList.contains('in')) return;
+      sec.classList.toggle('from-below', cdwScrollUp);   // scrolling up: drop in from below; scrolling down: from above
+      void sec.offsetWidth;
+      sec.classList.add('in');
+    }, function () {});
     cdwReveal(sec, function () {}, function () { sec.classList.remove('in'); });
   });
 })();

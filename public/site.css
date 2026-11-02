@@ -263,3 +263,7 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .bnf-i{transform:translateY(-60px)}
 .bnf.in .bnf-i{transition:opacity .8s ease,transform 1.1s cubic-bezier(.2,.9,.3,1.15);transition-delay:calc(.8s + var(--n,0) * .2s)}
 .ac-list.rev:not(.in)>.ac-item,.bnf:not(.in) .bnf-t,.bnf:not(.in) .bnf-i{transition:none}
+/* scrolling up: benefits rise in from below instead of dropping from above */
+.bnf.from-below .bnf-i{transform:translateY(60px)}
+.bnf.from-below.in .bnf-i{transform:none}
+.bnf.from-below:not(.in) .bnf-i{transition:none}
