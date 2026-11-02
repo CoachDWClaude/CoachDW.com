@@ -233,3 +233,6 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .ac-list.rev.in>.ac-item:nth-child(5){transition-delay:.28s}
 .ac-list.rev.in>.ac-item:nth-child(n+6){transition-delay:.35s}
 @media (prefers-reduced-motion:reduce){.ac-list.rev>.ac-item{opacity:1;transform:none}}
+
+/* "Coming soon" tag on benefits that aren't running yet */
+.soon{display:inline-block;vertical-align:.25em;margin-left:.4em;font-size:.48em;letter-spacing:.12em;text-transform:uppercase;color:#ff3b3b;border:1px solid rgba(255,59,59,.7);border-radius:999px;padding:.25em .7em .2em;white-space:nowrap}
