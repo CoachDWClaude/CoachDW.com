@@ -247,3 +247,5 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .bnf-i{opacity:0;transform:translateY(-34px)}
 .bnf.in .bnf-i{opacity:1;transform:none;transition:opacity .4s ease,transform .55s cubic-bezier(.2,.9,.3,1.25);transition-delay:calc(.35s + var(--n,0) * .09s)}
 @media (prefers-reduced-motion:reduce){.bnf-t,.bnf-i{opacity:1!important;transform:none!important;transition:none!important}}
+/* leaving view: reset instantly and quietly, so the entrance replays next time */
+.ac-list.rev:not(.in)>.ac-item,.bnf:not(.in) .bnf-t,.bnf:not(.in) .bnf-i{transition:none}

@@ -411,13 +411,13 @@
   });
 })();
 
-/* Articles & Chapters: rows slide in from the left the first time each list scrolls into view */
+/* Articles & Chapters: rows slide in each time a list scrolls into view (chapters from the left, articles from the right) */
 (function () {
   if (!('IntersectionObserver' in window)) return;
   var lists = document.querySelectorAll('#articles .ac-list');
   var io = new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.15 });
+    es.forEach(function (e) { e.target.classList.toggle('in', e.isIntersecting); });   // replays every time the list comes back into view
+  }, { threshold: 0.05 });
   lists.forEach(function (l) { l.classList.add('rev'); io.observe(l); });
 })();
 
@@ -433,8 +433,8 @@
     var n = 0;
     (id === 'free' ? sec.querySelectorAll('.bnf-t + div > div') : items).forEach(function (el) { el.classList.add('bnf-i'); el.style.setProperty('--n', n++); });
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { sec.classList.add('in'); io.disconnect(); } });
-    }, { threshold: 0.12 });
+      es.forEach(function (e) { sec.classList.toggle('in', e.isIntersecting); });   // replays every time the section comes back into view
+    }, { threshold: 0.05 });
     io.observe(sec);
   });
 })();
