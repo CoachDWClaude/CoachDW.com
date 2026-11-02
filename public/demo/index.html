@@ -142,6 +142,20 @@ textarea{min-height:76px;resize:vertical}
 .plan th{padding-left:4px!important}
 .greet{margin-bottom:-8px}
 @media (max-width:380px){.plan td,.plan td:first-child{font-size:15px!important}.plan td.top{font-size:19px!important}.plan td:first-child small{font-size:12px!important}.plan th{font-size:11px!important}}
+.intro{display:flex;flex-direction:column;gap:22px}
+.hero.today h1.long{font-size:60px}
+/* opening animation: greeting + today's session fill the screen, then shrink up to make room for the table */
+#app.introing>:not(.intro){opacity:0;visibility:hidden}
+#app>*{transition:opacity .6s ease}
+#app.introing .intro{justify-content:center}
+#app.introing .greet .hi{font-size:40px}
+#app.introing .hero.today .eyebrow{font-size:30.8px}
+#app.introing .hero.today h1{font-size:118px}
+#app.introing .hero.today h1.long{font-size:76px}
+#app.introing .hero.today{opacity:0;transform:translateY(24px)}
+#app.introing.show2 .hero.today{opacity:1;transform:none;transition:opacity .5s,transform .5s cubic-bezier(.2,1.4,.4,1)}
+#app.shrink .intro,#app.shrink .greet .hi,#app.shrink .hero.today .eyebrow,#app.shrink .hero.today .eyebrow,#app.shrink .hero.today h1{transition:height .9s cubic-bezier(.6,0,.2,1),font-size .9s cubic-bezier(.6,0,.2,1)}
+@media (max-width:380px){#app.introing .greet .hi{font-size:34px}#app.introing .hero.today h1{font-size:104px}#app.introing .hero.today .eyebrow{font-size:27.1px}}
 .hero.today{gap:0;margin:-6px 0 -12px}
 .hero.today .eyebrow{font-family:var(--display);font-size:24px;letter-spacing:.04em}
 .hero.today h1{font-size:92px;line-height:.95}
@@ -491,12 +505,14 @@ function home() {
   const day = d.toLocaleDateString('en-GB', { weekday: 'long' }), test = isTest();
   return `
   ${spotIcon()}
+  <div class="intro" id="intro">
   <section class="greet"><p class="hi" id="hi" aria-label="Good ${part} ${esc(D.name || 'Champ')}, happy ${day}.">Good ${part} ${esc(D.name || 'Champ')},<br>happy ${day}.</p>
   </section>
   <section class="hero today">
     <span class="eyebrow">${test ? 'Test session' : "Today you're on"}</span>
-    <h1${D.next.length > 6 ? ' style="font-size:60px"' : ''}>${esc(D.next)}<i>.</i></h1>
+    <h1${D.next.length > 6 ? ' class="long"' : ''}>${esc(D.next)}<i>.</i></h1>
   </section>
+  </div>
   <table class="plan"><thead><tr><th>Lift</th><th>50% &times; 12</th><th>75% &times; 10</th><th>AMRAP</th></tr></thead><tbody>
   ${todays().map(x => { const n = w => x.bw ? bwt(w - BWKG).replace(/\s+/g, '') : String(Math.round(w * 100) / 100); return `<tr><td>${esc(x.mv)}<small>${esc(x.nm)}</small></td>${test ? '<td>&ndash;</td><td>&ndash;</td><td class="top">Test<small>today</small></td>' : `<td>${n(warm(x, .5))}</td><td>${n(warm(x, .75))}</td><td class="top">${n(work(x))}<small>${x.r711 ? 'chase 11' : 'chase ' + D.S.trigger}</small></td>`}</tr>`; }).join('')}
   </tbody></table>
@@ -928,14 +944,45 @@ function lfg() {
   o.addEventListener('click', go); setTimeout(go, 1900);
 }
 let hiDone = '';
+// stretch "TODAY YOU'RE ON" so it starts and ends exactly with the word PUSH (letter-spacing in em, so it holds while the size animates)
+function fitToday() {
+  const h = document.querySelector('.hero.today h1'), e = document.querySelector('.hero.today .eyebrow'); if (!h || !e) return;
+  const r = document.createRange(); r.selectNodeContents(h.firstChild); const target = r.getBoundingClientRect().width;
+  e.style.letterSpacing = '0px'; e.style.marginRight = '0'; e.style.whiteSpace = 'nowrap'; e.style.display = 'block';
+  const r2 = document.createRange(); r2.selectNodeContents(e); const nat = r2.getBoundingClientRect().width;
+  const n = e.textContent.length, fs = parseFloat(getComputedStyle(e).fontSize); if (!target || n < 2) return;
+  const ls = (target - nat) / (n - 1) / fs;
+  e.style.letterSpacing = ls + 'em'; e.style.marginRight = (-ls) + 'em';
+}
 function typeHi() {
-  const el = document.getElementById('hi'); if (!el) return;
-  const st = el.parentElement.querySelector('.stamp'), key = el.getAttribute('aria-label');
-  if (hiDone === key || matchMedia('(prefers-reduced-motion: reduce)').matches) { hiDone = key; return; }
+  const el = document.getElementById('hi'), app = $('app'); if (!el) { app.classList.remove('introing', 'show2', 'shrink'); return; }
+  const fitLater = () => document.fonts && document.fonts.ready ? document.fonts.ready.then(fitToday) : fitToday();
+  const key = el.getAttribute('aria-label');
+  if (hiDone === key || matchMedia('(prefers-reduced-motion: reduce)').matches) { hiDone = key; app.classList.remove('introing', 'show2', 'shrink'); fitToday(); fitLater(); return; }
   hiDone = key;
+  const intro = $('intro');
+  // full-screen start: fill the space between the header and the bottom tabs
+  window.scrollTo(0, 0);
+  app.classList.add('introing');
+  const tabs = [...document.querySelectorAll('nav')].find(n => getComputedStyle(n).position === 'fixed' && n.getBoundingClientRect().top > innerHeight / 2);
+  const bigH = Math.max(intro.scrollHeight, (tabs ? tabs.getBoundingClientRect().top : innerHeight) - intro.getBoundingClientRect().top - 24);
+  intro.style.height = bigH + 'px';
+  fitToday(); fitLater();
   const cs = []; const walk = n => [...n.childNodes].forEach(k => { if (k.nodeType === 3) { const f = document.createDocumentFragment(); [...k.textContent].forEach(ch => { const sp = document.createElement('span'); sp.className = 'c'; sp.textContent = ch; f.appendChild(sp); cs.push(sp); }); k.replaceWith(f); } else walk(k); });
   walk(el); const cur = document.createElement('span'); cur.className = 'cur'; el.appendChild(cur);
-  let i = 0; (function step() { if (!document.body.contains(el)) return; if (i >= cs.length) { setTimeout(() => cur.remove(), 500); return; } cs[i].classList.add('on'); cs[i].after(cur); i++; setTimeout(step, 70); })();
+  const alive = () => document.body.contains(intro);
+  const shrink = () => {
+    if (!alive()) return;
+    app.classList.remove('introing'); const smallH = intro.scrollHeight;   // measure the normal size...
+    app.classList.add('introing'); void intro.offsetHeight;                // ...then go back and animate down to it
+    app.classList.add('shrink'); app.classList.remove('introing', 'show2'); intro.style.height = smallH + 'px';
+    setTimeout(() => { if (!alive()) return; intro.style.height = ''; app.classList.remove('shrink'); fitToday(); }, 950);
+  };
+  let i = 0; (function step() {
+    if (!alive()) return;
+    if (i >= cs.length) { setTimeout(() => { cur.remove(); if (!alive()) return; app.classList.add('show2'); setTimeout(shrink, 1500); }, 450); return; }
+    cs[i].classList.add('on'); cs[i].after(cur); i++; setTimeout(step, 70);
+  })();
 }
 function endSession() {
   const type = cur.grp || D.next;                // a stand-alone strength test logs against the lifts it tested
