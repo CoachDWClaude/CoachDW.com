@@ -255,6 +255,16 @@ textarea{min-height:76px;resize:vertical}
 .spotc .pan{position:absolute;right:0;top:58px;width:min(280px,82vw);background:var(--paper);border:2px solid var(--ink);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.2)}
 .spot summary{list-style:none;text-align:center;display:block}.spot summary::-webkit-details-marker{display:none}.spot[open] summary{background:var(--paper);color:var(--ink)}
 .set .w{white-space:nowrap}.set.top .w.bwl{font-size:30px}
+.rov-btns{display:flex;gap:12px;margin-top:18px}
+.rov-btns[hidden]{display:none}
+.rov-btns button{font-family:var(--display);text-transform:uppercase;letter-spacing:.12em;font-size:13px;color:rgba(255,255,255,.7);background:transparent;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:9px 16px;cursor:pointer}
+.rov-btns button:hover,.rov-btns button:focus-visible{color:#fff;border-color:rgba(255,255,255,.7)}
+.rov-hair{display:none;margin:12px 0 0;font-size:24px;line-height:1.1;letter-spacing:.02em}
+.rov-hair em{font-style:normal;color:#ff3b3b}
+.rov.hair .rov-hair{display:block;animation:hairFlash .5s steps(1) infinite}
+.rov.go .rov-hair{display:none}
+@keyframes hairFlash{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.rov.hair .rov-hair{animation:none}}
 .rov{position:fixed;inset:0;z-index:7;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-family:var(--display);text-transform:uppercase;text-align:center;cursor:pointer;padding:20px}
 .rov small{font-size:20px;letter-spacing:.2em;color:var(--red)}
 .rov b{font-weight:400;font-size:min(34vw,190px);line-height:1;font-variant-numeric:tabular-nums}
@@ -611,9 +621,9 @@ function tguide() {
   if (g.k === 'pick') return head + `<div class="tgx"><span class="eyebrow">Test weight &middot; ${esc(ex.nm)}</span><h2>What can you lift for 7 strict reps, but not 8?</h2>
     <label for="tpred">${ex.bw ? 'Added weight, kg (0 = bodyweight only)' : 'Test weight, kg'}<input id="tpred" type="number" step="${ex.inc}" min="0" inputmode="decimal" value="${kg(Math.max(0, ex.bw ? w - BWKG : w))}" style="font-size:34px;text-align:center;font-family:var(--display)"></label>
     <p class="note">${/dumbbell/i.test(ex.nm) ? 'Dumbbells: enter the weight of one dumbbell. ' : ''}Be as accurate as you can without over-reaching. Aim for a weight you can do for 7, as close to an AMRAP of 7 as possible. The app sets your load on what you can do, not what you say you can do.</p></div><button class="btn red" id="tg-pick">Next</button>`;
-  if (g.k === 'w1') return head + (hairOn(ex) ? hairBox() : '') + `<div class="tgx"><span class="eyebrow">Warm-up 1 &middot; 50%</span>${big(showS(ex, warm(ex, .5)), '&times; 10 reps')}</div><button class="btn red" id="tg-w1">Done. Start 90 sec rest</button>`;
-  if (g.k === 'w2') return head + (hairOn(ex) ? hairBox() : '') + `<div class="tgx"><span class="eyebrow">Warm-up 2 &middot; 75%</span>${big(showS(ex, warm(ex, .75)), '&times; 8 reps')}</div><button class="btn red" id="tg-w2">Done. Start 2 min rest</button>`;
-  if (g.k === 'top') return head + (hairOn(ex) ? hairBox() : '') + `<div class="tgx"><span class="eyebrow">Test set</span>${big(showS(ex, w), 'As many strict reps as possible')}<p class="note">Stop at strict technical failure. The rep you cannot finish with perfect form does not count.</p></div><button class="btn red" id="tg-top">Set done</button>`;
+  if (g.k === 'w1') return head + `<div class="tgx"><span class="eyebrow">Warm-up 1 &middot; 50%</span>${big(showS(ex, warm(ex, .5)), '&times; 10 reps')}</div><button class="btn red" id="tg-w1">Done. Start 90 sec rest</button>`;
+  if (g.k === 'w2') return head + `<div class="tgx"><span class="eyebrow">Warm-up 2 &middot; 75%</span>${big(showS(ex, warm(ex, .75)), '&times; 8 reps')}</div><button class="btn red" id="tg-w2">Done. Start 2 min rest</button>`;
+  if (g.k === 'top') return head + `<div class="tgx"><span class="eyebrow">Test set</span>${big(showS(ex, w), 'As many strict reps as possible')}<p class="note">Stop at strict technical failure. The rep you cannot finish with perfect form does not count.</p></div><button class="btn red" id="tg-top">Set done</button>`;
   if (g.k === 'reps') return head + `<div class="tgx"><span class="eyebrow">Log it</span><h2>How many strict reps?</h2>
     <div class="step"><button id="r-minus" aria-label="One rep fewer">&minus;</button><output id="r-out">${cur.reps}</output><button id="r-plus" aria-label="One rep more">+</button></div></div><button class="btn red" id="tg-save">Save</button>`;
   const e = cur.e[cur.e.length - 1], lastLift = cur.i + 1 >= list.length;
@@ -653,14 +663,14 @@ function cue(long, col) {                       // screen flash plus vibration (
   setTimeout(() => f.remove(), long ? 1300 : 450);
 }
 function restStop() { clearInterval(restTick); restEnd = 0; const ov = $('rest-ov'); if (ov) ov.remove(); const rb = $('rest-go'); if (rb) { rb.textContent = 'Set done. Start rest'; rb.classList.remove('red'); } pips.forEach(o => { try { o.stop(); } catch (_) {} }); pips = []; try { wake && wake.release(); } catch (_) {} wake = null; }
-function restToggle(ff) {
+function restToggle(ff, barT) {
   if (restEnd && !ff) return restStop();
   if (ff) restStop();
   try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch (_) {}
   try { navigator.wakeLock && navigator.wakeLock.request('screen').then(w => { wake = w; }).catch(() => {}); } catch (_) {}
   // the clock starts a few seconds in, to cover racking the weight and reaching the phone
   const total = ff || Math.max(1, (D.S.restSec ?? 120) - (D.S.restLead ?? 3)), t0 = actx ? actx.currentTime : 0;
-  restEnd = Date.now() + total * 1000; let rung = false, lastSec = null;
+  restEnd = Date.now() + total * 1000; let rung = false, lastSec = null; const fullT = barT || total;
   const pip = (at, hz, len) => {
     if (at < 0 || !actx) return;
     try { const o = actx.createOscillator(), g = actx.createGain(); o.connect(g); g.connect(actx.destination); o.frequency.value = hz; g.gain.value = .3; o.start(t0 + at); o.stop(t0 + at + len); pips.push(o); } catch (_) {}
@@ -673,8 +683,13 @@ function restToggle(ff) {
   else { try { const raw = atob(GO_CLIP), u = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) u[i] = raw.charCodeAt(i);
     actx.decodeAudioData(u.buffer, buf => { goBuf = buf; sayGo(); }, () => { if (restEnd === myEnd) pip(total, 1320, .9); }); } catch (_) { pip(total, 1320, .9); } }                                                      // GO: one long beep
   const ov = document.createElement('div'); ov.id = 'rest-ov'; ov.className = 'rov'; ov.setAttribute('role', 'timer');
-  ov.innerHTML = '<small id="rov-l">Rest</small><b id="rov-n">' + mmss(total) + '</b><span id="rov-s">Tap to cancel</span>' + (cur && hairOn(lst()[cur.i]) ? '<p style="margin:12px 0 0;font-size:24px;line-height:1.1;letter-spacing:.02em">LADIES - PUT YOUR F**KING <span style="color:#ff3b3b;opacity:1;font-size:inherit;letter-spacing:inherit">HAIR UP!</span></p>' : '') + '<i id="rov-bar" style="width:100%"></i>';
-  ov.addEventListener('click', ev => { ev.stopPropagation(); restStop(); }); document.body.appendChild(ov);
+  const hairRest = cur && hairOn(lst()[cur.i]);
+  ov.innerHTML = '<small id="rov-l">Rest</small><b id="rov-n">' + mmss(total) + '</b>' + (hairRest ? '<p class="rov-hair" id="rov-hair">LADIES - PUT YOUR F**KING <em>HAIR UP!</em></p>' : '') + '<div class="rov-btns" id="rov-btns"><button type="button" id="rov-cancel">Cancel</button>' + (total > 11 ? '<button type="button" id="rov-skip">Skip to 11</button>' : '') + '</div><span id="rov-s" hidden>Tap to close</span><i id="rov-bar" style="width:' + (total / fullT * 100) + '%"></i>';
+  ov.addEventListener('click', ev => {
+    ev.stopPropagation();
+    if (ev.target.id === 'rov-skip') { const left = Math.ceil((restEnd - Date.now()) / 1000); if (left > 11) restToggle(11, fullT); return; }
+    if (ev.target.id === 'rov-cancel' || restEnd <= Date.now()) restStop();   // during the countdown only the Cancel button stops it; at GO a tap anywhere closes
+  }); document.body.appendChild(ov);
   restTick = setInterval(() => {
     const left = restEnd - Date.now(), b = $('rest-go');
     const sec = Math.ceil(left / 1000);
@@ -683,8 +698,9 @@ function restToggle(ff) {
     if ($('rest-ov')) {
       const go = left <= 0;
       $('rov-n').textContent = go ? 'GO' : sec > 10 ? mmss(sec) : sec; $('rov-l').textContent = go ? 'Next set' : sec <= 10 ? 'Get ready' : 'Rest';
-      $('rov-s').textContent = go ? 'Tap to close' : 'Tap to cancel'; $('rov-bar').style.width = Math.max(0, left / (total * 10)) + '%';
-      $('rest-ov').className = 'rov' + (go ? ' go' : sec <= 3 ? ' a' : sec === 10 || sec === 5 ? ' r' : '');
+      $('rov-s').hidden = !go; $('rov-btns').hidden = go; $('rov-bar').style.width = Math.max(0, left / (fullT * 10)) + '%';
+      $('rest-ov').className = 'rov' + (go ? ' go' : sec <= 3 ? ' a' : sec === 10 || sec === 5 ? ' r' : '') + (!go && sec <= 11 ? ' hair' : '');
+      if (sec <= 11 && !go && $('rov-skip')) $('rov-skip').remove();
     }
     if (left <= -8000) return restStop();
     if (b) { b.textContent = restLabel(); b.classList.toggle('red', !!restEnd && left <= 0); }
@@ -700,7 +716,6 @@ function lift() {
   <header class="brand"><b>${esc(ex.mv)}</b><span>${cur.i + 1} of ${list.length}</span></header>
   <div class="prog">${list.map((_, i) => `<i class="${i <= cur.i ? 'on' : ''}"></i>`).join('')}</div>
   <p class="sub">${esc(ex.nm)} &middot; rest ${mmss(S.restSec ?? 120)} between sets</p>
-  ${hairOn(ex) ? hairBox() : ''}
   ${test ? `<label for="pred">${ex.bw ? 'Your predicted 7-rep ADDED weight, kg (0 = bodyweight only)' : 'Your predicted 7-rep weight, kg'}<input id="pred" type="number" step="${ex.inc}" min="0" inputmode="decimal" value="${kg(Math.max(0, ex.bw ? w - BWKG : w))}"></label>` : ''}
   <div class="sets">
     <div class="set"><span class="n">Set 1</span><span class="w">${showS(ex, warm(ex, .5))}</span><span class="r">10&ndash;12 reps</span></div>
