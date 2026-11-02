@@ -25,8 +25,9 @@ const open=()=>{if(window.cdwWelcomeAuto)window.cdwWelcomeAuto()};
 const C=T.map(prep);let first=true;
 while(true){
   for(let i=0;i<T.length;i++){
-    if(i===0){sflt.classList.remove('shine');void sflt.offsetWidth;sflt.classList.add('shine')}
-    reset(C[i]);say(i);pic(P[i]);await wait(i===0?1500:600);
+    reset(C[i]);say(i);pic(P[i]);
+    sflt.classList.remove('shine');void sflt.offsetWidth;sflt.classList.add('shine');   // shimmer sweeps STRENGTH FOR LIFE just before each line types
+    await wait(1450);
     await type(C[i],85);await wait(i===T.length-1?2200:1800);
     if(i===T.length-1&&first){first=false;open();await wait(300);await popClosed();await wait(800)}
     T[i].classList.add('off');await wait(i===T.length-1?700:200);
