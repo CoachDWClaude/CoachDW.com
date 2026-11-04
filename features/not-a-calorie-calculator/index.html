@@ -1,0 +1,900 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Not A Calorie Calculator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap">
+<style>
+/* Layout: one phone-sized app screen on a quiet grey stage, full-bleed on a real phone. Single deliberate look matching the SFL training app: black on white, red accents. */
+:root{
+  --paper:#ffffff; --ink:#111111; --red:#cc0000; --stage:#e9e7e4; --mute:#7d7873; --line:#e4e1dd; --soft:#f6f4f2;
+  --type:"Special Elite","Courier New",Courier,monospace;
+  --ui:"Special Elite","Courier New",Courier,monospace;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--stage);color:var(--ink);font-family:var(--ui);display:flex;align-items:center;justify-content:center;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px;box-sizing:border-box}
+*{box-sizing:border-box}
+.phone{position:relative;width:100%;max-width:420px;height:min(860px,100%);background:var(--paper);border-radius:28px;box-shadow:0 20px 60px rgba(40,20,10,.18);overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:460px){body{padding-left:0;padding-right:0;padding-block:0}.phone{max-width:none;height:100%;border-radius:0;box-shadow:none}}
+
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;padding:16px max(22px,env(safe-area-inset-right,0px)) 10px max(22px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.brand{font-family:var(--type);font-size:18px}
+.brand b{color:var(--red);font-weight:400}
+.tabs{display:flex;align-items:center;gap:12px}
+.reftab{font-family:var(--ui);font-weight:400;font-size:12px;letter-spacing:.04em;text-transform:uppercase;border:2px solid var(--red);color:var(--red);background:var(--paper);border-radius:999px;padding:5px 10px;cursor:pointer}
+.reftab[aria-pressed="true"]{background:var(--red);color:#fff}
+.stepno{font-weight:400;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);font-variant-numeric:tabular-nums}
+.prog{height:3px;background:var(--line)}
+.prog i{display:block;height:100%;background:var(--red);width:0;transition:width .35s ease}
+
+.screen{flex:1;overflow-y:auto;padding:22px 22px 18px;display:flex;flex-direction:column;gap:18px}
+.screen[hidden]{display:none!important}
+.enter{animation:in .35s ease both}
+@keyframes in{from{opacity:.0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}.prog i{transition:none}}
+
+.eyebrow{font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+h1,h2{font-family:var(--type);font-weight:400;margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:clamp(32px,9vw,40px)}
+h2{font-size:28px}
+p{margin:0;font-size:18px;line-height:1.4;font-weight:500}
+.note{font-size:15px;color:var(--mute);font-weight:500;line-height:1.35}
+.note b{color:var(--ink)}
+
+/* fields */
+.q{display:flex;flex-direction:column;gap:8px}
+.q>label,.q>.lab{font-weight:700;font-size:15px;letter-spacing:.1em;text-transform:uppercase}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--ui);font-weight:400;font-size:16px;letter-spacing:0;padding:10px 14px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:999px;cursor:pointer;line-height:1.1;text-align:left}
+.chip small{display:block;font-weight:500;font-size:13px;letter-spacing:0;color:var(--mute);margin-top:2px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chip[aria-pressed="true"] small{color:#cfcac5}
+.chips.stack{flex-direction:column}
+.chips.stack .chip{border-radius:14px;width:100%}
+.num{display:flex;align-items:center;border:2px solid var(--ink);border-radius:12px;overflow:hidden;background:var(--paper)}
+.num input{flex:1;min-width:0;border:0;font-family:var(--type);font-size:24px;padding:10px 12px;background:transparent;color:var(--ink);width:100%}
+.num span{font-weight:700;font-size:15px;color:var(--mute);padding-right:12px;text-transform:uppercase;letter-spacing:.08em}
+input:focus-visible,.chip:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.slide{display:flex;flex-direction:column;gap:6px}
+.slide .val{font-family:var(--type);font-size:26px}
+.slide .val small{font-family:var(--ui);font-size:15px;font-weight:700;color:var(--mute);letter-spacing:.06em;margin-left:6px}
+input[type=range]{width:100%;accent-color:var(--red);height:28px}
+.scale{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--mute)}
+.toggle{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;align-self:flex-start}
+.toggle button{font-family:var(--ui);font-weight:400;font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:6px 14px;border:0;background:var(--paper);color:var(--ink);cursor:pointer}
+.toggle button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+/* footer */
+.foot{display:flex;gap:10px;padding:12px 22px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+.btn{font-family:var(--ui);font-weight:400;font-size:18px;letter-spacing:.02em;text-transform:uppercase;padding:14px 18px;border-radius:14px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;flex:1}
+.btn.go{background:var(--red);border-color:var(--red);color:#fff;flex:2}
+.btn[hidden]{display:none}
+
+/* intro */
+.gift{border:2px dashed var(--red);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.gift .typed{font-family:var(--type);font-size:20px;color:var(--red)}
+.ticks{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.ticks li{font-size:17px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+.ticks li::before{content:"";width:8px;height:8px;background:var(--red);border-radius:2px;flex:none;transform:translateY(-2px)}
+
+/* result */
+.hero{display:flex;flex-direction:column;gap:4px;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+.big{font-family:var(--type);font-size:clamp(58px,17vw,74px);line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-family:var(--ui);font-size:20px;font-weight:700;letter-spacing:.1em;color:var(--mute);margin-left:6px}
+.range{font-weight:700;font-size:17px}
+.range b{color:var(--red)}
+.goals{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.goal{border:2px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.goal .k{font-weight:400;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}
+.goal .v{font-family:var(--type);font-size:26px;font-variant-numeric:tabular-nums}
+.goal .s{font-size:13px;color:var(--mute);font-weight:600}
+.goal.warn .s{color:var(--red)}
+.stack-bar{display:flex;height:22px;border-radius:6px;overflow:hidden;border:2px solid var(--ink)}
+.stack-bar i{display:block;height:100%}
+.legend{display:flex;flex-direction:column;gap:0}
+.legend div{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.legend .sw{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--ink)}
+.legend .nm{font-weight:700;font-size:17px}
+.legend .nm small{display:block;font-weight:500;font-size:13px;color:var(--mute)}
+.legend .kc{font-family:var(--type);font-size:20px;font-variant-numeric:tabular-nums}
+.sec{display:flex;flex-direction:column;gap:10px}
+.sec h3{margin:0;font-weight:800;font-size:15px;letter-spacing:.14em;text-transform:uppercase}
+.formulas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.formulas div{background:var(--soft);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.formulas .k{font-weight:400;font-size:11px;letter-spacing:0;text-transform:uppercase;color:var(--mute)}
+.formulas .v{font-family:var(--type);font-size:18px;font-variant-numeric:tabular-nums}
+.formulas .w{font-size:12px;font-weight:600;color:var(--mute)}
+.alert{border-left:4px solid var(--red);background:var(--soft);padding:12px 14px;border-radius:0 12px 12px 0;font-size:16px;font-weight:500;line-height:1.35}
+.alert b{color:var(--red)}
+details{border-top:2px solid var(--ink);padding-top:10px}
+summary{font-weight:800;font-size:16px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+summary::after{content:"+";color:var(--red);font-size:22px;line-height:1}
+details[open] summary::after{content:"–"}
+.faults{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.faults div{display:flex;flex-direction:column;gap:3px}
+.faults .f{font-weight:700;font-size:16px}
+.faults .fx{font-size:15px;font-weight:500;color:var(--ink);line-height:1.35}
+.faults .fx::before{content:"Our fix: ";color:var(--red);font-weight:700}
+.cta{background:var(--ink);color:#fff;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.cta h2{font-size:24px;color:#fff}
+.cta p{font-size:16px;color:#e8e4e0}
+.cta a{font-family:var(--ui);font-weight:400;font-size:18px;letter-spacing:.02em;text-transform:uppercase;text-decoration:none;text-align:center;background:var(--red);color:#fff;border-radius:12px;padding:13px}
+.cta .copy{font-family:var(--ui);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:#fff;border:1.5px solid #6d6965;border-radius:12px;padding:10px;cursor:pointer}
+.sig{font-family:var(--type);font-size:22px;color:var(--ink);align-self:flex-end}
+.refs{font-size:12px;color:var(--mute);line-height:1.45;font-weight:500}
+.sci{display:flex;flex-direction:column;gap:0;margin-top:10px}
+.sci .it{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--line)}
+.sci .hd{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.sci .nm{font-weight:800;font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+.sci .tag{font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:999px;white-space:nowrap;flex:none}
+.sci .tag.ev{background:var(--ink);color:#fff}
+.sci .tag.dw{background:var(--paper);color:var(--red);border:1.5px solid var(--red)}
+.sci .tx{font-size:15px;font-weight:500;line-height:1.38}
+.sci .tx code{font-family:var(--type);font-size:14px;background:var(--soft);padding:1px 4px;border-radius:4px;white-space:normal}
+.sci sup,.cite-n{color:var(--red);font-weight:700;font-size:12px}
+.reflist{display:flex;flex-direction:column;gap:8px;margin:12px 0 0;padding:0;list-style:none;counter-reset:r}
+.reflist li{font-size:13px;line-height:1.38;font-weight:500;display:grid;grid-template-columns:26px 1fr;gap:4px}
+.reflist li b{color:var(--red);font-variant-numeric:tabular-nums}
+.reflist a{color:var(--ink);text-decoration-color:var(--red);text-underline-offset:2px;word-break:break-word}
+.key{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;font-weight:600;color:var(--mute);margin-top:6px}
+.key span{display:flex;gap:6px;align-items:center}
+.jointab{font-family:var(--ui);font-size:12px;letter-spacing:.04em;text-transform:uppercase;background:var(--red);color:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 10px;text-decoration:none;white-space:nowrap}
+.reftab{white-space:nowrap}
+details.lesson{border:1.5px solid var(--ink);border-radius:14px;padding:0;background:var(--soft)}
+details.lesson summary{padding:12px 14px;font-weight:400;font-size:14px;letter-spacing:.04em;align-items:center;gap:10px}
+details.lesson summary .lt{display:flex;flex-direction:column;gap:2px}
+details.lesson summary .lk{color:var(--red);font-size:11px;letter-spacing:.12em}
+details.lesson summary .ln{font-size:16px;text-transform:none;letter-spacing:0}
+details.lesson .lb{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
+details.lesson .lb p{font-size:15px;line-height:1.45;font-weight:400}
+details.lesson .lb p b{color:var(--red);font-weight:400}
+details.lesson .lb sup{color:var(--red);font-size:11px}
+.formula-line{font-family:var(--type);font-size:15px;background:var(--paper);border:1.5px dashed var(--mute);border-radius:10px;padding:8px 10px;line-height:1.4}
+.read{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--red);text-decoration:underline;text-underline-offset:3px;align-self:flex-start}
+.prot{border:2px solid var(--ink);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.prot h3{margin:0;font-weight:400;font-size:15px;letter-spacing:.1em;text-transform:uppercase}
+.ptiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ptiles div{background:var(--soft);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ptiles .k{font-size:11px;text-transform:uppercase;color:var(--mute)}
+.ptiles .v{font-family:var(--type);font-size:22px;font-variant-numeric:tabular-nums}
+.ptiles .v.red{color:var(--red)}
+.ptiles .w{font-size:12px;color:var(--mute)}
+.netrows{display:flex;flex-direction:column;gap:6px}
+.netrows .nr{display:grid;grid-template-columns:72px 1fr 42px;gap:8px;align-items:center;font-size:14px}
+.netrows .tr{height:14px;background:var(--line);border-radius:4px;overflow:hidden;display:flex}
+.netrows .tr i{display:block;height:100%;background:var(--ink)}
+.netrows .tr em{display:block;height:100%;background:var(--red)}
+.netrows .nv{font-variant-numeric:tabular-nums;text-align:right}
+.nkey{display:flex;gap:14px;font-size:12px;color:var(--mute);flex-wrap:wrap}
+.nkey span{display:flex;gap:5px;align-items:center}
+.nkey i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.acr{color:var(--red);font-size:12px;margin-left:4px}
+.fl{border:2px solid var(--red);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.fl h3{margin:0;font-weight:400;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.chk{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.chk li{display:grid;grid-template-columns:24px 1fr;gap:8px;font-size:15px;line-height:1.35;align-items:start}
+.chk li i{font-style:normal;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--ink)}
+.chk li.ok i{background:var(--ink);color:#fff}
+.chk li.no i{color:var(--red);border-color:var(--red)}
+.chk li small{display:block;color:var(--mute);font-size:13px}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vs div{background:var(--soft);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.vs .k{font-size:11px;text-transform:uppercase;color:var(--mute)}
+.vs .v{font-family:var(--type);font-size:22px}
+.vs .w{font-size:12px;color:var(--mute);line-height:1.3}
+.duel{border:2px solid var(--ink);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.duel h3{margin:0;font-weight:400;font-size:15px;letter-spacing:.1em;text-transform:uppercase}
+.dt{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.dt th{font-weight:400;font-size:11px;text-transform:uppercase;color:var(--mute);text-align:right;padding:4px 0}
+.dt th:first-child,.dt td:first-child{text-align:left}
+.dt td{padding:6px 0;border-top:1px solid var(--line);text-align:right}
+.dt td small{display:block;color:var(--mute);font-size:11px}
+.dt tr.tot td{border-top:2px solid var(--ink);font-family:var(--type);font-size:18px}
+.dt .win{color:var(--red)}
+.verdict{background:var(--ink);color:#fff;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.verdict .vk{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ff8a80}
+.verdict p{font-size:15px;line-height:1.45;color:#fff}
+.nacd{border:2px solid var(--red);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--paper)}
+.nac{text-transform:none;letter-spacing:0}
+.nacd h3{margin:0;font-weight:400;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.nacd .cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nacd .cmp div{background:var(--soft);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.nacd .cmp .k{font-size:11px;text-transform:uppercase;color:var(--mute)}
+.nacd .cmp .v{font-family:var(--type);font-size:24px;font-variant-numeric:tabular-nums}
+.nacd .cmp .w{font-size:12px;color:var(--mute);line-height:1.3}
+.nacd .gapline{font-size:16px;line-height:1.45}
+.nacd .gapline b{color:var(--red);font-weight:400}
+</style>
+
+<div class="phone">
+  <div class="bar">
+    <div class="brand">Coach<b>DW</b></div>
+    <div class="tabs"><button type="button" class="reftab" id="refTab" aria-pressed="false">References</button><a class="jointab" href="https://www.skool.com/strengthforlife-5963" target="_blank" rel="noopener">Join the tribe</a></div>
+  </div>
+  <div class="prog"><i id="prog"></i></div>
+
+  <!-- 0 INTRO -->
+  <section class="screen enter" data-step="0">
+    <div class="eyebrow">The NOT A Calorie Calculator · Free tool</div>
+    <h1>Calories are bollox. Here's the best guess anyway.</h1>
+    <p>Every calculator online is a 100-year-old equation times a vague activity guess. This one asks better questions.</p>
+    <ul class="ticks">
+      <li>Three equations, blended to suit how you train</li>
+      <li>Your life, your job and your training scored separately</li>
+      <li>Protein, digestion and ultra-processed food built into the maths</li>
+      <li>Short lessons on every term as you go: BMR, RMR, TEF, NEAT, EAT, EPOC, MPS and TDEE</li>
+      <li>Your (NOT a)calorie deficit: how far a standard calculator could be steering you wrong</li>
+      <li>The body's clawback on exercise burn taken off</li>
+    </ul>
+    <div class="gift">
+      <div class="typed">No email. No catch.</div>
+      <div class="note">This is a gift. Answer six quick screens and you get your number. Example answers are filled in so you can see how it works... Change them to yours.</div>
+    </div>
+  </section>
+
+  <!-- 1 YOU -->
+  <section class="screen" data-step="1" hidden>
+    <div class="eyebrow">01 · You</div>
+    <h2>The basics</h2>
+    <div class="toggle" role="group" aria-label="Units">
+      <button type="button" id="uMet" aria-pressed="true">Metric</button>
+      <button type="button" id="uImp" aria-pressed="false">Imperial</button>
+    </div>
+    <div class="q"><div class="lab">Sex</div>
+      <div class="chips" data-key="sex">
+        <button class="chip" data-v="m" aria-pressed="true">Male</button>
+        <button class="chip" data-v="f" aria-pressed="false">Female</button>
+      </div>
+    </div>
+    <div class="q"><label for="age">Age</label><div class="num"><input id="age" type="number" inputmode="numeric" value="45" min="16" max="95"><span>years</span></div></div>
+    <div class="q met"><label for="wkg">Weight</label><div class="num"><input id="wkg" type="number" inputmode="decimal" value="85"><span>kg</span></div></div>
+    <div class="q imp" hidden><div class="lab">Weight</div><div class="row">
+      <div class="num"><input id="wst" type="number" inputmode="numeric" value="13" aria-label="Stone"><span>st</span></div>
+      <div class="num"><input id="wlb" type="number" inputmode="decimal" value="5" aria-label="Pounds"><span>lb</span></div></div></div>
+    <div class="q met"><label for="hcm">Height</label><div class="num"><input id="hcm" type="number" inputmode="decimal" value="178"><span>cm</span></div></div>
+    <div class="q imp" hidden><div class="lab">Height</div><div class="row">
+      <div class="num"><input id="hft" type="number" inputmode="numeric" value="5" aria-label="Feet"><span>ft</span></div>
+      <div class="num"><input id="hin" type="number" inputmode="decimal" value="10" aria-label="Inches"><span>in</span></div></div></div>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · BMR & RMR</span><span class="ln">What does your body burn doing nothing?</span></span></summary>
+      <div class="lb">
+        <p><b>BMR</b>, basal metabolic rate, is what your body burns just to stay alive. Heart, lungs, brain, organs. Measured lying still, fasted, in a warm room after a night's sleep.</p>
+        <p><b>RMR</b>, resting metabolic rate, is the same idea measured under looser conditions, so it reads slightly higher. It's what labs actually measure and what the equations predict.</p>
+        <p>It's the biggest slice of your day, typically 60 to 70% of everything you burn <sup>[18]</sup>. The catch... The equations predict an average, not you. That's why we blend three of them and give you a range.</p><a class="read" data-art="acnac" href="#" target="_blank" rel="noopener">Read: <span></span></a></div>
+    </details>
+  </section>
+
+  <!-- 2 BODY -->
+  <section class="screen" data-step="2" hidden>
+    <div class="eyebrow">02 · Body</div>
+    <h2>How much of you is muscle?</h2>
+    <p class="note">Muscle burns more than fat at rest. If we know roughly how much you carry, we can run a third equation built on lean mass.</p>
+    <div class="q"><div class="lab">What have you got?</div>
+      <div class="chips stack" data-key="bfmode">
+        <button class="chip" data-v="waist" aria-pressed="true">A tape measure<small>Waist at the belly button. Best option for most people.</small></button>
+        <button class="chip" data-v="known" aria-pressed="false">I know my estimated body fat %<small>From a scan, smart scales or callipers</small></button>
+        <button class="chip" data-v="none" aria-pressed="false">No idea<small>We'll run two equations instead of three</small></button>
+      </div>
+    </div>
+    <div class="q" id="qWaist"><label for="waist">Waist</label><div class="num"><input id="waist" type="number" inputmode="decimal" value="94"><span id="waistU">cm</span></div>
+      <div class="note">Breathe out, don't suck it in. We use the Relative Fat Mass formula.</div></div>
+    <div class="q" id="qBf" hidden><label for="bf">Body fat</label><div class="num"><input id="bf" type="number" inputmode="decimal" value="22"><span>%</span></div></div>
+  </section>
+
+  <!-- 3 FOOD -->
+  <section class="screen" data-step="3" hidden>
+    <div class="eyebrow">03 · Food</div>
+    <h2>What actually goes in</h2>
+    <p class="note">Digesting food costs energy. Protein costs the most, and real food costs more than factory food.</p>
+    <div class="q"><div class="lab">Protein</div>
+      <div class="chips stack" data-key="protein">
+        <button class="chip" data-v="0.8" aria-pressed="false">Barely think about it<small>Toast, cereal, pasta. Meat now and then.</small></button>
+        <button class="chip" data-v="1.2" aria-pressed="true">Some at most meals<small>Eggs, meat or fish once or twice a day</small></button>
+        <button class="chip" data-v="1.6" aria-pressed="false">Every meal, on purpose<small>Meat, fish, eggs, dairy built into every plate</small></button>
+        <button class="chip" data-v="2.2" aria-pressed="false">High and tracked<small>Around 2g per kg of bodyweight</small></button>
+      </div>
+      <label for="protG" class="note" style="margin-top:4px">Know your grams? Put them in instead (optional)</label>
+      <div class="num"><input id="protG" type="number" inputmode="numeric" placeholder="e.g. 140" min="0" max="500"><span>g a day</span></div>
+    </div>
+    <div class="q slide"><label for="upf">Ultra-processed food</label>
+      <div class="val" id="upfV">55%<small>of what you eat</small></div>
+      <input id="upf" type="range" min="0" max="100" step="5" value="55">
+      <div class="scale"><span>Cook from scratch</span><span>UK average ≈ 57%</span><span>All packets</span></div>
+      <div class="note">Anything with ingredients you wouldn't keep in a kitchen. Ready meals, cereal, crisps, protein bars, most bread, takeaways.</div>
+      <a class="read" data-art="tff1" href="#" target="_blank" rel="noopener">Read: <span></span></a>
+    </div>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · TEF & metabolic cost</span><span class="ln">Why protein is the cheapest calorie you can eat</span></span></summary>
+      <div class="lb">
+        <p><b>TEF</b>, the thermic effect of food, is the energy it costs to digest, absorb and store what you eat. Around 10% of a normal day's burn <sup>[18]</sup>.</p>
+        <p>But it isn't flat. Protein costs 20 to 30% of its own calories to process. Carbs 5 to 10%. Fat 0 to 3% <sup>[11]</sup>. That's the metabolic cost of food.</p>
+        <div class="formula-line">100 kcal of protein ≈ 75 kcal kept<br>100 kcal of carbs ≈ 92 kcal kept<br>100 kcal of fat ≈ 98 kcal kept</div>
+        <p>Same number on the label. Very different number in you... Protein also fills you up more than anything else on the plate <sup>[11]</sup>. And real food costs more to process than factory food <sup>[12]</sup>.</p><a class="read" data-art="acnac" href="#" target="_blank" rel="noopener">Read: <span></span></a><a class="read" data-art="protein" href="#" target="_blank" rel="noopener">Read: <span></span></a></div>
+    </details>
+  </section>
+
+  <!-- 4 LIFESTYLE -->
+  <section class="screen" data-step="4" hidden>
+    <div class="eyebrow">04 · Lifestyle</div>
+    <h2>Life outside work and the gym</h2>
+    <p class="note">Everything you do on your feet that isn't work or the gym. Walking the dog. Walking to and from work or the station. Running around after the kids. Shopping, gardening, the school run on foot.</p>
+    <div class="q"><div class="lab">How active is it, on a typical day?</div>
+      <div class="chips stack" data-key="lifeLvl">
+        <button class="chip" data-v="1" aria-pressed="false">1 · Gentle<small>Pottering, strolling, light jobs round the house</small></button>
+        <button class="chip" data-v="2" aria-pressed="true">2 · Easy<small>Walking the dog at their pace, playing with the kids</small></button>
+        <button class="chip" data-v="3" aria-pressed="false">3 · Steady<small>Walking to work with purpose, carrying the shopping</small></button>
+        <button class="chip" data-v="4" aria-pressed="false">4 · Busy<small>Brisk walking, running around after the kids, hills</small></button>
+        <button class="chip" data-v="5" aria-pressed="false">5 · Hard<small>Cycling to work, uphill hikes, heavy lifting and carrying</small></button>
+      </div>
+    </div>
+    <div class="q slide"><label for="lifeMin">How long, all added up?</label>
+      <div class="val" id="lifeMinV">1 hr<small>a day</small></div>
+      <input id="lifeMin" type="range" min="30" max="180" step="15" value="60">
+      <div class="scale"><span>30 min</span><span>1 hr 45</span><span>3 hrs</span></div>
+    </div>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · NEAT</span><span class="ln">The burn nobody counts</span></span></summary>
+      <div class="lb">
+        <p><b>NEAT</b>, non-exercise activity thermogenesis, is everything you burn moving that isn't planned training. Walking the dog. Chasing the kids. Stairs, standing, fidgeting.</p>
+        <p>It's the most variable part of anyone's day. Two people of a similar size can differ by up to 2,000 calories a day <sup>[17]</sup>... That's why we score your life in real hours instead of a tick box.</p><a class="read" data-art="bollox" href="#" target="_blank" rel="noopener">Read: <span></span></a></div>
+    </details>
+  </section>
+
+  <!-- 5 WORK -->
+  <section class="screen" data-step="5" hidden>
+    <div class="eyebrow">05 · Work</div>
+    <h2>What does your day job ask of you?</h2>
+    <div class="q">
+      <div class="chips stack" data-key="job">
+        <button class="chip" data-v="desk" aria-pressed="true">Desk or driving<small>Office, call centre, lorry or taxi</small></button>
+        <button class="chip" data-v="stand" aria-pressed="false">Standing, light<small>Shop, bar, hairdresser, lab</small></button>
+        <button class="chip" data-v="feet" aria-pressed="false">On your feet all shift<small>Waiting tables, nursing, care work, warehouse picking</small></button>
+        <button class="chip" data-v="trade" aria-pressed="false">Trades<small>Sparky, plumber, joiner, mechanic</small></button>
+        <button class="chip" data-v="site" aria-pressed="false">Building site<small>General labouring, groundwork, roofing</small></button>
+        <button class="chip" data-v="heavy" aria-pressed="false">Heavy manual<small>Hod carrying, digging, removals, scaffolding</small></button>
+        <button class="chip" data-v="none" aria-pressed="false">Not working<small>Retired, between jobs, full-time parent</small></button>
+      </div>
+    </div>
+    <div class="row" id="qJob">
+      <div class="q slide"><label for="jh">Hours a day</label><div class="val" id="jhV">8</div><input id="jh" type="range" min="2" max="12" step="1" value="8"></div>
+      <div class="q slide"><label for="jd">Days a week</label><div class="val" id="jdV">5</div><input id="jd" type="range" min="1" max="7" step="1" value="5"></div>
+    </div>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · NEAT at work</span><span class="ln">Your job can out-burn your training</span></span></summary>
+      <div class="lb">
+        <p>Your job is NEAT too, and usually the biggest chunk of it. Desk work tops out around 700 calories a day of work movement. Standing work up to around 1,400. Agricultural and heavy manual work around 2,000 or more <sup>[17]</sup>.</p>
+        <p>One tick box can't cover a range that wide. So we don't use one.</p><a class="read" data-art="bollox" href="#" target="_blank" rel="noopener">Read: <span></span></a></div>
+    </details>
+  </section>
+
+  <!-- 6 TRAINING -->
+  <section class="screen" data-step="6" hidden>
+    <div class="eyebrow">06 · Training</div>
+    <h2>The bit you choose to do</h2>
+    <div class="q slide"><label for="ls">Lifting sessions a week</label><div class="val" id="lsV">3</div><input id="ls" type="range" min="0" max="7" step="1" value="3"></div>
+    <div class="q" id="qLift"><div class="lab">How you lift</div>
+      <div class="chips stack" data-key="liftStyle">
+        <button class="chip" data-v="std" aria-pressed="false">Sets with proper rest<small>Machines and free weights, 8 to 15 reps</small></button>
+        <button class="chip" data-v="heavy" aria-pressed="true">Heavy compounds<small>Squats, deadlifts, presses, rows</small></button>
+        <button class="chip" data-v="circuit" aria-pressed="false">Circuits, little rest<small>Supersets, kettlebells, Hyrox-style</small></button>
+      </div>
+      <div class="lab" style="margin-top:6px">Minutes per session</div>
+      <div class="chips" data-key="liftMin">
+        <button class="chip" data-v="30" aria-pressed="false">30</button>
+        <button class="chip" data-v="45" aria-pressed="false">45</button>
+        <button class="chip" data-v="60" aria-pressed="true">60</button>
+        <button class="chip" data-v="90" aria-pressed="false">90</button>
+      </div>
+    </div>
+    <div class="q slide"><label for="cs">Cardio sessions a week</label><div class="val" id="csV">2</div><input id="cs" type="range" min="0" max="7" step="1" value="2"></div>
+    <div class="q" id="qCardio"><div class="lab">Cardio effort</div>
+      <div class="chips stack" data-key="cardioInt">
+        <button class="chip" data-v="easy" aria-pressed="true">Easy<small>Brisk or incline walk, easy bike, can chat</small></button>
+        <button class="chip" data-v="steady" aria-pressed="false">Steady<small>Running, rowing, cycling at a working pace</small></button>
+        <button class="chip" data-v="hard" aria-pressed="false">Hard intervals<small>HIIT, sprints, classes that leave you wrecked</small></button>
+      </div>
+      <div class="lab" style="margin-top:6px">Minutes per session</div>
+      <div class="chips" data-key="cardioMin">
+        <button class="chip" data-v="20" aria-pressed="false">20</button>
+        <button class="chip" data-v="30" aria-pressed="false">30</button>
+        <button class="chip" data-v="45" aria-pressed="true">45</button>
+        <button class="chip" data-v="60" aria-pressed="false">60</button>
+      </div>
+    </div>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · Protein, lifting &amp; MPS</span><span class="ln">Why lifting and protein beat cardio for losing fat, not muscle</span></span></summary>
+      <div class="lb">
+        <p>Cardio burns more in the session. No argument. In an eight-month trial in overweight, previously sedentary adults, cardio lost more weight and fat than lifting alone. But only the lifters gained muscle, and the best result came from doing both <sup>[23]</sup>.</p>
+        <p>Here's what the scale doesn't tell you. On a very low calorie diet, the group doing cardio saw their resting burn drop. The group lifting on the same diet kept their lean mass and their resting burn <sup>[22]</sup>.</p>
+        <p>Add protein and it gets better. Young men on a 40% calorie deficit, all lifting and doing intervals, ate either 1.2 or 2.4g of protein per kg. In four weeks the high protein group lost <b>4.8kg of fat and gained 1.2kg of lean mass</b>. The lower protein group lost 3.5kg of fat and gained next to none <sup>[21]</sup>.</p>
+        <p><b>MPS</b>, muscle protein synthesis, is how your body repairs and builds muscle. Lifting switches it on, and it stays raised for up to 48 hours after a session <sup>[24]</sup>. Protein is the raw material. And protein is the most expensive food to process, costing 20 to 30% of its own calories in <b>TEF</b> <sup>[11]</sup>.</p>
+        <div class="formula-line">Lift → MPS switched on for up to 48 hours<br>Protein → the building blocks, plus the highest TEF<br>Together → the weight you lose is fat, not muscle</div>
+        <p>Muscle is the engine. Each kilo burns about 13 calories a day at rest, fat about 4.5 <sup>[25]</sup>. Small on a daily basis... But muscle is what keeps you strong, moving and looking how you want once the weight comes off.</p>
+        <p>Lose weight with cardio alone and some of it can be muscle. Lose it lifting and eating protein and it's fat. Cardio is a bonus, not the plan.</p>
+        <a class="read" data-art="mag7" href="#" target="_blank" rel="noopener">Read: <span></span></a>
+      </div>
+    </details>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · EAT</span><span class="ln">Train for what it builds, not what it burns</span></span></summary>
+      <div class="lb">
+        <p><b>EAT</b>, exercise activity thermogenesis, is what you burn in planned training. For most people it's a smaller slice than they think. Even in people who train hard, it tops out around 15 to 30% of the day's burn <sup>[17]</sup>.</p>
+        <p>Your watch overstates it. Wrist trackers have been out by 27 to 93% on calories burned <sup>[19]</sup>. And your body claws back around 28% by turning its resting burn down <sup>[10]</sup>.</p>
+        <p>Lift to build muscle and strength. That's what changes your engine for good.</p><a class="read" data-art="mag7" href="#" target="_blank" rel="noopener">Read: <span></span></a><a class="read" data-art="acnac" href="#" target="_blank" rel="noopener">Read: <span></span></a></div>
+    </details>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · EPOC</span><span class="ln">The afterburn, and the bollox sold about it</span></span></summary>
+      <div class="lb">
+        <p><b>EPOC</b>, excess post-exercise oxygen consumption, is the afterburn. After training your body keeps using extra oxygen to refuel, repair and cool down.</p>
+        <p>It's real, but small... Only 6 to 15% of the energy cost of the session itself <sup>[16]</sup>. Harder sessions sit at the top of that range.</p>
+        <p>Anyone selling you a 24-hour fat-burning afterburn from cardio is selling you fluff and bollox. We add it in, scaled to how hard you train.</p>
+        <p><b>Lifting is different.</b> Its afterburn is bigger than steady cardio of a similar energy cost <sup>[28]</sup>. And then the repair starts. Resting burn stays raised by about 5% for up to 72 hours after a single lifting session <sup>[26]</sup>, and has been measured 4.7 to 9.4% higher the next morning <sup>[27]</sup>.</p>
+        <p>A big part of that is <b>MPS</b>, rebuilding muscle protein. Making protein is expensive... Protein turnover uses around a fifth of your resting energy <sup>[30]</sup>. That repair cost sits outside EPOC, so we count it separately as <b>Repair &amp; rebuild</b>.</p><a class="read" data-art="acnac" href="#" target="_blank" rel="noopener">Read: <span></span></a></div>
+    </details>
+  </section>
+
+  <!-- 7 RESULT -->
+  <section class="screen" data-step="7" hidden>
+    <div class="eyebrow">Your best guess</div>
+    <div class="hero">
+      <div class="big"><span id="rTdee">0</span><small>kcal / day</small></div>
+      <div class="range">Real maintenance is probably between <b id="rLo">0</b> and <b id="rHi">0</b></div>
+    </div>
+
+    <div class="goals">
+      <div class="goal" id="gCut"><span class="k">Lose fat</span><span class="v" id="rCut">0</span><span class="s" id="rCutS">20% under</span></div>
+      <div class="goal"><span class="k">Lose slowly</span><span class="v" id="rSlow">0</span><span class="s">10% under</span></div>
+      <div class="goal"><span class="k">Maintain</span><span class="v" id="rMain">0</span><span class="s">Hold steady</span></div>
+      <div class="goal"><span class="k">Build</span><span class="v" id="rBuild">0</span><span class="s">10% over</span></div>
+    </div>
+
+    <div class="nacd" id="nacd">
+      <h3>Your <span class="nac">(NOT a)calorie deficit</span></h3>
+      <div class="cmp">
+        <div><span class="k">A standard calculator</span><span class="v" id="nStd">0</span><span class="w" id="nStdW">Mifflin-St Jeor × one tick box</span></div>
+        <div><span class="k">The NOT A Calorie Calculator</span><span class="v" id="nOurs">0</span><span class="w">Everything it costs you to live, lift and digest</span></div>
+      </div>
+      <p class="gapline" id="nGap"></p>
+      <p class="note" id="nWhy"></p>
+    </div>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · The <span class="nac">(NOT a)calorie deficit</span></span><span class="ln">Why so many people undereat, and fall off the wagon</span></span></summary>
+      <div class="lb">
+        <p>The <b>(NOT a)calorie deficit</b> is the deficit you're actually running, not the one you were told you're running. Your target came from an obsolete equation, built over 100 years ago on an already invalid metric, multiplied by a tick box <sup>[1][20]</sup>.</p>
+        <p>That sum leaves out the metabolic cost of what you actually do. The digestion cost of protein <sup>[11]</sup>. The repair and rebuild after lifting <sup>[26]</sup>. The extra muscle you carry <sup>[25]</sup>. Your job and your life <sup>[17]</sup>. And even the best equation misses your resting burn by more than 10% for plenty of people <sup>[4]</sup>.</p>
+        <p>So the people doing everything right, lifting and eating high protein, are often the ones the sum shortchanges most. The PT plans a sensible 20% cut. The real one is bigger.</p>
+        <p>A bigger deficit isn't a faster win. Lose faster than about 0.5 to 1% of bodyweight a week and you risk losing muscle with the fat <sup>[31]</sup>. And appetite fights back hard... For every kilo lost, the drive to eat rose by around 100 calories a day in one trial, more than three times the drop in calories burned <sup>[32]</sup>.</p>
+        <p>Hungry, tired, losing strength, scale stalling. That's when people fall off the wagon and blame themselves. In 35 years of coaching, the problem is rarely willpower... It's a deficit nobody did the maths on properly.</p>
+        <a class="read" data-art="bollox" href="#" target="_blank" rel="noopener">Read: <span></span></a>
+      </div>
+    </details>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · Recovery &amp; collagen</span><span class="ln">Under-fuelled, under-recovered: why it catches up with you</span></span></summary>
+      <div class="lb">
+        <p>Training doesn't just break down muscle. Tendons, ligaments and other connective tissue take the load too, and they're built from <b>collagen</b>.</p>
+        <p>Rebuilding collagen needs raw materials. Protein supplies the building blocks. <b>Vitamin C</b> is a cofactor for the enzymes that stabilise the collagen molecule <sup>[34]</sup>. In a small study of 8 men, vitamin C-enriched gelatin taken an hour before exercise roughly doubled a blood marker of collagen synthesis <sup>[35]</sup>.</p>
+        <p>Under-eat and muscle repair slows too. Five days at an energy deficit cut resting muscle protein synthesis by 27% in 15 young adults. Lifting plus protein brought it back <sup>[33]</sup>.</p>
+        <p>Keep it up long enough and the bill grows. Low energy availability is linked to a poorer training response, lower strength and a higher injury risk, in men and women <sup>[36]</sup>.</p>
+        <p>Every session you rebuild a little less than you broke down. Week on week it stacks up... Niggles, aches, stalled lifts, flat energy. That's cumulative systemic fatigue and under-recovery, and it's the hidden bill of a (NOT a)calorie deficit.</p>
+        <div class="formula-line">At least 1.6g protein per kg, every day<br>Collagen-rich food: slow-cooked cuts, bone broth, skin-on fish<br>Vitamin C: peppers, kiwi, citrus, berries, broccoli<br>A deficit you can recover from</div>
+      </div>
+    </details>
+
+    <div class="sec">
+      <h3>Where it goes</h3>
+      <div class="stack-bar" id="rBar"></div>
+      <div class="legend" id="rLegend"></div>
+    </div>
+    <details class="lesson"><summary><span class="lt"><span class="lk">Lesson · TDEE</span><span class="ln">How your day adds up</span></span></summary>
+      <div class="lb">
+        <p><b>TDEE</b>, total daily energy expenditure, is everything you burn in a day, added up.</p>
+        <div class="formula-line">TDEE = RMR + NEAT + EAT + EPOC + TEF</div>
+        <p>The bar above is yours, piece by piece. Look at which slice is biggest... It isn't the gym. That's why the gym is for building the engine, and the kitchen and your day decide the rest.</p><a class="read" data-art="bollox" href="#" target="_blank" rel="noopener">Read: <span></span></a><a class="read" data-art="cico" href="#" target="_blank" rel="noopener">Read: <span></span></a></div>
+    </details>
+
+    <div class="prot">
+      <h3>Protein: the metabolic cost</h3>
+      <div class="ptiles">
+        <div><span class="k">Your target</span><span class="v red" id="pT">0g</span><span class="w">At least 1.6g per kg</span></div>
+        <div><span class="k">On the label</span><span class="v" id="pK">0</span><span class="w">kcal at 4 per gram</span></div>
+        <div><span class="k">Burned digesting</span><span class="v" id="pB">0</span><span class="w">kcal, about a quarter</span></div>
+      </div>
+      <div class="netrows" aria-label="What 100 kcal of each nutrient leaves you with">
+        <div class="nr"><span>Protein</span><span class="tr"><i style="width:75%"></i><em style="width:25%"></em></span><span class="nv">75</span></div>
+        <div class="nr"><span>Carbs</span><span class="tr"><i style="width:92.5%"></i><em style="width:7.5%"></em></span><span class="nv">92</span></div>
+        <div class="nr"><span>Fat</span><span class="tr"><i style="width:98%"></i><em style="width:2%"></em></span><span class="nv">98</span></div>
+      </div>
+      <div class="nkey"><span><i style="background:var(--ink)"></i>Kept from 100 kcal eaten</span><span><i style="background:var(--red)"></i>Burned digesting it</span></div>
+      <p class="note" id="pNote"></p>
+    </div>
+
+    <div class="fl">
+      <h3>Fat loss done right</h3>
+      <ul class="chk" id="flList"></ul>
+      <div class="vs">
+        <div><span class="k">1kg of muscle at rest</span><span class="v">≈13</span><span class="w">kcal a day. Keep it.</span></div>
+        <div><span class="k">1kg of fat at rest</span><span class="v">≈4.5</span><span class="w">kcal a day. Lose it.</span></div>
+      </div>
+      <p class="note" id="flNote"></p>
+    </div>
+
+    <div class="duel">
+      <h3>Lift or cardio? If you could only pick one</h3>
+      <p class="note">60 minutes of each, worked out on your body. Everything it costs you, not just the bit your watch sees.</p>
+      <table class="dt">
+        <thead><tr><th></th><th id="dLiftH">Lifting</th><th id="dCardH">Cardio</th></tr></thead>
+        <tbody>
+          <tr><td>The session<small>EAT</small></td><td id="d1a"></td><td id="d1b"></td></tr>
+          <tr><td>Afterburn<small>EPOC, first hours</small></td><td id="d2a"></td><td id="d2b"></td></tr>
+          <tr><td>Repair &amp; rebuild<small>MPS, next 48 hours</small></td><td id="d3a"></td><td id="d3b">0</td></tr>
+          <tr class="tot"><td>Total</td><td id="dTa"></td><td id="dTb"></td></tr>
+          <tr><td>Keeps muscle in a diet?</td><td class="win">Yes</td><td>Not on its own</td></tr>
+          <tr><td>Raises resting burn long term?</td><td class="win">≈96 kcal/day</td><td>No clear change</td></tr>
+        </tbody>
+      </table>
+      <div class="verdict"><span class="vk">DW verdict</span><p id="dVerdict"></p></div>
+      <p class="note">Small studies, so treat the repair figure as a guide <sup class="cite-n">[26][29]</sup>. Do both if you can... That's what wins outright <sup class="cite-n">[23]</sup>.</p>
+    </div>
+    <div class="alert" id="rUpf"></div>
+
+    <div class="sec">
+      <h3>The three engines</h3>
+      <div class="formulas" id="rForm"></div>
+      <div class="note" id="rFormNote"></div>
+    </div>
+
+    <div class="sec">
+      <h3>Find your real number</h3>
+      <p class="note"><b>Eat the maintenance figure for three weeks.</b> Weigh every morning and compare weekly averages, not single days. Weight flat? That's your number. Rising or falling? Move it by 100 to 200 a day and go again. The scale tells you what no equation can.</p>
+    </div>
+
+    <details>
+      <summary>Why calories are still bollox</summary>
+      <div class="faults">
+        <div><span class="f">The equations are averages from small groups of people.</span><span class="fx">Three equations blended, weighted to how you train, and given as a range rather than a single "perfect" number.</span></div>
+        <div><span class="f">"Moderately active" means nothing.</span><span class="fx">Lifestyle, work and training scored separately in real hours, using measured energy costs from the 2024 Compendium of Physical Activities.</span></div>
+        <div><span class="f">Every calorie on the label is treated the same.</span><span class="fx">Protein and ultra-processed food change what digestion costs you, so both feed the maths.</span></div>
+        <div><span class="f">Watches and machines overstate exercise burn.</span><span class="fx">We take off the 28% the average body claws back by turning down its resting burn.</span></div>
+        <div><span class="f">The afterburn gets wildly oversold.</span><span class="fx">EPOC is added at its measured size, 6 to 15% of the session, scaled to how hard you train.</span></div>
+        <div><span class="f">The label itself is built on rounded 1890s averages.</span><span class="fx">None possible. Atwater's 4, 9 and 4 overstate vegetable protein by nearly 30% and fruit carbs by about 11% <sup class="cite-n">[20]</sup>. Another reason the scale has the final say.</span></div>
+        <div><span class="f">The label number isn't what you absorb.</span><span class="fx">No fix in the maths for this one. It's why the scale has the final say.</span></div>
+      </div>
+    </details>
+
+
+
+    <button class="btn" type="button" id="seeRefs" style="flex:none">See the science behind every number</button>
+
+    <div class="cta">
+      <h2>Liked the gift?</h2>
+      <p>Come and join the tribe. The Strength For Life community on Skool is free to join, with a ton of benefits and the chance to actually profit from being a member.</p>
+      <a href="https://www.skool.com/strengthforlife-5963" target="_blank" rel="noopener">Join free on Skool</a>
+      <button class="copy" type="button" id="share">Copy link to share this calculator</button>
+    </div>
+    <div class="sig">Danny Williams</div>
+    <div class="refs">Built on: Mifflin-St Jeor 1990 · Harris-Benedict, Roza &amp; Shizgal revision 1984 · Cunningham 1980 · Relative Fat Mass, Woolcott &amp; Bergman 2018 · 2024 Adult Compendium of Physical Activities · Westerterp 2004 · Barr &amp; Wright 2010 · Hall et al. 2019 · Careau et al. 2021 · Morton et al. 2018 · LaForgia et al. 2006. A guide, not a prescription. Not medical advice.</div>
+  </section>
+
+  <!-- REFERENCES TAB -->
+  <section class="screen refscreen" id="refScreen" hidden>
+    <div class="eyebrow">References</div>
+    <h2>The science behind every number</h2>
+    <p class="note">Every figure in this calculator, where it comes from, and which calls are ours. Tap a reference to read the study.</p>
+      <div class="key"><span><i class="tag ev sci-k">Evidence</i>Taken straight from published research</span><span><i class="tag dw sci-k">DW call</i>Our working figure, built on the research</span></div>
+      <div class="sci">
+        <div class="it"><div class="hd"><span class="nm">Mifflin-St Jeor</span><span class="tag ev">Evidence</span></div>
+          <div class="tx"><code>10×kg + 6.25×cm − 5×age + 5 (men) or − 161 (women)</code>. The most reliable common equation for non-obese and obese adults, landing within 10% of measured resting burn more often than any other <sup>[3][4]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Harris-Benedict</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Built on 239 healthy people in 1919 <sup>[1]</sup>. We use the 1984 revision, reckoned to land within about 14% in normally nourished people <sup>[2]</sup>. In athletes it showed no significant error, where Mifflin-St Jeor did <sup>[5]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Cunningham</span><span class="tag ev">Evidence</span></div>
+          <div class="tx"><code>500 + 22 × lean mass (kg)</code>. Built on lean mass, not total weight <sup>[6]</sup>. Also accurate in athletes <sup>[5]</sup>. Only used when we can estimate body fat.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Body fat from a tape</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Relative Fat Mass: <code>64 − 20 × height ÷ waist (+12 for women)</code>. Validated against DXA scans and more accurate than BMI <sup>[7]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Blending the three</span><span class="tag dw">DW call</span></div>
+          <div class="tx">Train 2+ lifting or 3+ cardio sessions a week and Harris-Benedict and Cunningham get 40% each, Mifflin-St Jeor 20%. Otherwise Mifflin-St Jeor leads at 50%. Weights follow the accuracy findings above <sup>[4][5]</sup>, the split itself is ours.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Activity costs</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Every activity uses its MET value from the 2024 Adult Compendium <sup>[8]</sup>. Lifestyle levels 1 to 5: 2.5 (pottering, light jobs), 3.0 (walking the dog), 4.0 (walking to work), 5.0 (brisk walking, chasing the kids, around the 4.8 for brisk walking and 5.8 for vigorous play), 6.5 (around the 6.0 for cross-country hiking and 6.8 for cycling to work). Desk work 1.5. Standing work 1.8. Trades 3.0. Labouring 4.0 to 5.0. Weights 3.5 to 5.8. Brisk walk 4.8. Rowing 7.3.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Scaled to you</span><span class="tag dw">DW call</span></div>
+          <div class="tx">A MET assumes a standard resting burn, and real resting burn varies, which is why a separate Compendium exists for over-60s <sup>[8][9]</sup>. So one MET here equals <em>your</em> blended resting burn per kg per hour, and only energy above resting is added so nothing is counted twice.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Shift averages</span><span class="tag dw">DW call</span></div>
+          <div class="tx">Nobody digs for eight solid hours. Job values are shift averages from the Compendium's occupation codes <sup>[8]</sup> and then reduced 20% for breaks. Hard cardio intervals are averaged at 9.0 across the session, between moderate and vigorous interval values <sup>[8]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">The rest of the day</span><span class="tag dw">DW call</span></div>
+          <div class="tx">8 hours asleep at resting burn. Any awake hours you didn't account for are scored at 1.5, the Compendium's level for light sitting tasks <sup>[8]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Exercise clawback</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Training burn is cut by 28%. Across 1,754 adults, the body offset an average 28% of extra activity energy by lowering resting burn <sup>[10]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Digestion and protein</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Digestion costs 20 to 30% of protein calories, 5 to 10% of carbs and 0 to 3% of fat <sup>[11]</sup>. We use the midpoints (25%, 7.5%, 2%), take your protein intake and split the rest evenly between carbs and fat.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Ultra-processed food</span><span class="tag dw">DW call</span></div>
+          <div class="tx">A processed meal cost almost half the digestive energy of a matched whole food one <sup>[12]</sup>. That is one small study, so we apply a modest version: digestion runs 15% higher on a scratch-cooked diet, 30% lower on an all-packet one.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Hidden overeating</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">On an ultra-processed diet, people ate 508 kcal a day more than on whole food <sup>[13]</sup>. UK adults get 56.8% of their calories from ultra-processed food <sup>[14]</sup>. Flagged as a warning, not added to the maths.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Protein's metabolic cost</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Protein shown at 25% digestion cost, the midpoint of 20 to 30% <sup>[11]</sup>. So 100 kcal of protein leaves about 75, carbs about 92, fat about 98. Enter your grams for the most accurate figure.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Lifting, protein &amp; MPS</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Higher protein (2.4 vs 1.2g/kg) with hard training in a 40% deficit gave more fat loss and more lean mass gain in young men over 4 weeks <sup>[21]</sup>. Lifting on a very low calorie diet preserved lean mass and resting burn where cardio didn't <sup>[22]</sup>. Cardio alone lost more weight and fat than lifting alone over 8 months, but only lifting added muscle and combining both did best <sup>[23]</sup>. MPS stayed raised 48 hours after lifting in untrained people <sup>[24]</sup>. Muscle ≈13 and fat ≈4.5 kcal/kg/day at rest <sup>[25]</sup>. Shown as guidance, not added to the maths.</div></div>
+        <div class="it"><div class="hd"><span class="nm">The <span class="nac">(NOT a)calorie deficit</span></span><span class="tag dw">DW call</span></div>
+          <div class="tx">"Standard calculator" here means Mifflin-St Jeor <sup>[3]</sup> times the usual activity factor picked from your weekly sessions: 1.2 for none, 1.375 for 1 to 3, 1.55 for 4 or 5, 1.725 for 6 or 7, 1.9 for 8 plus. We compare a 20% cut from that number with your NOT A Calorie Calculator burn. Weekly loss uses the common rule of thumb of about 7,700 kcal per kg, itself an estimate. Safe loss rate for keeping muscle of 0.5 to 1% of bodyweight a week <sup>[31]</sup>. Appetite rises around 100 kcal a day per kg lost <sup>[32]</sup>. The link to people quitting is Danny's coaching experience, not a measured result.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Recovery, collagen &amp; vitamin C</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Vitamin C is a cofactor for the collagen hydroxylases <sup>[34]</sup>. Vitamin C-enriched gelatin before exercise roughly doubled the collagen synthesis marker PINP in 8 men over 3 days <sup>[35]</sup>. A 5-day energy deficit cut resting MPS 27% in 15 young adults, restored by lifting and protein <sup>[33]</sup>. Low energy availability reduces training response and strength and raises injury risk <sup>[36]</sup>. "Cumulative systemic fatigue" is Danny's coaching description of how these add up over weeks, not a measured result. Shown as guidance, not added to the maths.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Repair &amp; rebuild after lifting</span><span class="tag dw">DW call</span></div>
+          <div class="tx">Resting burn rose about 5% (around 95 kcal a day) for 72 hours after one lifting session in 8 overweight young men <sup>[26]</sup>, and 4.7 to 9.4% the next morning in trained men <sup>[27]</sup>. Lifting's afterburn beat steady cycling of similar cost <sup>[28]</sup>. Over months, lifting raised resting burn by about 96 kcal a day against controls, aerobic training showed no significant change <sup>[29]</sup>, though the authors rate those studies as high risk of bias. We add 5% of resting burn for the 48 hours after each session (capped at every day), then take the 28% clawback off. Conservative, and small study numbers, so treat it as a guide.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Lift or cardio comparison</span><span class="tag dw">DW call</span></div>
+          <div class="tx">Compares 60 minutes of each using your own body and resting burn: session cost <sup>[8]</sup>, afterburn <sup>[16][28]</sup> and, for lifting, 48 hours of repair at 5% <sup>[26]</sup>. Clawback left off both so they compare fairly. The verdict is Danny's coaching call, built on that and on what the weight you lose is made of <sup>[21][22][23]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">EPOC, the afterburn</span><span class="tag dw">DW call</span></div>
+          <div class="tx">EPOC runs at 6 to 15% of the net energy cost of a session, rising with intensity <sup>[16]</sup>. We use 6% for easy cardio, 10% for steady cardio and lifting, 15% for hard intervals, then apply the 28% clawback.</div></div>
+        <div class="it"><div class="hd"><span class="nm">How your day splits</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Resting burn typically 60 to 70% of the day, digestion around 10% <sup>[18]</sup>. NEAT varies by up to 2,000 kcal a day between people of similar size, and exercise maxes out around 15 to 30% even in people who train <sup>[17]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Protein target</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">At least 1.6g per kg of bodyweight a day, where gains in lean mass levelled off in the largest meta-analysis on protein and resistance training <sup>[15]</sup>.</div></div>
+        <div class="it"><div class="hd"><span class="nm">The ±10% range</span><span class="tag ev">Evidence</span></div>
+          <div class="tx">Even the best equation misses by more than 10% in a good share of people <sup>[4]</sup>, so you get a range, not one magic number.</div></div>
+        <div class="it"><div class="hd"><span class="nm">Goal targets</span><span class="tag dw">DW call</span></div>
+          <div class="tx">20% and 10% under for fat loss, 10% over for building. Fat-loss targets never go below your resting burn. Coaching rules of thumb, then tested against the scale.</div></div>
+      </div>
+      <ol class="reflist">
+        <li><b>1</b><a href="https://archive.org/details/biometricstudyof00harruoft" target="_blank" rel="noopener">Harris JA, Benedict FG. A Biometric Study of Basal Metabolism in Man. Carnegie Institution of Washington; 1919.</a></li>
+        <li><b>2</b><a href="https://pubmed.ncbi.nlm.nih.gov/6741850/" target="_blank" rel="noopener">Roza AM, Shizgal HM. The Harris Benedict equation reevaluated. Am J Clin Nutr. 1984;40(1):168-182.</a></li>
+        <li><b>3</b><a href="https://doi.org/10.1093/ajcn/51.2.241" target="_blank" rel="noopener">Mifflin MD, St Jeor ST, et al. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr. 1990;51(2):241-247.</a></li>
+        <li><b>4</b><a href="https://doi.org/10.1016/j.jada.2005.02.005" target="_blank" rel="noopener">Frankenfield D, Roth-Yousey L, Compher C. Comparison of predictive equations for resting metabolic rate. J Am Diet Assoc. 2005;105(5):775-789.</a></li>
+        <li><b>5</b><a href="https://doi.org/10.1007/s40279-023-01896-z" target="_blank" rel="noopener">O'Neill JER, Corish CA, Horner K. Accuracy of resting metabolic rate prediction equations in athletes. Sports Med. 2023;53(12):2373-2398.</a></li>
+        <li><b>6</b><a href="https://pubmed.ncbi.nlm.nih.gov/?term=Cunningham+1980+reanalysis+of+the+factors+influencing+basal+metabolic+rate" target="_blank" rel="noopener">Cunningham JJ. A reanalysis of the factors influencing basal metabolic rate in normal adults. Am J Clin Nutr. 1980;33:2372-2374.</a></li>
+        <li><b>7</b><a href="https://doi.org/10.1038/s41598-018-29362-1" target="_blank" rel="noopener">Woolcott OO, Bergman RN. Relative fat mass (RFM) as a new estimator of whole-body fat percentage. Sci Rep. 2018;8:10980.</a></li>
+        <li><b>8</b><a href="https://doi.org/10.1016/j.jshs.2023.10.010" target="_blank" rel="noopener">Herrmann SD, Willis EA, Ainsworth BE, et al. 2024 Adult Compendium of Physical Activities. J Sport Health Sci. 2024;13(1):6-12.</a> Values: <a href="https://pacompendium.com/adult-compendium/" target="_blank" rel="noopener">pacompendium.com</a></li>
+        <li><b>9</b><a href="https://pacompendium.com/" target="_blank" rel="noopener">Willis EA, Herrmann SD, et al. Older Adult Compendium of Physical Activities. J Sport Health Sci. 2024;13(1):13-17.</a></li>
+        <li><b>10</b><a href="https://doi.org/10.1016/j.cub.2021.08.016" target="_blank" rel="noopener">Careau V, Halsey LG, Pontzer H, et al. Energy compensation and adiposity in humans. Curr Biol. 2021;31(20):4659-4666.</a></li>
+        <li><b>11</b><a href="https://doi.org/10.1186/1743-7075-1-5" target="_blank" rel="noopener">Westerterp KR. Diet induced thermogenesis. Nutr Metab (Lond). 2004;1:5.</a></li>
+        <li><b>12</b><a href="https://doi.org/10.3402/fnr.v54i0.5144" target="_blank" rel="noopener">Barr SB, Wright JC. Postprandial energy expenditure in whole-food and processed-food meals. Food Nutr Res. 2010;54:5144.</a></li>
+        <li><b>13</b><a href="https://doi.org/10.1016/j.cmet.2019.05.008" target="_blank" rel="noopener">Hall KD, Ayuketah A, Brychta R, et al. Ultra-processed diets cause excess calorie intake and weight gain. Cell Metab. 2019;30(1):67-77.</a></li>
+        <li><b>14</b><a href="https://doi.org/10.3390/nu10050587" target="_blank" rel="noopener">Rauber F, da Costa Louzada ML, Steele EM, et al. Ultra-processed food consumption in the UK (2008-2014). Nutrients. 2018;10(5):587.</a></li>
+        <li><b>15</b><a href="https://doi.org/10.1136/bjsports-2017-097608" target="_blank" rel="noopener">Morton RW, Murphy KT, McKellar SR, et al. Protein supplementation and resistance training-induced gains in muscle mass and strength. Br J Sports Med. 2018;52(6):376-384.</a></li>
+        <li><b>16</b><a href="https://pubmed.ncbi.nlm.nih.gov/17101527/" target="_blank" rel="noopener">LaForgia J, Withers RT, Gore CJ. Effects of exercise intensity and duration on the excess post-exercise oxygen consumption. J Sports Sci. 2006;24(12):1247-1264.</a></li>
+        <li><b>17</b><a href="https://www.endotext.org/wp-content/uploads/pdfs/non-exercise-activity-thermogenesis.pdf" target="_blank" rel="noopener">von Loeffelholz C, Birkenfeld AL. The role of non-exercise activity thermogenesis in human energy homeostasis. Endotext; updated 2018.</a></li>
+        <li><b>18</b><a href="https://nap.nationalacademies.org/catalog/26818/dietary-reference-intakes-for-energy" target="_blank" rel="noopener">National Academies of Sciences, Engineering, and Medicine. Dietary Reference Intakes for Energy. Washington DC: The National Academies Press; 2023.</a></li>
+        <li><b>19</b><a href="https://doi.org/10.3390/jpm7020003" target="_blank" rel="noopener">Shcherbina A, Mattsson CM, Waggott D, et al. Accuracy in wrist-worn, sensor-based measurements of heart rate and energy expenditure in a diverse cohort. J Pers Med. 2017;7(2):3.</a></li>
+        <li><b>20</b><a href="https://ars.usda.gov/ARSUSERFILES/80400535/DATA/CLASSICS/USDA%20HANDBOOK%2074.PDF" target="_blank" rel="noopener">Merrill AL, Watt BK. Energy Value of Foods: Basis and Derivation. USDA Agriculture Handbook No. 74; 1955, revised 1973.</a></li>
+        <li><b>21</b><a href="https://doi.org/10.3945/ajcn.115.119339" target="_blank" rel="noopener">Longland TM, Oikawa SY, Mitchell CJ, Devries MC, Phillips SM. Higher compared with lower dietary protein during an energy deficit combined with intense exercise promotes greater lean mass gain and fat mass loss. Am J Clin Nutr. 2016;103(3):738-746.</a></li>
+        <li><b>22</b><a href="https://doi.org/10.1080/07315724.1999.10718838" target="_blank" rel="noopener">Bryner RW, Ullrich IH, Sauers J, et al. Effects of resistance vs. aerobic training combined with an 800 calorie liquid diet on lean body mass and resting metabolic rate. J Am Coll Nutr. 1999;18(2):115-121.</a></li>
+        <li><b>23</b><a href="https://pubmed.ncbi.nlm.nih.gov/23019316/" target="_blank" rel="noopener">Willis LH, Slentz CA, Bateman LA, et al. Effects of aerobic and/or resistance training on body mass and fat mass in overweight or obese adults. J Appl Physiol. 2012;113(12):1831-1837.</a></li>
+        <li><b>24</b><a href="https://doi.org/10.1152/ajpendo.1997.273.1.E99" target="_blank" rel="noopener">Phillips SM, Tipton KD, Aarsland A, Wolf SE, Wolfe RR. Mixed muscle protein synthesis and breakdown after resistance exercise in humans. Am J Physiol. 1997;273(1):E99-E107.</a></li>
+        <li><b>25</b><a href="https://doi.org/10.3945/ajcn.2010.29885" target="_blank" rel="noopener">Wang Z, Ying Z, Bosy-Westphal A, et al. Specific metabolic rates of major organs and tissues across adulthood. Am J Clin Nutr. 2010;92(6):1369-1377 (citing Elia 1992).</a></li>
+        <li><b>26</b><a href="https://doi.org/10.1007/s00421-010-1666-5" target="_blank" rel="noopener">Heden T, Lox C, Rose P, Reid S, Kirk EP. One-set resistance training elevates energy expenditure for 72 h similar to three sets. Eur J Appl Physiol. 2011;111:477-484.</a></li>
+        <li><b>27</b><a href="https://pubmed.ncbi.nlm.nih.gov/8282641/" target="_blank" rel="noopener">Melby C, Scholl C, Edwards G, Bullough R. Effect of acute resistance exercise on postexercise energy expenditure and resting metabolic rate. J Appl Physiol. 1993;75(4):1847-1853.</a></li>
+        <li><b>28</b><a href="https://doi.org/10.1123/ijsn.4.4.347" target="_blank" rel="noopener">Gillette CA, Bullough RC, Melby CL. Postexercise energy expenditure in response to acute aerobic or resistive exercise. Int J Sport Nutr. 1994;4(4):347-360.</a></li>
+        <li><b>29</b><a href="https://doi.org/10.1080/02640414.2020.1754716" target="_blank" rel="noopener">MacKenzie-Shalders K, Kelly JT, So D, Coffey VG, Byrne NM. The effect of exercise interventions on resting metabolic rate: a systematic review and meta-analysis. J Sports Sci. 2020;38(14):1635-1649.</a></li>
+        <li><b>30</b><a href="https://bionumbers.hms.harvard.edu/bionumber.aspx?id=113244" target="_blank" rel="noopener">Welle S, Nair KS. Relationship of resting metabolic rate to body composition and protein turnover. Am J Physiol. 1990;258:E990-E998; and Waterlow JC, 1984. Protein synthesis ≈20% of basal metabolism.</a></li>
+        <li><b>31</b><a href="https://doi.org/10.1186/1550-2783-11-20" target="_blank" rel="noopener">Helms ER, Aragon AA, Fitschen PJ. Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. J Int Soc Sports Nutr. 2014;11:20.</a></li>
+        <li><b>32</b><a href="https://doi.org/10.1002/oby.21653" target="_blank" rel="noopener">Polidori D, Sanghvi A, Seeley RJ, Hall KD. How strongly does appetite counter weight loss? Quantification of the feedback control of human energy intake. Obesity. 2016;24(11):2289-2295.</a></li>
+        <li><b>33</b><a href="https://doi.org/10.1152/ajpendo.00590.2013" target="_blank" rel="noopener">Areta JL, Burke LM, Camera DM, et al. Reduced resting skeletal muscle protein synthesis is rescued by resistance exercise and protein ingestion following short-term energy deficit. Am J Physiol Endocrinol Metab. 2014;306(8):E989-E997.</a></li>
+        <li><b>34</b><a href="https://doi.org/10.3390/nu9080866" target="_blank" rel="noopener">Pullar JM, Carr AC, Vissers MCM. The roles of vitamin C in skin health. Nutrients. 2017;9(8):866.</a></li>
+        <li><b>35</b><a href="https://doi.org/10.3945/ajcn.116.138594" target="_blank" rel="noopener">Shaw G, Lee-Barthel A, Ross ML, Wang B, Baar K. Vitamin C-enriched gelatin supplementation before intermittent activity augments collagen synthesis. Am J Clin Nutr. 2017;105(1):136-143.</a></li>
+        <li><b>36</b><a href="https://doi.org/10.1136/bjsports-2018-099193" target="_blank" rel="noopener">Mountjoy M, Sundgot-Borgen JK, Burke LM, et al. IOC consensus statement on relative energy deficiency in sport (RED-S): 2018 update. Br J Sports Med. 2018;52(11):687-697.</a></li>
+      </ol>
+      </section>
+
+  <div class="foot">
+    <button class="btn" id="back" type="button" hidden>Back</button>
+    <button class="btn go" id="next" type="button">Start</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const S = {units:'met', sex:'m', bfmode:'waist', protein:1.2, lifeLvl:2, job:'desk', liftStyle:'heavy', liftMin:60, cardioInt:'easy', cardioMin:45};
+  const screens=[...document.querySelectorAll('.screen[data-step]')];
+  const LAST=screens.length-1;
+  let step=0;
+  const $=id=>document.getElementById(id);
+  const num=id=>{const v=parseFloat($(id).value);return isFinite(v)?v:0};
+
+  // chips
+  document.querySelectorAll('.chips[data-key]').forEach(g=>{
+    g.addEventListener('click',e=>{
+      const b=e.target.closest('.chip'); if(!b) return;
+      g.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c===b?'true':'false'));
+      const v=b.dataset.v; S[g.dataset.key]=isNaN(+v)?v:+v; sync();
+    });
+  });
+  // units
+  function setUnits(u){
+    S.units=u; $('uMet').setAttribute('aria-pressed',u==='met'); $('uImp').setAttribute('aria-pressed',u==='imp');
+    document.querySelectorAll('.met').forEach(e=>e.hidden=u!=='met');
+    document.querySelectorAll('.imp').forEach(e=>e.hidden=u!=='imp');
+    // convert waist value for display
+    const w=num('waist');
+    if(u==='imp' && $('waistU').textContent==='cm'){$('waist').value=Math.round(w/2.54*2)/2;$('waistU').textContent='in'}
+    if(u==='met' && $('waistU').textContent==='in'){$('waist').value=Math.round(w*2.54);$('waistU').textContent='cm'}
+    if(u==='imp'){const kg=num('wkg'),lb=kg/0.45359237;$('wst').value=Math.floor(lb/14);$('wlb').value=Math.round(lb%14);const inch=num('hcm')/2.54;$('hft').value=Math.floor(inch/12);$('hin').value=Math.round(inch%12)}
+    else{const lb=num('wst')*14+num('wlb');$('wkg').value=Math.round(lb*0.45359237);$('hcm').value=Math.round((num('hft')*12+num('hin'))*2.54)}
+  }
+  $('uMet').onclick=()=>setUnits('met'); $('uImp').onclick=()=>setUnits('imp');
+
+  // sliders
+  const sl=[['upf','upfV',v=>v+'%<small>of what you eat</small>'],['lifeMin','lifeMinV',v=>{const m=+v,h=Math.floor(m/60),r=m%60;return (h?h+' hr'+(h>1?'s':''):'')+(h&&r?' ':'')+(r?r+' min':'')+'<small>a day</small>'}],['jh','jhV',v=>v],['jd','jdV',v=>v],['ls','lsV',v=>v],['cs','csV',v=>v]];
+  sl.forEach(([i,o,f])=>{$(i).addEventListener('input',()=>{$(o).innerHTML=f($(i).value);sync()})});
+
+  function sync(){
+    $('qWaist').hidden=S.bfmode!=='waist'; $('qBf').hidden=S.bfmode!=='known';
+    $('qJob').hidden=S.job==='none';
+    $('qLift').hidden=+$('ls').value===0; $('qCardio').hidden=+$('cs').value===0;
+  }
+
+  function inputs(){
+    let kg,cm,waistCm;
+    if(S.units==='met'){kg=num('wkg');cm=num('hcm');waistCm=num('waist')}
+    else{kg=(num('wst')*14+num('wlb'))*0.45359237;cm=(num('hft')*12+num('hin'))*2.54;waistCm=num('waist')*2.54}
+    return {kg,cm,waistCm,age:num('age'),bf:num('bf')};
+  }
+
+  // ---- the maths ----
+  const MET={life:{1:2.5,2:3.0,3:4.0,4:5.0,5:6.5},
+    job:{desk:1.5,stand:1.8,feet:2.8,trade:3.0,site:4.0,heavy:5.0,none:0},
+    lift:{std:3.5,heavy:5.0,circuit:5.8}, cardio:{easy:4.8,steady:7.3,hard:9.0}, leftover:1.5};
+  const BREAKS=0.8, CLAWBACK=0.28;
+  const EPOC={lift:0.10, cardio:{easy:0.06,steady:0.10,hard:0.15}};
+  // CoachDW articles: change any url here once the page is live on coachdw.com
+  const ARTICLES={
+    acnac:{t:'A Calorie Is Not A Calorie',u:'https://coachdw.com/articles/a-calorie-is-not-a-calorie'},
+    bollox:{t:'Calories Are Bollox: So I Built A Better Calculator',u:'https://coachdw.com/articles/calories-are-bollox'},
+    cico:{t:'Why Calories Are Bullsh!t (and CICO Is All Fluff and Bollox)',u:'https://coachdw.com/articles/why-calories-are-bullshit'},
+    protein:{t:'Protein Cost Per Gram calculator',u:'https://coachdw.com/tools/protein-cost-per-gram'},
+    mag7:{t:'The Magnificent 7',u:'https://coachdw.com/articles/the-magnificent-7'},
+    tff1:{t:'What Happened To What We Eat? (Thought For Food, Chapter 1)',u:'https://coachdw.com/chapters/thought-for-food-chapter-1'}
+  };
+  document.querySelectorAll('[data-art]').forEach(a=>{const A=ARTICLES[a.dataset.art]; if(!A){a.hidden=true;return} a.href=A.u; a.querySelector('span').textContent=A.t});
+
+  function calc(){
+    const I=inputs(), m=S.sex==='m';
+    const kg=Math.max(35,I.kg), cm=Math.max(130,I.cm), age=Math.min(95,Math.max(16,I.age));
+    const msj=10*kg+6.25*cm-5*age+(m?5:-161);
+    const hb=m?88.362+13.397*kg+4.799*cm-5.677*age:447.593+9.247*kg+3.098*cm-4.330*age;
+    let bf=null;
+    if(S.bfmode==='known'&&I.bf>2&&I.bf<70) bf=I.bf;
+    if(S.bfmode==='waist'&&I.waistCm>40) bf=Math.min(65,Math.max(4,64-20*(cm/I.waistCm)+(m?0:12)));
+    const ffm=bf!=null?kg*(1-bf/100):null;
+    const cun=ffm!=null?500+22*ffm:null;
+    const lifts=+$('ls').value, cardios=+$('cs').value;
+    const trained=lifts>=2||cardios>=3;
+    let w=trained?{msj:.2,hb:.4,cun:.4}:{msj:.5,hb:.25,cun:.25};
+    if(cun==null){w=trained?{msj:.35,hb:.65,cun:0}:{msj:.65,hb:.35,cun:0}}
+    const rmr=msj*w.msj+hb*w.hb+(cun||0)*w.cun;
+    const k=rmr/(kg*24); // own resting burn per kg per hour = 1 personal MET
+    const net=(met,h)=>Math.max(0,met-1)*kg*h*k;
+
+    // hours per average day
+    const lifeH=(+$('lifeMin').value)/60;
+    const jobH=S.job==='none'?0:(+$('jh').value)*(+$('jd').value)/7;
+    const liftH=lifts*S.liftMin/60/7, cardH=cardios*S.cardioMin/60/7;
+    const awake=16;
+    const used=lifeH+jobH+liftH+cardH;
+    const leftH=Math.max(0,awake-used);
+
+    const life=net(MET.life[S.lifeLvl],lifeH)+net(MET.leftover,leftH);
+    const work=net(MET.job[S.job]||1,jobH)*BREAKS;
+    const trainRaw=net(MET.lift[S.liftStyle],liftH)+net(MET.cardio[S.cardioInt],cardH);
+    const train=trainRaw*(1-CLAWBACK);
+    const epocRaw=net(MET.lift[S.liftStyle],liftH)*EPOC.lift+net(MET.cardio[S.cardioInt],cardH)*EPOC.cardio[S.cardioInt];
+    const epoc=epocRaw*(1-CLAWBACK);
+    const repairRaw=lifts>0?rmr*0.05*Math.min(1,lifts*2/7):0;
+    const repair=repairRaw*(1-CLAWBACK);
+    const noTef=rmr+life+work+train+epoc+repair;
+
+    // digestion: protein share + UPF penalty, solved iteratively
+    const upf=+$('upf').value/100;
+    const upfMult=1.15-0.45*upf;
+    const protG=num('protG')>0?num('protG'):S.protein*kg;
+    const protK=protG*4;
+    let tdee=noTef*1.1, f=0.1;
+    for(let i=0;i<12;i++){
+      const p=Math.min(0.5,protK/tdee), rest=(1-p)/2;
+      f=upfMult*(p*0.25+rest*0.075+rest*0.02);
+      tdee=noTef/(1-f);
+    }
+    const tef=tdee-noTef;
+    return {kg,rmr,msj,hb,cun,w,bf,trained,life,work,train,trainRaw,epoc,repair,tef,tdee,upf,upfMult,protG,net};
+  }
+
+  const r10=x=>Math.round(x/10)*10;
+  const fmt=x=>r10(x).toLocaleString('en-GB');
+
+  function render(){
+    const R=calc();
+    $('rTdee').textContent=fmt(R.tdee);
+    $('rLo').textContent=fmt(R.tdee*0.9); $('rHi').textContent=fmt(R.tdee*1.1);
+    const cut=R.tdee*0.8, floor=R.rmr;
+    $('rCut').textContent=fmt(Math.max(cut,floor));
+    $('rCutS').textContent=cut<floor?'Floored at your resting burn':'20% under';
+    $('gCut').classList.toggle('warn',cut<floor);
+    $('rSlow').textContent=fmt(R.tdee*0.9); $('rMain').textContent=fmt(R.tdee); $('rBuild').textContent=fmt(R.tdee*1.1);
+
+    const parts=[
+      ['Resting engine','RMR','Organs, brain, staying alive',R.rmr,'#111111'],
+      ['Lifestyle','NEAT','Everyday activity, plus pottering',R.life,'#cc0000'],
+      ['Work','NEAT','Your day job, breaks allowed for',R.work,'#e07a6a'],
+      ['Training','EAT','After the 28% body clawback ('+fmt(R.trainRaw-R.train)+' off)',R.train,'#7d7873'],
+      ['Afterburn','EPOC','Extra burn in the hours after sessions',R.epoc,'#b3ada7'],
+      ['Repair & rebuild','MPS','Raised resting burn for 48h after lifting',R.repair,'#5a5652'],
+      ['Digestion','TEF','Protein and food quality',R.tef,'#d8d3ce']
+    ];
+    $('rBar').innerHTML=parts.map(p=>`<i style="width:${(p[3]/R.tdee*100).toFixed(2)}%;background:${p[4]}" title="${p[0]} (${p[1]})"></i>`).join('');
+    $('rLegend').innerHTML=parts.map(p=>`<div><span class="sw" style="background:${p[4]}"></span><span class="nm">${p[0]}<span class="acr">${p[1]}</span><small>${p[2]}</small></span><span class="kc">${fmt(p[3])}</span></div>`).join('');
+
+    {
+      const sess=(+$('ls').value)+(+$('cs').value);
+      const fac=sess===0?1.2:sess<=3?1.375:sess<=5?1.55:sess<=7?1.725:1.9;
+      const box=sess===0?'Sedentary':sess<=3?'Lightly active':sess<=5?'Moderately active':sess<=7?'Very active':'Extra active';
+      const std=R.msj*fac, plan=std*0.8, gap=R.tdee-plan, pct=gap/R.tdee*100;
+      const kgWk=gap*7/7700, bwPct=kgWk/R.kg*100;
+      $('nStd').textContent=fmt(std); $('nStdW').textContent=`Mifflin-St Jeor × ${fac} (${box})`; $('nOurs').textContent=fmt(R.tdee);
+      if(std<R.tdee-25){
+        $('nGap').innerHTML=`A PT or app takes 20% off the standard number and tells you to eat <b>${fmt(plan)}</b>. Against what you really burn, that's a <b>${Math.round(pct)}% deficit</b>, not 20%. Roughly <b>${kgWk.toFixed(2)}kg a week</b>, about ${bwPct.toFixed(1)}% of your bodyweight.`;
+        $('nWhy').textContent=bwPct>1?'Faster than the 0.5 to 1% a week that protects muscle. That\'s a (NOT a)calorie deficit: more hunger, more muscle lost, more likely to fall off the wagon.':'Inside the safe range this time, but the gap grows the more you lift, eat protein and move.';
+      }else{
+        $('nGap').innerHTML=`Here the standard number is ${std>R.tdee+25?'<b>higher</b> than':'about the same as'} what you really burn. A 20% cut from it would be a <b>${Math.max(0,Math.round(pct))}% deficit</b>, ${std>R.tdee+25?'smaller than you think. Which is why the scale might not move.':'close to plan.'}`;
+        $('nWhy').textContent='Either way, the standard sum is guessing. The scale tells you which way it guessed.';
+      }
+    }
+    const tgt=Math.round(R.kg*1.6/5)*5, now=Math.round(R.protG/5)*5;
+    $('pT').textContent=tgt+'g'; $('pK').textContent=fmt(tgt*4); $('pB').textContent=fmt(tgt*4*0.25);
+    const gap=tgt-R.protG;
+    const extra=Math.max(0,gap)*4*(0.25-0.0475)*R.upfMult;
+    $('pNote').innerHTML=gap>2
+      ?`You're eating roughly <b>${now}g</b>. Hit ${tgt}g, swapping carbs and fat for protein, and digestion burns about <b>${fmt(extra)} more calories a day</b>, before counting how much fuller you'll be. Protein nets you about 3 calories per gram, not the 4 on the label.`
+      :`You're eating roughly <b>${now}g</b>, so you're there. Keep it there. Protein nets you about 3 calories per gram, not the 4 on the label, and it's what keeps the muscle while the fat goes.`;
+    const lifts=+$('ls').value, cardios=+$('cs').value, protOk=R.protG>=R.kg*1.6-2;
+    const items2=[
+      [lifts>=2,'Lifting at least twice a week',lifts>=2?`You lift ${lifts} times a week. MPS stays switched on between sessions.`:`You lift ${lifts} time${lifts===1?'':'s'} a week. Twice is the minimum to keep muscle in a deficit.`],
+      [protOk,'Protein at least 1.6g per kg',protOk?`You're at about ${Math.round(R.protG)}g. That's the raw material covered.`:`You're at about ${Math.round(R.protG)}g. Aim for ${tgt}g.`],
+      [true,'Cardio as a bonus, not the plan',cardios>0?`${cardios} session${cardios===1?'':'s'} a week. Good for your heart, but it won't protect your muscle on its own.`:`None right now. Walking more counts as NEAT and helps too.`]
+    ];
+    $('flList').innerHTML=items2.map(([ok,t,d])=>`<li class="${ok?'ok':'no'}"><i>${ok?'✓':'!'}</i><span>${t}<small>${d}</small></span></li>`).join('');
+    $('flNote').textContent=(lifts>=2&&protOk)?'You are set up to lose fat, not muscle. Eat the fat loss figure above and let the scale and the mirror confirm it.':'Fix the red one first. In a calorie deficit, lifting and protein decide whether the weight you lose is fat or muscle.';
+    const ls=lifts>0?S.liftStyle:'heavy', ci=cardios>0?S.cardioInt:'steady';
+    const a1=R.net(MET.lift[ls],1), a2=a1*EPOC.lift, a3=R.rmr*0.05*2;
+    const b1=R.net(MET.cardio[ci],1), b2=b1*EPOC.cardio[ci];
+    const ta=a1+a2+a3, tb=b1+b2;
+    const lName={std:'Lifting',heavy:'Heavy lifting',circuit:'Circuits'}[ls], cName={easy:'Easy cardio',steady:'Steady cardio',hard:'Hard cardio'}[ci];
+    $('dLiftH').textContent=lName; $('dCardH').textContent=cName;
+    [['d1a',a1],['d2a',a2],['d3a',a3],['dTa',ta],['d1b',b1],['d2b',b2],['dTb',tb]].forEach(([id,v])=>$(id).textContent=fmt(v));
+    $('dTa').classList.toggle('win',ta>=tb); $('dTb').classList.toggle('win',tb>ta);
+    const diff=Math.abs(ta-tb);
+    $('dVerdict').textContent=(ta>=tb
+      ?`Lift. Hour for hour it costs you ${fmt(diff)} kcal more than ${cName.toLowerCase()} once you count the repair, and that's before the muscle it keeps.`
+      :(diff<=tb*0.15
+        ?`Lift. ${cName} burns about ${fmt(diff)} kcal more per hour, but that's close to even once the repair is counted. Only lifting keeps your muscle and your resting burn while you diet.`
+        :`Still lift. ${cName} burns about ${fmt(diff)} kcal more per hour, so it wins the session. But in a diet, lifting decides whether the weight you lose is fat or muscle, and only lifting keeps your resting burn up. Burn the calories in the kitchen, build the engine in the gym.`))
+      +' If you can do both, do both.';
+    const upfPct=Math.round(R.upf*100);
+    $('rUpf').innerHTML=upfPct<=25?`<b>Food quality:</b> at ${upfPct}% ultra-processed you're well ahead of the UK average. Real food costs more to digest and fills you up for longer.`
+      :`<b>Hidden overeating:</b> at ${upfPct}% ultra-processed, this is the number to watch. In a controlled NIH trial, people on an ultra-processed diet ate about 500 kcal a day more than on real food, without meaning to.`;
+
+    const items=[['Mifflin-St Jeor',R.msj,R.w.msj],['Harris-Benedict',R.hb,R.w.hb],['Cunningham',R.cun,R.w.cun]];
+    $('rForm').innerHTML=items.map(([n,v,wt])=>`<div><span class="k">${n}</span><span class="v">${v==null?'n/a':fmt(v)}</span><span class="w">${v==null?'needs body fat':Math.round(wt*100)+'% weight'}</span></div>`).join('');
+    $('rFormNote').textContent=(R.trained?'You train regularly, so the equations that hold up best in athletes get more say. ':'Mifflin-St Jeor leads, as the most reliable equation for the general population. ')
+      +(R.bf!=null?`Estimated body fat ${Math.round(R.bf)}%. `:'')+`Blended resting burn: ${fmt(R.rmr)} kcal.`;
+  }
+
+  function show(n){
+    step=Math.max(0,Math.min(LAST,n));
+    screens.forEach((s,i)=>{s.hidden=i!==step; if(i===step){s.classList.remove('enter');void s.offsetWidth;s.classList.add('enter');s.scrollTop=0}});
+    $('prog').style.width=(step/LAST*100)+'%';
+    $('back').hidden=step===0;
+    $('next').textContent=step===0?'Start':step===LAST-1?'Get my number':step===LAST?'Start again':'Next';
+    if(step===LAST) render();
+  }
+  $('next').onclick=()=>show(step===LAST?0:step+1);
+  $('back').onclick=()=>show(step-1);
+
+  $('share').onclick=function(){
+    const btn=this, txt=location.href;
+    const done=()=>{btn.textContent='Link copied';setTimeout(()=>btn.textContent='Copy link to share this calculator',2000)};
+    try{navigator.clipboard.writeText(txt).then(done,()=>{btn.textContent=txt})}catch(e){btn.textContent=txt}
+  };
+
+  let onRefs=false;
+  function refs(on){
+    onRefs=on; $('refTab').setAttribute('aria-pressed',on);
+    $('refScreen').hidden=!on; screens.forEach((sc,i)=>sc.hidden=on||i!==step);
+    $('back').hidden=on?false:step===0; $('next').hidden=on;
+    if(on){$('refScreen').scrollTop=0;$('back').textContent='Back to calculator'}else{$('back').textContent='Back'}
+  }
+  $('refTab').onclick=()=>refs(!onRefs);
+  $('seeRefs').onclick=()=>refs(true);
+  const goBack=$('back').onclick; $('back').onclick=()=>{ if(onRefs) refs(false); else goBack(); };
+  sync(); show(0);
+  window.__calc=calc; // for testing
+})();
+</script>
+
+</body></html>

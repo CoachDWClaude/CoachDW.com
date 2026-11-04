@@ -1,0 +1,382 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SFL Progress Module</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+/* ================= SFL PROGRESS MODULE: styles (copy with the module when plugging into the app) ================= */
+:root{--red:#cc0000;--ink:#111;--paper:#fff;--line:#ddd;--mute:#777;--up:#12963a;--r:10px;--display:'Special Elite','Courier New',monospace}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f0e5;color:var(--ink);font-family:var(--display)}
+.wrap{max-width:520px;margin:0 auto;padding:0 16px 40px}
+.top{background:#000;color:#fff;padding:14px 16px;border-bottom:1px solid rgba(204,0,0,.6)}
+.top .in{max-width:520px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.top b{font-weight:400;font-size:20px;letter-spacing:.04em}.top b i{font-style:normal;color:#ff3b3b}
+.top span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#bbb}
+.src{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 4px;font-size:13px;color:var(--mute)}
+.src button,.src label{font:inherit;font-size:13px;border:1px solid var(--ink);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer;color:var(--ink)}
+.src button[aria-pressed=true]{background:var(--ink);color:#fff}
+.src input{display:none}
+.card{background:#fff;border:1px solid #ded7c4;border-radius:var(--r);padding:16px;margin-top:12px}
+
+.sflp{display:flex;flex-direction:column;gap:12px}
+.sflp .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.sflp label.lift{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+.sflp select{font:inherit;font-size:17px;padding:10px;border:2px solid var(--ink);border-radius:var(--r);background:#fff;color:var(--ink)}
+.sflp .seg{display:grid;gap:6px}
+.sflp .seg.five{grid-template-columns:repeat(5,1fr)}.sflp .seg.three{grid-template-columns:repeat(3,1fr)}
+.sflp .seg button{font:inherit;font-size:14px;padding:10px 2px;border:2px solid var(--ink);background:#fff;color:var(--ink);border-radius:var(--r);cursor:pointer}
+.sflp .seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.sflp .seg.three button[aria-pressed=true]{background:var(--red);border-color:var(--red)}
+.sflp svg.g{width:100%;height:auto;display:block;overflow:visible}
+.sflp svg.g text{font-family:var(--display);font-size:10px;fill:var(--mute)}
+.sflp .ax{stroke:var(--line);stroke-width:1}
+.sflp .bdiv{stroke:var(--line);stroke-width:1;stroke-dasharray:3 3}
+.sflp text.bl{font-size:9px}
+.sflp .gl{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.sflp .k-red{stroke:var(--red)}.sflp .k-blk{stroke:var(--ink)}.sflp .k-dot{stroke-dasharray:1 5;stroke-width:3}
+.sflp .gend{stroke:#fff;stroke-width:2;cursor:pointer}.sflp .gend.k-red{fill:var(--red)}.sflp .gend.k-blk{fill:var(--ink)}
+.sflp .gend:focus{outline:none;stroke:#ffb000}
+.sflp .gtip rect{fill:var(--ink)}.sflp .gtip.tr rect{fill:var(--red)}.sflp .gtip text{fill:#fff;font-size:10px}
+.sflp .scrubl{stroke:var(--red);stroke-width:1.2;stroke-dasharray:2 2}
+.sflp .scrubd{fill:#fff;stroke:var(--red);stroke-width:2}
+.sflp input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--line);margin:6px 0}
+.sflp input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--red);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.sflp input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--red);border:3px solid #fff}
+.sflp .read{font-size:13px;line-height:1.55;min-height:3.2em;background:#faf8f2;border-radius:8px;padding:8px 10px}
+.sflp .read .num{font-size:20px;color:var(--red)}
+.sflp .verdict{margin:0;font-size:15px;line-height:1.4}
+.sflp .up{color:var(--up)}.sflp .dn{color:var(--red)}
+.sflp ul.legend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;font-size:14px}
+.sflp ul.legend li{display:flex;align-items:center;gap:8px;padding:6px 4px;border-radius:6px;cursor:pointer}
+.sflp ul.legend li[aria-current=true]{background:#faf3f3}
+.sflp ul.legend .rt{margin-left:auto}
+.sflp ul.legend small{color:var(--mute);font-size:12px}
+.sflp .vcard{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;border-radius:var(--r);padding:14px;color:#fff;background:#555}
+.sflp .vcard.up{background:var(--up)}.sflp .vcard.dn{background:var(--red)}.sflp .vcard.eq{background:var(--ink)}.sflp .vcard.na{background:#fff;color:var(--ink);border:1px dashed var(--line);grid-template-columns:1fr}
+.sflp .vc-arrow{font-size:44px;line-height:1;width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+.sflp .vc-txt{display:flex;flex-direction:column;gap:2px}.sflp .vc-txt b{font-weight:400;font-size:22px;text-transform:uppercase;letter-spacing:.02em;line-height:1.05}.sflp .vc-txt span{font-size:14px;opacity:.92}
+.sflp .vc-nums{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.sflp .vc-n{background:rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;font-size:24px;line-height:1.1;display:flex;flex-direction:column}
+.sflp .vc-n small{font-size:11px;letter-spacing:.06em;opacity:.85;margin-top:2px}
+.sflp .vc-n.this{background:#fff;color:var(--ink)}
+.sflp .vc-early{grid-column:1/-1;margin:4px 0 0;font-size:12px;opacity:.9}
+.sflp .ax.v{stroke:#f0ece2}.sflp .ax.zero{stroke:#bbb}
+.sflp .gl.red{stroke:var(--red)}.sflp .gl.blk{stroke:var(--ink)}
+.sflp .dot.red{fill:var(--red)}.sflp .dot.blk{fill:var(--ink)}
+.sflp .trend{stroke-width:1.6;stroke-dasharray:5 4}.sflp .trend.red{stroke:var(--red)}.sflp .trend.blk{stroke:var(--ink)}
+.sflp .gap{opacity:.16}.sflp .gap.up{fill:var(--up)}.sflp .gap.dn{fill:var(--red)}.sflp .gap.eq{fill:#888}
+.sflp svg.g text.endlab{font-size:11px}.sflp svg.g text.endnum{font-size:14px}
+.sflp svg.g text.red{fill:var(--red)}.sflp svg.g text.blk{fill:var(--ink)}
+.sflp .bar rect{cursor:pointer}.sflp .bar.red rect{fill:var(--red)}.sflp .bar.blk rect{fill:var(--ink)}.sflp .bar.old rect{fill:#c9c3b4}
+.sflp .bar.sel rect{stroke:#ffb000;stroke-width:3}
+.sflp svg.g text.bnum{font-size:11px;fill:var(--ink)}
+.sflp svg.g text.chg{font-size:9.5px}.sflp svg.g text.chg.up,.sflp svg.g text.bandt.up{fill:var(--up)}.sflp svg.g text.chg.dn,.sflp svg.g text.bandt.dn{fill:var(--red)}.sflp svg.g text.chg.eq{fill:var(--mute)}
+.sflp .avg{stroke:var(--mute);stroke-dasharray:4 3}.sflp svg.g text.avgt{font-size:9px}
+.sflp .band{fill:#fff}.sflp .band.alt{fill:#f5f2ea}.sflp .band.cur{fill:#fbecec}
+.sflp svg.g text.bandt{font-size:10.5px;fill:var(--ink)}
+.sflp .scrubd.blk{stroke:var(--ink)}
+.sflp .read .tr{color:var(--red)}
+.sflp .bdet{font-size:13px;line-height:1.55;background:#faf8f2;border-radius:8px;padding:8px 10px}
+.sflp .vc-cause{grid-column:1/-1;margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.95}
+.sflp .chg-box{border:2px solid var(--ink);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px}
+.sflp .chg-h{font-weight:400;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.sflp .chg-box ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.sflp .chg-box li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:5px}
+.sflp .chg-v b{font-weight:400;color:var(--red)}
+.sflp .chg-note{margin:0;font-size:14px}.sflp .chg-note b{font-weight:400}
+.sflp .linkb{font:inherit;font-size:13px;color:var(--red);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline}
+.sflp .chg-edit{display:flex;gap:8px}.sflp .chg-edit input{flex:1;min-width:0;font:inherit;font-size:15px;padding:9px;border:2px solid var(--ink);border-radius:8px}
+.sflp .chg-edit button{font:inherit;font-size:14px;border:0;border-radius:8px;background:var(--red);color:#fff;padding:0 14px;cursor:pointer}
+.sflp .gl.dotl{stroke-dasharray:1 5;stroke-width:2.6}.sflp .gl.faint{opacity:.35}.sflp .gl.sel{stroke-width:3.6;opacity:1}
+.sflp .gend.red{fill:var(--red)}.sflp .gend.blk{fill:var(--ink)}
+.sflp .gend.sel{stroke:#ffb000;stroke-width:3}
+.sflp svg.g text.endlab[data-blk]{font-size:10.5px;cursor:pointer}.sflp svg.g text.endlab.sel{text-decoration:underline}
+.sflp .pbar{border-radius:8px;padding:8px 12px;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;color:#fff;background:var(--ink)}
+.sflp .pbar.up{background:var(--up)}.sflp .pbar.dn{background:var(--red)}.sflp .pbar.na{background:#666}
+.sflp .pbar b{font-weight:400;font-size:15px;letter-spacing:.1em;text-transform:uppercase}
+.sflp .pbar span{font-size:15px}
+.sflp .pbar small{flex-basis:100%;font-size:11.5px;opacity:.88}
+.sflp .seg.two{grid-template-columns:1fr 1fr}
+.sflp .seg.two button[aria-pressed=true]{background:var(--ink);border-color:var(--ink)}
+.sflp .gl.old{stroke:#c9c3b4;stroke-width:1.8;stroke-dasharray:1 4}
+.sflp .dot{cursor:pointer;stroke:#fff;stroke-width:1.2}.sflp .dot.on{stroke:#ffb000;stroke-width:2.5}
+.sflp svg.g text.axl{font-size:9px}
+.sflp .key{margin:-4px 0 0;font-size:12px;color:var(--mute);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sflp .sw{display:inline-block;width:18px;height:3px;border-radius:2px;margin-left:6px}.sflp .sw:first-child{margin-left:0}
+.sflp .sw.red{background:var(--red)}.sflp .sw.blk{background:var(--ink)}.sflp .sw.old{background:#c9c3b4}
+.sflp .ptip{margin:0;font-size:13px;background:#faf8f2;border-radius:8px;padding:8px 10px}.sflp .ptip .red{color:var(--red);font-weight:400}.sflp .ptip .blk{font-weight:400}
+.sflp .linkb[data-act=older]{align-self:flex-start}
+.sflp .avgl{stroke-width:1.4;stroke-dasharray:5 4;opacity:.85}.sflp .avgl.red{stroke:var(--red)}.sflp .avgl.blk{stroke:var(--ink)}
+.sflp .sw.dash{background:repeating-linear-gradient(90deg,var(--ink) 0 5px,transparent 5px 9px);height:2px}
+.sflp .count{margin:-4px 0 0;font-size:13px;color:var(--mute)}.sflp .count b{font-weight:400;color:var(--red)}
+.sflp .pbar{padding:12px 14px;gap:2px 8px}
+.sflp .pbar b{font-size:24px;letter-spacing:.06em}.sflp .pbar span{font-size:16px}.sflp .pbar small{font-size:13px;margin-top:2px}
+.sflp .gl{stroke-width:3}
+.sflp hr.split{border:0;border-top:1px solid var(--line);margin:8px 0 2px}
+.sflp .nowband{fill:#fbecec}
+.sflp svg.g tspan.u{font-size:8px}
+.sflp .note{margin:0;font-size:12px;line-height:1.5;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.sflp *{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><b>Strength For Life <i>&middot;</i> Progress</b><span>Module preview</span></div></div>
+<div class="wrap">
+  <div class="src" id="src">Data:
+    <button type="button" data-src="example" aria-pressed="true">Example (6 months)</button>
+    <button type="button" data-src="app" id="src-app" hidden>My app data</button>
+    <label>Load backup file<input type="file" id="src-file" accept=".json,application/json"></label>
+  </div>
+  <div class="card"><div id="progress"></div></div>
+  <p class="note" style="margin-top:14px">Preview of the progress module before it goes into the app. Top: this 6-week block against last block, kilos gained since each block started. Bottom: your last 24 sessions, the latest 6 in red against the 18 before in black; the black average carries on dashed, so red above it means faster. Green shading = faster, red = slower.</p>
+</div>
+
+<script>
+/* =====================================================================================
+   SFL PROGRESS MODULE
+   Plug-in API:  SFLProgress.mount(element, data, options)
+     data    = { lifts: [{ id, name, inc }], sessions: [{ t: ms, sets: { liftId: { w: kg, reps } } }] }   (any order)
+     options = { range: 12, mode: 'line', lift: 'squat', unit: 'kg' }   all optional
+   SFLProgress.fromApp(D) turns the app's saved state (localStorage) into that data shape.
+   ===================================================================================== */
+const SFLProgress = (() => {
+  const DAY = 864e5, BLOCK = 42, SAME = 0.1;          // within ±0.1%/wk counts as the same pace
+  const kg = v => (Math.round(v * 100) / 100).toString();
+  const sgn = (v, dp = 2) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(dp);
+  const day = t => new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // Rate of progression: the straight trend line through a block's top sets, as % of where the block started, per week
+  function fit(ps) {
+    if (ps.length < 2) return null;
+    const n = ps.length, xs = ps.map(p => p.t / DAY), ys = ps.map(p => p.v), mx = xs.reduce((a, b) => a + b) / n, my = ys.reduce((a, b) => a + b) / n;
+    let sxy = 0, sxx = 0; xs.forEach((x, i) => { sxy += (x - mx) * (ys[i] - my); sxx += (x - mx) ** 2; });
+    if (!sxx) return null;
+    const slope = sxy / sxx; return { slope, icpt: my - slope * mx };
+  }
+  const rate = ps => { const f = fit(ps); return f ? f.slope * 7 / ps[0].v * 100 : null; };
+  const verdictOf = (a, b) => a == null || b == null ? 'na' : a - b > SAME ? 'up' : b - a > SAME ? 'dn' : 'eq';
+
+  function fromApp(D) {
+    const lifts = (D.ex || []).map(x => ({ id: x.id, name: x.mv + (x.nm ? ' (' + x.nm + ')' : ''), inc: x.inc || 2.5 }));
+    const sessions = (D.log || []).filter(s => !s.test).map(s => { const sets = {}; s.e.forEach(e => { sets[e.id] = { w: e.w, reps: e.reps, n: e.reps4 != null ? 2 : 1 }; }); return { t: s.t, sets, rest: s.rest, sleep: s.sleep, feel: s.feel }; });
+    return { lifts: lifts.filter(l => sessions.some(s => s.sets[l.id])), sessions };
+  }
+
+  // What was different about a block, compared with the block before: worked out from the log and check-ins
+  const mean = (ps, f) => { const v = ps.map(f).filter(x => typeof x === 'number' && !isNaN(x)); return v.length ? v.reduce((a, b) => a + b) / v.length : null; };
+  function changes(k, prev) {
+    if (!k || !prev) return [];
+    const out = [], wks = q => Math.max(1, ((q.ps[q.ps.length - 1].t - q.ps[0].t) / DAY + 1) / 7);
+    const add = (label, a, b, min, fmt) => { if (a != null && b != null && Math.abs(a - b) >= min) out.push({ label, from: fmt(b), to: fmt(a), up: a > b }); };
+    add('Top sets per lift', mean(k.ps, p => p.n), mean(prev.ps, p => p.n), .2, v => v.toFixed(1).replace('.0', ''));
+    add('Days between sessions', mean(k.ps, p => p.rest), mean(prev.ps, p => p.rest), .3, v => v.toFixed(1));
+    add('Sessions per week (this lift)', k.ps.length / wks(k), prev.ps.length / wks(prev), .3, v => v.toFixed(1));
+    add('Sleep', mean(k.ps, p => p.sleep), mean(prev.ps, p => p.sleep), .3, v => v.toFixed(1) + '/5');
+    add('Feeling', mean(k.ps, p => p.feel), mean(prev.ps, p => p.feel), .3, v => v.toFixed(1) + '/5');
+    return out;
+  }
+  const NOTES_KEY = 'sfl-progress-notes';
+  const notes = { get: (lift, b) => { try { return (JSON.parse(localStorage.getItem(NOTES_KEY) || '{}')[lift] || {})[b] || ''; } catch (_) { return ''; } },
+    set: (lift, b, txt) => { try { const all = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'); (all[lift] = all[lift] || {})[b] = txt; localStorage.setItem(NOTES_KEY, JSON.stringify(all)); } catch (_) {} } };
+  function changePanel(liftId, k, prev, editing) {
+    if (!k || !prev) return '';
+    const ch = changes(k, prev), note = notes.get(liftId, k.i);
+    return `<div class="chg-box"><b class="chg-h">What changed in ${k.isCur ? 'this block' : 'block ' + (k.i + 1)}</b>
+      ${ch.length ? `<ul>${ch.map(c => `<li><span>${c.label}</span><span class="chg-v">${c.from} &rarr; <b>${c.to}</b></span></li>`).join('')}</ul>` : '<p class="note">No change in sets, rest days, sleep or feel picked up from your log.</p>'}
+      ${editing ? `<div class="chg-edit"><input type="text" data-k="note" maxlength="80" placeholder="e.g. Added a second top set" value="${esc(note)}" aria-label="What you changed"><button type="button" data-act="save-note">Save</button></div>`
+        : `<p class="chg-note">${note ? '&#9998; <b>' + esc(note) + '</b> ' : ''}<button type="button" class="linkb" data-act="edit-note">${note ? 'Edit' : '+ Add what you changed'}</button></p>`}
+    </div>`;
+  }
+
+  function mount(el, data, opt = {}) {
+    const st = { blk: 'week', lift: opt.lift || null, pt: null, older: false, edit: false };
+    const sessions = data.sessions.slice().sort((a, b) => a.t - b.t);
+    const lifts = data.lifts.filter(l => sessions.some(s => s.sets[l.id]));
+    if (!lifts.length) { el.innerHTML = '<p class="note">No sessions to show yet.</p>'; return; }
+    if (!lifts.some(l => l.id === st.lift)) st.lift = lifts[0].id;
+
+    function build() {
+      const lift = lifts.find(l => l.id === st.lift);
+      const all = sessions.filter(s => s.sets[lift.id]).map(s => ({ t: s.t, w: s.sets[lift.id].w, reps: s.sets[lift.id].reps, n: s.sets[lift.id].n || 1, rest: s.rest, sleep: s.sleep, feel: s.feel }));
+      all.forEach(p => { p.v = p.w + p.reps * lift.inc / 10; });            // weight is the whole, each rep a tenth of a plate step
+      const t0 = all[0].t; all.forEach((p, j) => { p.b = st.blk === 'session' ? Math.floor(j / 6) : Math.floor((p.t - t0) / DAY / BLOCK); });
+      const cur = all[all.length - 1].b, blocks = [];
+      for (let i = 0; i <= cur; i++) { const ps = all.filter(p => p.b === i); if (ps.length) blocks.push({ i, ps, start: st.blk === 'session' ? ps[0].t : t0 + i * BLOCK * DAY, rate: rate(ps), fit: fit(ps) }); }
+      blocks.forEach((k, j) => { k.prev = blocks[j - 1] || null; k.v = k.prev ? verdictOf(k.rate, k.prev.rate) : 'na'; k.isCur = k.i === cur; });
+      return { lift, all, blocks, cur };
+    }
+
+    // ---- the headline: faster or slower than last block ----
+    // kg per week (trend through the block) and average % gain session on session
+    const kgwk = k => k && k.fit ? k.fit.slope * 7 : null;
+    const sos = k => { if (!k || k.ps.length < 2) return null; let t = 0; for (let j = 1; j < k.ps.length; j++) t += (k.ps[j].v / k.ps[j - 1].v - 1) * 100; return t / (k.ps.length - 1); };
+    const f2 = (v, u) => v == null ? '–' : sgn(v) + u;
+
+    function banner(cb, pb) {
+      const a = kgwk(cb), b2 = kgwk(pb), v = verdictOf(a, b2);
+      if (v === 'na') return `<div class="pbar na"><b>Not enough to compare yet</b><small>Your comparison starts in your second 6-week block.</small></div>`;
+      const word = v === 'up' ? '&#9650; Faster' : v === 'dn' ? '&#9660; Slower' : 'Same pace';
+      return `<div class="pbar ${v}"><b>${word}</b><span>than last block</span><small>${f2(a, ' kg/wk')} this block &middot; ${f2(b2, ' kg/wk')} last block</small></div>`;
+    }
+
+    // Second graph: the 18 sessions before, running straight into the latest 6
+    function runGraph(all) {
+      const N = 6, M = 18, pts = all.slice(-(N + M));
+      if (pts.length < N + 3) return `<div class="pbar na"><b>Not enough sessions yet</b><small>This comparison needs at least ${N + 3} sessions of this lift.</small></div>`;
+      const pre = pts.slice(0, -N), now = pts.slice(-N), base = pts[0].v;
+      const q = pts.map((p, j) => ({ x: j + 1, y: p.v - base, p }));
+      const slopeX = arr => { const n = arr.length, mx = arr.reduce((a, r) => a + r.x, 0) / n, my = arr.reduce((a, r) => a + r.y, 0) / n; let sxy = 0, sxx = 0; arr.forEach(r => { sxy += (r.x - mx) * (r.y - my); sxx += (r.x - mx) ** 2; }); const m = sxx ? sxy / sxx : 0; return { m, at: x => my + m * (x - mx) }; };
+      const qPre = q.slice(0, pre.length), qNow = q.slice(pre.length - 1);            // red joins on from the last black point
+      const sp = slopeX(qPre), sn = slopeX(q.slice(pre.length - 1)), xb = pre.length;
+      const fPre = sp.at, fNow = x => sp.at(xb) + sn.m * (x - xb);                   // red average starts where the black average reached, so red above black = faster
+      const a = sn.m, b = sp.m, v = Math.abs(a - b) < 0.02 ? 'eq' : a > b ? 'up' : 'dn';
+      const W = 320, H = 200, L = 36, R = 70, T = 14, B = 26, n = q.length;
+      const ys0 = q.map(r => r.y).concat([fPre(1), fPre(n), fNow(n)]), lo = Math.min(0, ...ys0), hi = Math.max(2.5, ...ys0), pad = (hi - lo) * .1;
+      const xs = x => L + (x - 1) * (W - L - R) / (n - 1), ys = y => T + (hi + pad - y) * (H - T - B) / (hi - lo + 2 * pad);
+      let g = '';
+      const step = hi - lo > 12 ? 5 : hi - lo > 5 ? 2.5 : 1;
+      for (let y = Math.ceil(lo / step) * step; y <= hi + 1e-9; y += step) g += `<line class="ax${y === 0 ? ' zero' : ''}" x1="${L}" x2="${W - R}" y1="${ys(y)}" y2="${ys(y)}"/><text x="${L - 5}" y="${ys(y) + 3}" text-anchor="end">${y > 0 ? '+' : ''}${kg(y)}</text>`;
+      g += `<text x="${L - 5}" y="${T - 3}" text-anchor="end" class="axl">kg</text>`;
+      g += `<rect class="nowband" x="${xs(pre.length + .5)}" y="${T}" width="${W - R - xs(pre.length + .5)}" height="${H - B - T}"/>`;
+      [1, Math.round(pre.length / 2), pre.length, n].forEach(x => { g += `<text x="${xs(x)}" y="${H - 9}" text-anchor="middle">${x}</text>`; });
+      g += `<text x="${(L + W - R) / 2}" y="${H + 2}" text-anchor="middle" class="axl">session</text>`;
+      const x1 = xb;
+      g += `<polygon class="gap ${v}" points="${xs(x1)},${ys(fNow(x1))} ${xs(n)},${ys(fNow(n))} ${xs(n)},${ys(fPre(n))} ${xs(x1)},${ys(fPre(x1))}"/>`;
+      g += `<line class="avgl blk" x1="${xs(1)}" y1="${ys(fPre(1))}" x2="${xs(n)}" y2="${ys(fPre(n))}"/><line class="avgl red" x1="${xs(x1)}" y1="${ys(fNow(x1))}" x2="${xs(n)}" y2="${ys(fNow(n))}"/>`;
+      g += `<polyline class="gl blk" points="${qPre.map(r => xs(r.x) + ',' + ys(r.y)).join(' ')}"/><polyline class="gl red" points="${qNow.map(r => xs(r.x) + ',' + ys(r.y)).join(' ')}"/>`;
+      g += q.map((r, j) => `<circle class="dot ${j < pre.length ? 'blk' : 'red'}" cx="${xs(r.x)}" cy="${ys(r.y)}" r="${n > 16 ? 2.6 : 3.4}"/>`).join('');
+      const lab = [{ c: 'red', t: 'Last ' + N, y: ys(fNow(n)), val: a }, { c: 'blk', t: 'Prev ' + pre.length, y: ys(fPre(n)), val: b }].sort((p, r) => p.y - r.y);
+      if (lab[1].y - lab[0].y < 24) { const m = (lab[0].y + lab[1].y) / 2; lab[0].y = m - 12; lab[1].y = m + 12; }
+      lab.forEach(l => { g += `<text class="endlab ${l.c}" x="${W - R + 8}" y="${l.y - 1}">${l.t}</text><text class="endnum ${l.c}" x="${W - R + 8}" y="${l.y + 11}">${sgn(l.val, 2)}<tspan class="u">kg</tspan></text>`; });
+      const word = v === 'up' ? '&#9650; Faster' : v === 'dn' ? '&#9660; Slower' : v === 'eq' ? 'Same pace' : '–';
+      return `<div class="pbar ${v}"><b>${word}</b><span>latest ${N} sessions v the ${pre.length} before</span><small>${sgn(a, 2)} kg per session latest ${N} &middot; ${sgn(b, 2)} kg per session the ${pre.length} before</small></div>
+        <svg class="g" viewBox="0 0 ${W} ${H + 4}" role="img" aria-label="Latest ${N} sessions against the ${pre.length} before">${g}</svg>
+        <p class="key"><span class="sw red"></span>Latest ${N} <span class="sw blk"></span>${pre.length} before <span class="sw dash"></span>Average per session</p>`;
+    }
+
+    function render() {
+      const { lift, all, blocks, cur } = build();
+      const cb = blocks.find(k => k.i === cur), pb = blocks.find(k => k.i === cur - 1);
+      const W = 320, H = 200, L = 40, R = 58, T = 14, B = 26;
+      const pair = st.older ? blocks.slice() : [pb, cb].filter(Boolean);
+      // each block as kg gained from its first session, by session number or by week
+      pair.forEach(k => { const v0 = k.ps[0].v;
+        k.line = st.blk === 'week' ? k.ps.map(p => ({ x: (p.t - k.start) / DAY / 7, y: p.v - v0, p })) : k.ps.map((p, j) => ({ x: j + 1, y: p.v - v0, p }));
+        // average line: straight best fit through the block's points, run across the whole block
+        const n = k.line.length, mx = k.line.reduce((a, q) => a + q.x, 0) / n, my = k.line.reduce((a, q) => a + q.y, 0) / n;
+        let sxy = 0, sxx = 0; k.line.forEach(q => { sxy += (q.x - mx) * (q.y - my); sxx += (q.x - mx) ** 2; });
+        k.avg = n > 1 && sxx ? { m: sxy / sxx, c: my - (sxy / sxx) * mx } : null; });
+      const xmax = 6, x0 = st.blk === 'week' ? 0 : 1;
+      const ysv = pair.flatMap(k => k.line.map(q => q.y).concat(k.avg && k.i >= cur - 1 ? [k.avg.c + k.avg.m * x0, k.avg.c + k.avg.m * 6] : [])), lo = Math.min(0, ...ysv), hi = Math.max(2.5, ...ysv), pad = (hi - lo) * .1;
+      const xs = x => L + (x - x0) * (W - L - R) / (xmax - x0), ys = y => T + (hi + pad - y) * (H - T - B) / (hi - lo + 2 * pad);
+      const cls = k => k.i === cur ? 'red' : k.i === cur - 1 ? 'blk' : 'old';
+      let svg = '';
+      for (let x = x0; x <= xmax; x++) svg += `<line class="ax v" x1="${xs(x)}" x2="${xs(x)}" y1="${T}" y2="${H - B}"/><text x="${xs(x)}" y="${H - 9}" text-anchor="middle">${st.blk === 'week' ? (x ? 'Wk ' + x : 'Start') : x}</text>`;
+      if (st.blk !== 'week') svg += `<text x="${(L + W - R) / 2}" y="${H + 2}" text-anchor="middle" class="axl">session</text>`;
+      const step = hi - lo > 12 ? 5 : hi - lo > 5 ? 2.5 : 1;
+      for (let y = Math.ceil(lo / step) * step; y <= hi + 1e-9; y += step) svg += `<line class="ax${y === 0 ? ' zero' : ''}" x1="${L}" x2="${W - R}" y1="${ys(y)}" y2="${ys(y)}"/><text x="${L - 5}" y="${ys(y) + 3}" text-anchor="end">${y > 0 ? '+' : ''}${kg(y)}</text>`;
+      svg += `<text x="${L - 5}" y="${T - 3}" text-anchor="end" class="axl">kg</text>`;
+      if (cb && pb && cb.avg && pb.avg) { const av = (k, x) => k.avg.c + k.avg.m * x;
+        svg += `<polygon class="gap ${verdictOf(kgwk(cb), kgwk(pb))}" points="${xs(x0)},${ys(av(cb, x0))} ${xs(6)},${ys(av(cb, 6))} ${xs(6)},${ys(av(pb, 6))} ${xs(x0)},${ys(av(pb, x0))}"/>`; }
+      pair.filter(k => k.avg && k.i >= cur - 1).forEach(k => { const c = cls(k);
+        svg += `<line class="avgl ${c}" x1="${xs(x0)}" y1="${ys(k.avg.c + k.avg.m * x0)}" x2="${xs(6)}" y2="${ys(k.avg.c + k.avg.m * 6)}"/>`; });
+      pair.slice().sort((p, q) => (p.i >= cur - 1) - (q.i >= cur - 1) || p.i - q.i).forEach(k => { const c = cls(k);
+        svg += `<polyline class="gl ${c}" points="${k.line.map(q => xs(q.x) + ',' + ys(q.y)).join(' ')}"/>`;
+        if (c !== 'old') svg += k.line.map(q => `<circle class="dot ${c}" cx="${xs(q.x)}" cy="${ys(q.y)}" r="3.4"/>`).join(''); });
+      // end labels
+      const lab = pair.filter(k => k.i >= cur - 1).map(k => ({ k, y: ys(k.line[k.line.length - 1].y) })).sort((p, q) => p.y - q.y);
+      if (lab.length === 2 && lab[1].y - lab[0].y < 24) { const m = (lab[0].y + lab[1].y) / 2; lab[0].y = m - 12; lab[1].y = m + 12; }
+      lab.forEach(({ k, y }) => { const c = cls(k), e = k.line[k.line.length - 1];
+        svg += `<text class="endlab ${c}" x="${W - R + 8}" y="${y - 1}">${k.i === cur ? 'This' : 'Last'}</text><text class="endnum ${c}" x="${W - R + 8}" y="${y + 11}">${sgn(e.y, 1)}kg</text>`; });
+      // tapped point
+      let tip = '';
+      if (st.pt) { const k = pair.find(k => k.i === st.pt[0]), q = k && k.line[st.pt[1]];
+        if (q) tip = `<p class="ptip"><b class="${cls(k)}">${k.i === cur ? 'This block' : 'Last block'}</b> &middot; ${st.blk === 'week' ? 'week ' + Math.min(6, Math.floor(q.x) + 1) : 'session ' + q.x} &middot; ${day(q.p.t)} &middot; ${kg(q.p.w)} kg &times; ${q.p.reps} &middot; ${sgn(q.y, 1)} kg on the block</p>`; }
+
+      el.innerHTML = `<div class="sflp">
+        <label class="lift">Lift<select data-k="lift">${lifts.map(l => `<option value="${l.id}" ${l.id === st.lift ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>
+        <span class="eyebrow">Block v block (6 weeks)</span>
+        ${banner(cb, pb)}
+        <svg class="g" viewBox="0 0 ${W} ${H + 4}" role="img" aria-label="${esc(lift.name)}: this block against last block">${svg}</svg>
+        <p class="key"><span class="sw red"></span>This block <span class="sw blk"></span>Last block <span class="sw dash"></span>Average</p>
+        <hr class="split">
+        <span class="eyebrow">Last 24 sessions</span>
+        ${runGraph(all)}
+      </div>`;
+    }
+
+    el.onclick = e => {
+      const by = e.target.closest('[data-by]'), pt = e.target.closest('[data-pt]'), act = e.target.closest('[data-act]');
+      if (act && act.dataset.act === 'edit-note') { st.edit = true; render(); const i = el.querySelector('[data-k=note]'); i && i.focus(); return; }
+      if (act && act.dataset.act === 'save-note') { const i = el.querySelector('[data-k=note]'), { cur } = build(); notes.set(st.lift, cur, i.value.trim()); st.edit = false; render(); return; }
+      if (act && act.dataset.act === 'older') { st.older = !st.older; st.pt = null; render(); return; }
+      if (by) { st.blk = by.dataset.by; st.pt = null; st.edit = false; render(); }
+      else if (pt) { const [i, j] = pt.dataset.pt.split(':').map(Number); st.pt = st.pt && st.pt[0] === i && st.pt[1] === j ? null : [i, j]; render(); }
+    };
+    el.addEventListener('keydown', e => { if (e.target.dataset && e.target.dataset.k === 'note' && e.key === 'Enter') { e.preventDefault(); el.querySelector('[data-act=save-note]').click(); } });
+    el.onchange = e => { if (e.target.dataset.k === 'lift') { st.lift = e.target.value; st.pt = null; st.edit = false; render(); } };
+    render();
+    return { set: o => { Object.assign(st, o, { pt: null }); render(); } };
+  }
+  return { mount, fromApp, rate };
+})();
+/* ================================ end of module ================================ */
+
+
+/* ---------- Example data: about six months of Phase 1, using the Magnificent 7 rules ----------
+   A made-up story so the comparator has something to show: block 3 adds a second top set, block 4 sleep slips, block 5 adds a rest day. */
+function exampleData() {
+  let z = 20261102; const rnd = () => (z = (z * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const lifts = [
+    { id: 'squat', name: 'Squat (Back Squat)', inc: 2.5, w: 80 }, { id: 'ohp', name: 'Shoulder Press (BB)', inc: 2.5, w: 40 },
+    { id: 'chest', name: 'Chest Press (Flat DB)', inc: 2, w: 26 }, { id: 'dips', name: 'Dips (BW + load)', inc: 2.5, w: 85 },
+    { id: 'hinge', name: 'Deficit Hinge', inc: 2.5, w: 90 }, { id: 'pull', name: 'Pull Up (BW + load)', inc: 2.5, w: 85 },
+    { id: 'row', name: 'Row', inc: 2.5, w: 55 }, { id: 'upright', name: 'Upright Row', inc: 2.5, w: 35 }];
+  const days = { PUSH: ['squat', 'ohp', 'chest', 'dips'], PULL: ['hinge', 'pull', 'row', 'upright'] };
+  const state = {}; lifts.forEach(l => { state[l.id] = { w: l.w, last: null }; });
+  const WEEKS = 27, DAYMS = 864e5, end = new Date(); end.setHours(18, 0, 0, 0);
+  const sessions = [];
+  for (let k = 0; k < WEEKS * 3; k++) {
+    const wk = Math.floor(k / 3), t = end.getTime() - ((WEEKS - wk) * 7 - [0, 2, 4][k % 3]) * DAYMS;
+    // the story: block 3 adds a second top set (faster), block 4 sleep slips (slower), block 5 adds a rest day between sessions (faster)
+    const block = Math.floor(wk / 6), boost = block === 2 ? .2 : block === 3 ? -.18 : block === 4 ? .22 : 0;
+    const type = k % 2 ? 'PULL' : 'PUSH', sets = {}, nTop = block >= 2 ? 2 : 1;
+    const rest = block === 4 ? 3 : 2, sleep = block === 3 ? (rnd() < .6 ? 2 : 3) : (rnd() < .5 ? 4 : 3), feel = block === 3 ? 3 : (rnd() < .5 ? 4 : 3);
+    days[type].forEach(id => {
+      const l = lifts.find(x => x.id === id), s = state[id];
+      // first go at a new weight: 5 or 6 reps; then most sessions add a rep until 7 earns the next jump
+      let reps = s.last == null ? (rnd() < .3 + boost ? 6 : 5) : Math.min(8, s.last + (rnd() < .42 + boost ? 1 : 0));
+      if (rnd() < .05) reps = Math.max(4, reps - 1);                       // the odd off day
+      sets[id] = { w: s.w, reps, n: nTop };
+      if (reps >= 7) { s.w += Math.max(l.inc, Math.floor(s.w * .025 / l.inc) * l.inc); s.last = null; }   // up, never more than 5%, rounded down
+      else if (reps <= 4) { s.w = Math.round(s.w * .95 / l.inc) * l.inc; s.last = null; }
+      else s.last = reps;
+    });
+    sessions.push({ t, sets, rest, sleep, feel });
+  }
+  return { lifts: lifts.map(({ id, name, inc }) => ({ id, name, inc })), sessions };
+}
+
+/* ---------- Preview page wiring: example data, the app's saved data on the same site, or a backup file ---------- */
+(function () {
+  const box = document.getElementById('progress');
+  const APP_KEYS = ['sfl-live-v1', 'sfl-new-v1', 'sfl-dw-v1', 'sfl-demo-v2'];
+  let appD = null;
+  try { for (const k of APP_KEYS) { const raw = localStorage.getItem(k); if (raw) { const d = JSON.parse(raw); if (d && d.log && d.log.length) { appD = d; break; } } } } catch (_) {}
+  const btnApp = document.getElementById('src-app'); if (appD) btnApp.hidden = false;
+  const show = (src, data) => { document.querySelectorAll('#src [data-src]').forEach(b => b.setAttribute('aria-pressed', b.dataset.src === src)); SFLProgress.mount(box, data); };
+  document.getElementById('src').addEventListener('click', e => { const b = e.target.closest('[data-src]'); if (!b) return; if (b.dataset.src === 'example') show('example', exampleData()); if (b.dataset.src === 'app' && appD) show('app', SFLProgress.fromApp(appD)); });
+  document.getElementById('src-file').addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; f.text().then(txt => { try { const d = JSON.parse(txt); show('file', d.log ? SFLProgress.fromApp(d) : d); } catch (_) { box.innerHTML = '<p class="note">That file isn&rsquo;t an app backup. Export it from the app&rsquo;s Coach tab and try again.</p>'; } }); });
+  show(appD ? 'app' : 'example', appD ? SFLProgress.fromApp(appD) : exampleData());
+})();
+</script>
+</body>
+</html>
+
+</body></html>
