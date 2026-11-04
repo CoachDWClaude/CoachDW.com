@@ -4,7 +4,17 @@ Status: waiting on Danny to decide whether to build it, and on which tier.
 
 ## Job
 
-Take a photo of a meal and get a quick estimate of protein, carbs, fat and calories, then correct it.
+The photo is for accountability first, and the numbers are a best guess. Take a picture before you eat, see what is on the plate, and get a rough range for protein, carbs, fat and calories.
+
+## Three checks, like the NOT A Calorie Calculator
+
+Each is a guide, and none is treated as exact:
+
+1. The photo: a visual record and a rough guess.
+2. The packet: the label, shown with its likely margin.
+3. The portion: the member's own weighed or hand-sized amount.
+
+Show which checks were used and give one range. Use the best evidence available, rather than a plain average of the three.
 
 ## Flow
 
@@ -18,6 +28,12 @@ Take a photo of a meal and get a quick estimate of protein, carbs, fat and calor
 A conference abstract tested 4 apps on 102 controlled meals (NUTRITION 2026, not peer reviewed). Calories were underestimated by about a third and fat by 30 g. Early follow-up suggests a bigger miss on higher-fat, lower-carb meals.
 
 So: confirm portions, ask about cooking fats and oils, and read packaging labels where possible.
+
+Labels are a guide too. Guidance for UK and EU foods allows about 20% either way on protein at 10 to 40 g per 100 g. A UK survey of 41 protein products found 30 met their claim and most of the rest were within 5%, though one was at about 54%. The survey publisher sells protein verification.
+
+## Accountability
+
+Keep photos private by default, with sharing to the tribe as an opt-in. A small study of 43 people reported more awareness from photographing food before eating, without a control group in the source seen. In a large app study, only 2.58% of users stayed active, so the habit needs goals and a reason to return.
 
 ## What it needs
 
