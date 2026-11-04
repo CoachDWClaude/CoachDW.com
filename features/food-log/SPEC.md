@@ -35,6 +35,17 @@ Labels are a guide too. Guidance for UK and EU foods allows about 20% either way
 
 Keep photos private by default, with sharing to the tribe as an opt-in. A small study of 43 people reported more awareness from photographing food before eating, without a control group in the source seen. In a large app study, only 2.58% of users stayed active, so the habit needs goals and a reason to return.
 
+## My Usual Meals
+
+Eat the same meals as often as you can, and logging gets easier and more accurate.
+
+- Check a meal properly once, with photo, label and weighed portions.
+- Save it as a usual meal.
+- Next time, tap once. No new photo, so no AI cost.
+- Aim for a small rotation of usual meals, with some variety in them.
+
+In 112 adults over 12 weeks of a weight loss programme, those with more repetitive diets lost 5.9% of bodyweight against 4.3% for more varied diets. This is a correlation, not proof of cause (Hagerman et al. 2026).
+
 ## What it needs
 
 - A small server step to hold the private API key.
