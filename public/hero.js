@@ -49,7 +49,7 @@ while(true){
     root.style.removeProperty('--phh');
     var cur = img.offsetHeight;
     var bottom = j.getBoundingClientRect().bottom + window.scrollY;
-    var want = cur + (vh - 12 - bottom);
+    var want = cur + (vh - 30 - bottom);
     want = Math.max(180, vh * 0.38, Math.min(want, w * 1.6));
     root.style.setProperty('--phh', Math.round(want) + 'px');
   }

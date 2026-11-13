@@ -121,7 +121,7 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .m7{font-family:'Special Elite','Courier New',monospace!important}
 
 /* ===== Chat panel (floating button → message → WhatsApp Business) ===== */
-.chatp{position:fixed;right:clamp(12px,2vw,24px);bottom:calc(clamp(12px,2vw,24px) + 72px);z-index:31;width:min(340px,calc(100vw - 24px));background:#fff;color:#111;border:2px solid #cc0000;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.5);font-family:'Special Elite','Courier New',monospace;overflow:hidden;transform-origin:bottom right;transform:scale(.85) translateY(10px);opacity:0;visibility:hidden;transition:transform .25s cubic-bezier(.2,.9,.3,1.2),opacity .2s,visibility 0s .25s}
+.chatp{position:fixed;right:clamp(12px,2vw,24px);bottom:calc(clamp(12px,2vw,24px) + 156px);z-index:31;width:min(340px,calc(100vw - 24px));background:#fff;color:#111;border:2px solid #cc0000;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.5);font-family:'Special Elite','Courier New',monospace;overflow:hidden;transform-origin:bottom right;transform:scale(.85) translateY(10px);opacity:0;visibility:hidden;transition:transform .25s cubic-bezier(.2,.9,.3,1.2),opacity .2s,visibility 0s .25s}
 .chatp.on{transform:none;opacity:1;visibility:visible;transition-delay:0s}
 .chatp-top{display:flex;align-items:center;gap:10px;background:#000;color:#fff;padding:10px 8px 10px 12px}
 .chatp-av{width:38px;height:38px;border-radius:50%;background:#000;border:1px solid #cc0000;object-fit:contain;padding:4px;box-sizing:border-box}
