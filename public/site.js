@@ -383,3 +383,68 @@
     membersEl.textContent = CONFIG.members.toLocaleString('en-GB') + ' already in. ';
   }
 })();
+
+/* Articles & Chapters: animate the chapter drop-downs open and closed, matching the main menu */
+(function () {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var EASE = 'cubic-bezier(.7,0,.2,1)';
+  document.addEventListener('click', function (e) {
+    var sum = e.target.closest && e.target.closest('.ac-item > summary');
+    if (!sum) return;
+    var d = sum.parentElement, body = d.querySelector('.ac-body');
+    if (!body || reduce) { requestAnimationFrame(function () { d.classList.toggle('show', d.open); }); return; }
+    e.preventDefault();
+    if (d.dataset.busy) return;
+    d.dataset.busy = '1';
+    if (!d.open) {
+      d.open = true;
+      var h = body.scrollHeight;
+      var a = body.animate([{ height: '0px', clipPath: 'inset(0 0 100% 0)' }, { height: h + 'px', clipPath: 'inset(0 0 0 0)' }], { duration: 450, easing: EASE });
+      requestAnimationFrame(function () { d.classList.add('show'); });
+      a.onfinish = function () { delete d.dataset.busy; };
+    } else {
+      d.classList.remove('show');
+      var h2 = body.offsetHeight;
+      var b = body.animate([{ height: h2 + 'px', clipPath: 'inset(0 0 0 0)' }, { height: '0px', clipPath: 'inset(0 0 100% 0)' }], { duration: 380, easing: EASE, delay: 120, fill: 'forwards' });
+      b.onfinish = function () { d.open = false; b.cancel(); delete d.dataset.busy; };
+    }
+  });
+})();
+
+/* Which way the page is scrolling, for entrances that follow the scroll direction */
+var cdwScrollUp = false;
+(function () { var y = window.scrollY; addEventListener('scroll', function () { var n = window.scrollY; if (n !== y) cdwScrollUp = n < y; y = n; }, { passive: true }); })();
+
+/* Scroll animations: play when a block reaches the middle of the screen; reset once it is fully off screen so it replays next time */
+function cdwReveal(el, onIn, onOut) {
+  if (!('IntersectionObserver' in window)) { onIn(); return; }
+  new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) onIn(); }); }, { rootMargin: '-40% 0px -40% 0px' }).observe(el);
+  new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) onOut(); }); }, { threshold: 0 }).observe(el);
+}
+
+/* Articles & Chapters: chapter rows slide in from the left, article rows from the right */
+(function () {
+  document.querySelectorAll('#articles .ac-list').forEach(function (l) {
+    l.classList.add('rev');
+    cdwReveal(l, function () { l.classList.add('in'); }, function () { l.classList.remove('in'); });
+  });
+})();
+
+/* Member benefits: title first, then each card or item drops down in turn */
+(function () {
+  ['free', 'membership'].forEach(function (id) {
+    var sec = document.getElementById(id); if (!sec) return;
+    var head = sec.querySelector('h2'); if (!head) return;
+    sec.classList.add('bnf');
+    head.parentElement.classList.add('bnf-t');
+    var items = id === 'free' ? sec.querySelectorAll('.bnf-t + div > div') : sec.querySelectorAll('ul > li');
+    items.forEach(function (el, n) { el.classList.add('bnf-i'); el.style.setProperty('--n', n); });
+    cdwReveal(head, function () {
+      if (sec.classList.contains('in')) return;
+      sec.classList.toggle('from-below', cdwScrollUp);   // scrolling up: drop in from below; scrolling down: from above
+      void sec.offsetWidth;
+      sec.classList.add('in');
+    }, function () {});
+    cdwReveal(sec, function () {}, function () { sec.classList.remove('in'); });
+  });
+})();

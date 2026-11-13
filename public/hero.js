@@ -15,21 +15,47 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const p1=document.getElementById('p1'),p2=document.getElementById('p2'),pb=document.getElementById('playbtn');
 const pic=n=>{p1.classList.toggle('on',n===1);p2.classList.toggle('on',n===2);pb.classList.add('on')};
-const t1=document.getElementById('t1'),t2=document.getElementById('t2');
-const say=n=>{t1.classList.toggle('off',n!==1);t2.classList.toggle('off',n!==2)};
+const T=[document.getElementById('t1'),document.getElementById('t3'),document.getElementById('t2')];
+const P=[1,2,1];
+const say=n=>T.forEach((t,i)=>t.classList.toggle('off',i!==n));
 const reset=cs=>cs.forEach(c=>c.classList.remove('on'));
 const popClosed=()=>new Promise(r=>{const t=setInterval(()=>{if(!(window.cdwWelcomeOpen&&window.cdwWelcomeOpen())){clearInterval(t);r()}},200)});
 const open=()=>{if(window.cdwWelcomeAuto)window.cdwWelcomeAuto()};
-(async()=>{if(reduce){document.querySelectorAll('.tw').forEach(e=>e.classList.remove('tw'));pic(1);say(1);await wait(3000);open();return}
-const c1=prep(t1),c2=prep(t2);let first=true;
+(async()=>{if(reduce){document.querySelectorAll('.tw').forEach(e=>e.classList.remove('tw'));pic(1);say(0);await wait(3000);open();return}
+const C=T.map(prep);let first=true;
 while(true){
-  reset(c1);say(1);pic(1);sflt.classList.remove('shine');void sflt.offsetWidth;sflt.classList.add('shine');await wait(1500);
-  await type(c1,85);await wait(1800);
-  t1.classList.add('off');pic(2);await wait(500);
-  reset(c2);t2.classList.remove('off');
-  await type(c2,85);await wait(2200);
-  if(first){first=false;open();await wait(300);await popClosed();await wait(800)}
-  t2.classList.add('off');await wait(700);
+  for(let i=0;i<T.length;i++){
+    reset(C[i]);say(i);pic(P[i]);
+    sflt.classList.remove('shine');void sflt.offsetWidth;sflt.classList.add('shine');   // shimmer sweeps STRENGTH FOR LIFE just before each line types
+    await wait(1450);
+    await type(C[i],85);await wait(i===T.length-1?2200:1800);
+    if(i===T.length-1&&first){first=false;open();await wait(300);await popClosed();await wait(800)}
+    T[i].classList.add('off');await wait(i===T.length-1?700:200);
+  }
 }})();
 
+})();
+
+/* First screen: size the hero photo so the Join the Tribe button sits at the bottom of the screen on load */
+(function () {
+  var lastW = 0;
+  function fitHero(force) {
+    var img = document.getElementById('p1'), j = document.querySelector('.hero .jwrap');
+    if (!img || !j) return;
+    var w = window.innerWidth;
+    if (!force && w === lastW) return; // ignore phone address-bar height changes
+    lastW = w;
+    var vh = window.innerHeight, root = document.documentElement;
+    root.style.removeProperty('--phh');
+    var cur = img.offsetHeight;
+    var bottom = j.getBoundingClientRect().bottom + window.scrollY;
+    var want = cur + (vh - 12 - bottom);
+    want = Math.max(180, vh * 0.38, Math.min(want, w * 1.6));
+    root.style.setProperty('--phh', Math.round(want) + 'px');
+  }
+  function all() { fitHero(true); }
+  if (document.readyState === 'complete') all(); else window.addEventListener('load', all);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(all, 50); });
+  window.addEventListener('resize', function () { fitHero(false); });
+  window.addEventListener('orientationchange', function () { setTimeout(all, 300); });
 })();

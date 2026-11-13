@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<title>CoachDW Global Article &amp; Chapter Template</title>
+<style>
+  :root{
+    --black:#0a0a0a;
+    --red:#cc0000;
+    --paper:#f9f7f2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{
+    background:var(--paper);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Page-break guide: solid colours only — wkhtmltopdf's renderer paints
+     any transparent/alpha stop in a repeating-linear-gradient as solid
+     black, so #ecb2ae is --paper blended with red at ~28% by hand. If
+     --paper changes, recalculate this blend to match. */
+  body{
+    background-color:var(--paper);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      #f9f7f2 0,
+      #f9f7f2 10.986in,
+      #ecb2ae 10.986in,
+      #ecb2ae 11in
+    );
+    min-height:100vh;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-family:'Special Elite','Courier New',monospace;
+  }
+  *{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:var(--black);
+    padding:8px 20px;
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .header img.sig{ height:auto; width:74%; max-width:550px; flex:1 1 74%; min-width:0; object-fit:contain; display:block; }
+  .header img.logo{ height:auto; width:74%; max-width:550px; flex:1 1 74%; min-width:0; object-fit:contain; display:block; }
+
+  .placeholder-content{ padding:60px 20px; color:#999; font-size:14px; }
+
+  .title-block{ padding:20px 20px 20px; }
+  .title-block .kicker{ color:#e6772e; font-family:'Share Tech Mono','Courier New',monospace; font-size:13px; letter-spacing:1px; text-transform:uppercase; }
+  .title-block .book-title{ color:var(--red); font-size:24px; line-height:1.2; margin-top:6px; }
+  .title-block .series-title{ color:#e6772e; font-size:20px; margin-top:4px; }
+
+  .title-block .book-title .dw-mark-img{ height:1.8em; vertical-align:-0.4em; margin-left:6px; }
+  .title-block .tagline{ color:#4a4a4a; font-size:16px; line-height:1.6; margin-top:8px; }
+  .title-block .item-title{ color:var(--red); font-size:18px; margin-top:18px; line-height:1.3; white-space:nowrap; }
+  .title-block .item-meta{ color:#666; font-size:13px; margin-top:6px; letter-spacing:1px; text-transform:uppercase; }
+
+  
+  .pull-quote{ margin:25px 0; }
+  .pull-quote .quote-rule-img{ width:100%; height:auto; display:block; }
+  .pull-quote .rule-row{ display:flex; align-items:center; gap:14px; }
+  .pull-quote .rule-row.top{ justify-content:flex-start; }
+  .pull-quote .rule-row.bottom{ justify-content:flex-end; }
+  .pull-quote .rule-row .plain-line{ flex:1 1 auto; height:2px; background:var(--red); }
+  .pull-quote .rule-row img.quote-mark{ flex:0 0 auto; height:30px; width:auto; display:block; }
+  .pull-quote .rule-row img.quote-signature{ flex:0 0 auto; height:32px; width:auto; display:block; }
+  .pull-quote .quote-text{ font-size:18px; font-weight:500; color:var(--black); line-height:1.5; text-align:left; padding:8px 6px; }
+  .body-content{ padding:0 20px 40px; }
+  .body-content p{ font-size:15px; line-height:1.7; color:#2b2b2b; margin-bottom:18px; }
+  .body-content .p-num{ font-family:'Special Elite','Courier New',monospace; font-weight:normal; color:var(--red); font-size:12px; opacity:0.65; float:left; margin-right:4px; margin-top:4px; }
+
+  .page-footer{ text-align:center; padding:30px 20px 40px; border-top:1px solid #ddd6c4; margin-top:10px; }
+  .page-footer img{ height:60px; }
+
+  .punct-demo{ padding:0 20px 30px; }
+  .punct-demo p{ font-size:15px; line-height:1.7; color:#2b2b2b; }
+  .punct-demo .red-punct{ color:var(--red); }
+
+  .drop-cap{ font-size:32px; float:left; line-height:0.8; padding:2px 6px 0 0; color:var(--red); }
+  .img-full{ margin:28px 0; }
+  .img-full .img-box{ width:100%; position:relative; padding-bottom:80%; background:#e2ddc9; border:1px dashed #b5ae95; }
+  .img-full .img-box .img-label{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Share Tech Mono','Courier New',monospace; font-size:12px; color:#8a8468; letter-spacing:1px; text-transform:uppercase; text-align:center; width:80%; }
+  .img-full .img-caption{ font-family:'Share Tech Mono','Courier New',monospace; font-size:11px; color:#8a8468; margin-top:8px; text-align:center; }
+
+  /* Skool CTA button design pending — removed fabricated placeholder CSS.
+     Real design not yet locked (see: Skool banner, on the horizon). */
+
+  .body-content .cite{ color:var(--red); font-size:0.85em; }
+  .body-content h2{ color:var(--red); font-size:20px; margin:30px 0 14px; }
+  .references{ padding:0 20px 30px; border-top:1px solid #ddd6c4; margin-top:20px; }
+  .references h3{ color:var(--black); font-size:15px; margin:20px 0 12px; }
+  .references p{ font-size:12px; color:#666; line-height:1.6; margin-bottom:8px; }
+  .references .cite{ color:var(--red); }
+
+  .para-break{ display:flex; align-items:center; gap:12px; margin:26px 0 4px; }
+  .para-break::before{ content:""; flex:0 0 24px; height:1px; background:var(--red); opacity:0.5; }
+  .para-break .eyebrow{ font-family:'Share Tech Mono','Courier New',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--red); opacity:0.85; }
+
+  .split-block{ display:flex; gap:28px; margin:28px 0; align-items:flex-start; }
+  .split-block.img-right{ flex-direction:row-reverse; }
+  .split-block .split-img{ flex:0 0 50%; border:1px solid var(--red); overflow:hidden; }
+  .split-block .split-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .split-block .split-img .img-placeholder{ width:100%; position:relative; padding-bottom:125%; background:#e2ddc9; }
+  .split-block .split-img .img-label{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Share Tech Mono','Courier New',monospace; font-size:10px; color:#8a8468; letter-spacing:1px; text-transform:uppercase; text-align:center; width:80%; }
+  .split-block .split-text{ flex:1; font-size:14px; line-height:1.6; color:#2b2b2b; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     COACHDW GLOBAL ARTICLE & CHAPTER TEMPLATE — LOCKED BRAND TEMPLATE
+     Use this for CoachDW.com articles AND Thought For Food / book chapters.
+     Header, footer and pull-quote graphics below are real brand
+     assets baked in as base64, so this file works standalone —
+     no re-upload needed. Only touch the sections marked [EDIT].
+     ============================================================ -->
+
+<!-- HEADER — do not modify -->
+<div class="header">
+  <img class="sig" src="/articles/img/signature.png" alt="Danny Williams signature">
+  <img class="logo" src="/articles/img/logo.png" alt="CoachDW.com Strength For Life">
+</div>
+
+<!-- [EDIT] TITLE BLOCK — generic pattern, works for both a CoachDW article and a book chapter.
+
+     ARTICLE example:
+       kicker:      CoachDW Article
+       title:       Article Title
+       description: Subheader
+
+     CHAPTER example:
+       kicker:      #ThoughtForFood — Chapter 1
+       title:       Chapter Title
+       description: Chapter description
+
+     Delete the item-meta line entirely for book chapters — it's article-only (format tag + read time). -->
+<div class="title-block">
+  <div class="kicker">[CoachDW Article  /  #BookName — Chapter X]</div>
+  <div class="book-title">[TITLE]</div>
+  <div class="tagline">[Subheader / chapter description]</div>
+  <div class="item-meta">[FORMAT TAG e.g. QUICK READ / SUMMARY / DEEP DIVE] &middot; [X] MINUTE READ — ARTICLES ONLY, DELETE FOR CHAPTERS</div>
+</div>
+
+<!-- [EDIT] BODY CONTENT — paragraphs, headers, quotes, images -->
+<div class="body-content">
+
+  <!-- Opening paragraph — first letter gets the red drop cap -->
+  <p><span class="drop-cap">[X]</span>[Opening paragraph text. This one carries no number — it's the hook.]</p>
+
+  <!-- Every paragraph after the opener gets a red paragraph number -->
+  <p><span class="p-num">2</span>[Paragraph text.]</p>
+
+  <!-- OPTIONAL: split image/text block — img-right or default (img-left)
+       Replace the placeholder <div> below with <img src="..."> once you have the real photo -->
+  <div class="split-block img-right">
+    <div class="split-img">
+      <div class="img-placeholder"><span class="img-label">[Image placeholder — describe shot]</span></div>
+    </div>
+    <div class="split-text">[Short supporting quote or callout text, ~2-3 lines.]</div>
+  </div>
+
+  <p><span class="p-num">3</span>[Paragraph text.]</p>
+
+  <!-- OPTIONAL: full-width image placeholder (use if no real photo yet) -->
+  <div class="img-full">
+    <div class="img-box"><span class="img-label">[Image placeholder — describe shot]</span></div>
+    <div class="img-caption">[Caption text]</div>
+  </div>
+
+  <p><span class="p-num">4</span>[Paragraph text.]</p>
+
+  <!-- PULL QUOTE — rule/quote-mark graphics are real brand assets, don't touch the <img> tags -->
+  <div class="pull-quote">
+    <div class="rule-row top"><img class="quote-mark" src="/articles/img/quote-mark.png" alt=""><span class="plain-line"></span></div>
+    <div class="quote-text">[Pull-quote text — a strong standalone line from the article.]</div>
+    <div class="rule-row bottom"><span class="plain-line"></span><img class="quote-signature" src="/articles/img/quote-signature.png" alt=""></div>
+  </div>
+
+  <!-- SECTION BREAK — small red eyebrow label above an H2 -->
+  <div class="para-break"><span class="eyebrow">[Eyebrow label]</span></div>
+  <h2>[Section Heading]</h2>
+
+  <p><span class="p-num">5</span>[Paragraph text with a citation<span class="cite">[1]</span>.]</p>
+
+  <p><span class="p-num">6</span>[Paragraph text.]</p>
+
+  <!-- Second pull-quote (repeat the block above as many times as needed) -->
+  <div class="pull-quote">
+    <div class="rule-row top"><img class="quote-mark" src="/articles/img/quote-mark.png" alt=""><span class="plain-line"></span></div>
+    <div class="quote-text">[Another pull-quote line.]</div>
+    <div class="rule-row bottom"><span class="plain-line"></span><img class="quote-signature" src="/articles/img/quote-signature.png" alt=""></div>
+  </div>
+
+  <h2>[Section Heading]</h2>
+
+  <p><span class="p-num">7</span>[Paragraph text.]</p>
+
+  <!-- Repeat h2 / p-num paragraphs / split-block / pull-quote as needed for the rest of the article -->
+
+  <h2>Bringing It Together</h2>
+
+  <p><span class="p-num">N</span>[Closing paragraph — opinion + CTA. Default sign-off: "Now get to the f**king gym."]</p>
+
+  <!-- SKOOL CTA — locked brand asset, real banner image, real clickable link.
+       Swap the href for the correct destination URL per article/chapter if it ever differs. -->
+  <p style="text-align:center;margin:32px 0;">
+    <a href="https://www.skool.com/coachdw" style="display:inline-block;">
+      <img src="/articles/img/skool-banner.png" alt="Click here to join #StrengthForLife on skool.com — free for a limited time" style="width:100%;max-width:380px;height:auto;display:block;margin:0 auto;">
+    </a>
+  </p>
+
+  <!-- [EDIT] REFERENCES — delete if the article has none -->
+  <div class="references">
+    <h3>References</h3>
+    <p><span class="cite">[1]</span> [Author(s) (Year) 'Title', Journal, Volume(Issue), pp.xx&ndash;xx.]</p>
+    <p><span class="cite">[2]</span> [Reference 2]</p>
+  </div>
+</div>
+
+<!-- FOOTER — do not modify -->
+<div class="page-footer">
+  <img src="/articles/img/footer-signature.png" alt="Danny Williams">
+</div>
+
+</body>
+</html>

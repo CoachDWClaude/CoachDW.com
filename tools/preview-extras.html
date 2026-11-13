@@ -1,0 +1,31 @@
+<style>
+html.helv [data-wrap]{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif!important}
+html.helv h1,html.helv h2,html.helv h3,html.helv .sfl,html.helv .sfl *,html.helv .line,html.helv .line *,html.helv .sb,html.helv .sb *,html.helv [aria-label="Welcome..."]{font-family:'Special Elite','Courier New',monospace}
+html.mix [data-wrap]{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif!important}
+html.mix h1,html.mix h2,html.mix h3,html.mix h4,html.mix .sfl,html.mix .sfl *,html.mix .line,html.mix .line *,html.mix .sb,html.mix .sb *,html.mix [aria-label="Welcome..."],html.mix .ttl,html.mix .ttl *,html.mix .mnav li a>span,html.mix .mnav .act,html.mix .join,html.mix .join *,html.mix button,html.mix a[style*="font-weight: 700"],html.mix a[style*="font-weight: 700"] *{font-family:'Special Elite','Courier New',monospace}
+html.mix .mnav li a small,html.mix .ttl .desc{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+#fontswitch{position:fixed;left:12px;bottom:12px;z-index:200;display:flex;border:2px solid #cc0000;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+#fontswitch button{border:0;background:#fff;color:#111;padding:8px 9px;font-size:12px;cursor:pointer}
+#fontswitch button.on{background:#cc0000;color:#fff}
+#fontswitch .mx{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}#fontswitch .se{font-family:'Special Elite','Courier New',monospace}#fontswitch .hn{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+#prevbar{position:fixed;left:8px;right:84px;bottom:8px;z-index:200;display:flex;flex-wrap:wrap;gap:6px;align-items:center;pointer-events:none}
+#prevbar>*{pointer-events:auto}
+#prevbar select{font:13px 'Helvetica Neue',Helvetica,Arial,sans-serif;padding:7px 8px;border:2px solid #cc0000;border-radius:10px;background:#fff;color:#111;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:100%}
+#prevbar #fontswitch{position:static}
+html.focus [data-sec]:not(.show){display:none}
+</style>
+<!-- BODY -->
+<div id="prevbar"><select id="secpick" aria-label="Show section"><option value="">Whole page</option></select></div>
+<script>
+(function(){var b=document.querySelectorAll('#fontswitch button');function markTitles(){var all=document.querySelectorAll('[data-wrap] span,[data-wrap] div,[data-wrap] a,[data-wrap] p');all.forEach(function(el){var p=el.parentElement;if(!p||el!==p.firstElementChild)return;var n=el.nextElementSibling;if(!n)return;var cs=getComputedStyle(p);if(cs.display.indexOf('flex')<0||cs.flexDirection.indexOf('column')<0)return;if(parseFloat(getComputedStyle(el).fontSize)>parseFloat(getComputedStyle(n).fontSize)+1&&el.textContent.trim().length<80&&!el.closest('.mock,[style*="container-type: inline-size; overflow: hidden"]'))el.classList.add('ttl')})}
+markTitles();
+document.querySelectorAll('[data-wrap] span,[data-wrap] div').forEach(function(el){var cs=getComputedStyle(el),t=el.textContent.trim(),p=el.parentElement;if(!t||t.length>24||el.children.length)return;if(el.closest('[style*="container-type: inline-size; overflow: hidden"]'))return;var lab=cs.textTransform==='uppercase'||cs.color==='rgb(204, 0, 0)'||cs.color==='rgb(255, 59, 59)';if(lab&&p&&p.textContent.trim()===t)el.classList.add('ttl');});
+function set(f){document.documentElement.classList.toggle('helv',f==='hn');document.documentElement.classList.toggle('mix',f==='mx');b.forEach(function(x){x.classList.toggle('on',x.getAttribute('data-f')===f)});window.dispatchEvent(new Event('resize'))}
+b.forEach(function(x){x.addEventListener('click',function(){set(x.getAttribute('data-f'))})});})();
+</script>
+<script>
+(function(){var sel=document.getElementById('secpick'),secs=[].slice.call(document.querySelectorAll('[data-sec]'));
+secs.forEach(function(s){var o=document.createElement('option');o.value=o.textContent=s.getAttribute('data-sec');sel.appendChild(o)});
+function show(v){document.documentElement.classList.toggle('focus',!!v);secs.forEach(function(s){s.classList.toggle('show',s.getAttribute('data-sec')===v)});try{localStorage.setItem('cdw_prev_sec',v)}catch(e){}window.scrollTo(0,0);window.dispatchEvent(new Event('resize'))}
+sel.addEventListener('change',function(){show(sel.value)});var v='';try{v=localStorage.getItem('cdw_prev_sec')||''}catch(e){}sel.value=v;show(v);})();
+</script>

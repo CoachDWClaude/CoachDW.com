@@ -1,0 +1,93 @@
+<!-- TRIPLE THREAT POP-UPS: one per item -->
+<div data-if="showApp" hidden>
+<div id="tt-app" role="dialog" aria-modal="true" aria-label="App" style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+<button type="button" aria-label="Close" data-action="closeTT" style="position: absolute; inset: 0; border: none; background: rgba(0,0,0,.78); cursor: pointer"></button>
+<div style="position: relative; width: 100%; max-width: 560px; max-height: calc(100vh - 32px); overflow-y: auto; background: #f4f0e5; color: #111111; border-top: 6px solid #cc0000; border-radius: 8px; box-shadow: 0 24px 60px rgba(0,0,0,.5)">
+<div style="background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px">
+<div style="font-size: clamp(22px, 3vw, 34px); line-height: 1.1">Get the <span style="color: #ff4d4d">APP</span></div>
+<button type="button" aria-label="Close App" data-action="closeTT" style="flex: none; width: 44px; height: 44px; border: 2px solid #ff1a1a; border-radius: 50%; background: transparent; color: #ff1a1a; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff1a1a" stroke-width="2.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+</div>
+<div style="padding: clamp(16px, 3vw, 32px); display: flex; flex-direction: column; gap: 20px">
+<p style="margin: 0; font-size: clamp(16px, 2vw, 20px); color: #3d3d3d">Your <span class="m7">Mag7</span> session set out for you. Log your reps, check in daily, and the app does the progression maths.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; justify-content: center">
+<div style="flex: 0 1 320px; max-width: 320px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+<div style="position: relative; aspect-ratio: 9 / 16; border: 6px solid #0a0a0a; border-radius: 26px; overflow: hidden; background: #0b0b0b; box-shadow: 0 12px 28px rgba(0,0,0,.35)">
+<div style="width: 100%; height: 100%; container-type: inline-size; overflow: hidden; display: flex; flex-direction: column; background: #ffffff; color: #0c0c0d; font-family: 'Special Elite', 'Courier New', monospace; font-size: 4.6cqw; line-height: 1.3">
+<div style="flex: none; background: #000000; padding: 2.5cqw 4cqw; display: flex; align-items: center; justify-content: space-between; gap: 3cqw"><img src="/images/signature.png" alt="" style="width: 40%; height: auto; display: block"><img src="/images/logo-coachdw.png" alt="" style="width: 38%; height: auto; display: block"></div>
+<div style="flex: 1; min-height: 0; padding: 5cqw; display: flex; flex-direction: column; gap: 4cqw">
+<div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 0.8cqw solid #0c0c0d; padding-bottom: 2cqw"><span style="font-size: 1.25em; text-transform: uppercase; letter-spacing: .04em">Welcome</span><span style="font-size: 0.6em; letter-spacing: .14em; text-transform: uppercase; color: #cc0000">Before you start</span></div>
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4cqw">
+<span style="font-size: 0.62em; letter-spacing: .14em; text-transform: uppercase; color: #cc0000">Strength For Life</span>
+<span style="font-size: 1.9em; line-height: 1.1; text-transform: uppercase">Two quick things first.</span>
+<span>A short <span style="color: #cc0000">health check</span>, then the <span style="color: #cc0000">house rules</span>.</span>
+<span>Takes about a minute. Your answers stay on your phone.</span>
+</div>
+<div style="background: #cc0000; color: #ffffff; text-align: center; text-transform: uppercase; letter-spacing: .06em; padding: 3.4cqw; border-radius: 1.5cqw; margin-bottom: 30cqw">Start</div>
+</div>
+</div>
+<button type="button" aria-label="Play Danny's App explainer" style="position: absolute; right: 5%; bottom: 4%; width: 30%; aspect-ratio: 1 / 1; padding: 0; border: 3px solid #cc0000; border-radius: 50%; overflow: hidden; cursor: pointer; background: #000000; box-shadow: 0 6px 16px rgba(0,0,0,.45)">
+<img src="/images/danny-smiling.jpg" alt="" style="display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%">
+<span aria-hidden="true" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center"><span style="width: 44%; height: 44%; border-radius: 50%; background: rgba(204,0,0,.9); display: flex; align-items: center; justify-content: center"><svg width="46%" height="46%" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#ffffff"></path></svg></span></span>
+</button>
+</div>
+</div>
+</div>
+<div class="jwrap" style="width:100%;margin:26px 0 0"><span class="pt" aria-hidden="true">👉</span><a class="join" href="https://www.skool.com/strengthforlife-5963" target="_blank" rel="noopener" data-action="closeTT"><span class="jt">Join the Tribe <b>FREE</b> on <img src="/images/skool.svg" alt="Skool"></span></a></div>
+</div>
+</div>
+</div>
+</div>
+<div data-if="showIlog" hidden>
+<div id="tt-ilog" role="dialog" aria-modal="true" aria-label="iLog" style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+<button type="button" aria-label="Close" data-action="closeTT" style="position: absolute; inset: 0; border: none; background: rgba(0,0,0,.78); cursor: pointer"></button>
+<div style="position: relative; width: 100%; max-width: 560px; max-height: calc(100vh - 32px); overflow-y: auto; background: #f4f0e5; color: #111111; border-top: 6px solid #cc0000; border-radius: 8px; box-shadow: 0 24px 60px rgba(0,0,0,.5)">
+<div style="background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px">
+<div style="font-size: clamp(22px, 3vw, 34px); line-height: 1.1">Use the <span style="color: #ff4d4d">iLOG</span> training journal</div>
+<button type="button" aria-label="Close iLog" data-action="closeTT" style="flex: none; width: 44px; height: 44px; border: 2px solid #ff1a1a; border-radius: 50%; background: transparent; color: #ff1a1a; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff1a1a" stroke-width="2.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+</div>
+<div style="padding: clamp(16px, 3vw, 32px); display: flex; flex-direction: column; gap: 20px">
+<p style="margin: 0; font-size: clamp(16px, 2vw, 20px); color: #3d3d3d">Prefer pen and paper? The same system on the page. No phone, no signal, no excuses.</p>
+<div class="ilogshow" role="img" aria-label="The iLOG training journal: the cover, and a page with Push and Pull logged">
+<div class="cov"><svg class="covsvg" viewBox="0 0 385 312" role="img" aria-label="CoachDW.com Strength For Life, iLOG Training Journal"><image href="/images/logo-coachdw-clear.png" x="-13" y="-12" width="411" height="149"/><text x="0" y="262" textLength="385" lengthAdjust="spacingAndGlyphs" class="ct">iLOG</text><text x="0" y="308" textLength="385" lengthAdjust="spacingAndGlyphs" class="cs">TRAINING JOURNAL</text></svg></div>
+<div class="pg">
+<div class="blk"><div class="d"><span class="w">PUSH</span><span>Fri 23 Oct</span></div><div class="h"><span>LIFT</span><span>SET 1</span><span>SET 2</span><span>TOP</span><span>REPS</span></div><div class="r"><span>Squat</span><span>45</span><span>67.5</span><span>90</span><span class="">6</span></div><div class="r"><span>Sh. Press</span><span>30</span><span>45</span><span>60</span><span class="hit">7</span></div><div class="r"><span>Chest</span><span>18</span><span>26</span><span>36</span><span class="">6</span></div><div class="r"><span>Dips</span><span>52.5</span><span>77.5</span><span>105</span><span class="">5</span></div><div class="n">Sh. Press hit 7 ... +5% next time</div></div>
+<div class="blk"><div class="d"><span class="w">PULL</span><span>Mon 26 Oct</span></div><div class="h"><span>LIFT</span><span>SET 1</span><span>SET 2</span><span>TOP</span><span>REPS</span></div><div class="r"><span>Hinge</span><span>77.5</span><span>115</span><span>155</span><span class="">6</span></div><div class="r"><span>Pulldown</span><span>52.5</span><span>77.5</span><span>105</span><span class="hit">7</span></div><div class="r"><span>Row</span><span>50</span><span>75</span><span>100</span><span class="">6</span></div><div class="r"><span>Upright</span><span>16</span><span>24</span><span>32</span><span class="">5</span></div><div class="r"><span>Curl</span><span>11</span><span>16</span><span>22</span><span class="">6</span></div><div class="n">Pulldown hit 7 ... +5% next time</div></div>
+</div>
+</div>
+<div class="jwrap" style="width:100%;margin:26px 0 0"><span class="pt" aria-hidden="true">👉</span><a class="join" href="https://www.skool.com/strengthforlife-5963" target="_blank" rel="noopener" data-action="closeTT"><span class="jt">Join the Tribe <b>FREE</b> on <img src="/images/skool.svg" alt="Skool"></span></a></div>
+</div>
+</div>
+</div>
+</div>
+<div data-if="showWa" hidden>
+<div id="tt-wa" role="dialog" aria-modal="true" aria-label="WhatsApp" style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+<button type="button" aria-label="Close" data-action="closeTT" style="position: absolute; inset: 0; border: none; background: rgba(0,0,0,.78); cursor: pointer"></button>
+<div style="position: relative; width: 100%; max-width: 560px; max-height: calc(100vh - 32px); overflow-y: auto; background: #f4f0e5; color: #111111; border-top: 6px solid #cc0000; border-radius: 8px; box-shadow: 0 24px 60px rgba(0,0,0,.5)">
+<div style="background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px">
+<div style="font-size: clamp(22px, 3vw, 34px); line-height: 1.1">Chat on <span style="color: #ff4d4d">WhatsApp</span></div>
+<button type="button" aria-label="Close WhatsApp" data-action="closeTT" style="flex: none; width: 44px; height: 44px; border: 2px solid #ff1a1a; border-radius: 50%; background: transparent; color: #ff1a1a; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff1a1a" stroke-width="2.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+</div>
+<div style="padding: clamp(16px, 3vw, 32px); display: flex; flex-direction: column; gap: 20px">
+<p style="margin: 0; font-size: clamp(16px, 2vw, 20px); color: #3d3d3d">Text in your sets, get your next session back. Training as easy as messaging a mate.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; justify-content: center">
+<div style="flex: 0 1 320px; max-width: 320px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+<div style="position: relative; aspect-ratio: 9 / 16; border: 6px solid #0a0a0a; border-radius: 26px; overflow: hidden; background: #0b0b0b; box-shadow: 0 12px 28px rgba(0,0,0,.35)">
+<div style="width: 100%; height: 100%; container-type: inline-size; overflow: hidden; display: flex; flex-direction: column; background: #efe7dd; color: #111b21; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 3.4cqw; line-height: 1.3">
+<div style="flex: none; background: #075e54; color: #ffffff; display: flex; align-items: center; gap: 2.6cqw; padding: 3.2cqw 3.5cqw"><span style="flex: none; width: 9cqw; height: 9cqw; border-radius: 50%; background: #0a0a0a; border: 0.5cqw solid #cc0000; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85em">DW</span><span style="display: flex; flex-direction: column; min-width: 0"><b style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">CoachDW Strength For Life</b><span data-wa-status style="font-size: 0.8em; opacity: .85">online</span></span></div>
+<div style="flex: 1; min-height: 0; overflow: hidden; padding: 3cqw 2.6cqw; display: flex; flex-direction: column; justify-content: flex-end; gap: 1.8cqw">
+<div data-wa-msgs style="display: contents"></div>
+</div>
+<div style="flex: none; display: flex; gap: 2cqw; align-items: center; padding: 2.2cqw 3cqw"><span style="flex: 1; min-width: 0; background: #ffffff; border-radius: 6cqw; padding: 2.4cqw 3.5cqw; color: #667781; white-space: nowrap; overflow: hidden" data-wa-field>Message</span><span style="flex: none; width: 10cqw; height: 10cqw; border-radius: 50%; background: #00a884"></span></div>
+</div>
+<button type="button" aria-label="Play Danny's WhatsApp explainer" style="position: absolute; right: 5%; bottom: 4%; width: 30%; aspect-ratio: 1 / 1; padding: 0; border: 3px solid #cc0000; border-radius: 50%; overflow: hidden; cursor: pointer; background: #000000; box-shadow: 0 6px 16px rgba(0,0,0,.45)">
+<img src="/images/danny-smiling.jpg" alt="" style="display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%">
+<span aria-hidden="true" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center"><span style="width: 44%; height: 44%; border-radius: 50%; background: rgba(204,0,0,.9); display: flex; align-items: center; justify-content: center"><svg width="46%" height="46%" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#ffffff"></path></svg></span></span>
+</button>
+</div>
+</div>
+</div>
+<div class="jwrap" style="width:100%;margin:26px 0 0"><span class="pt" aria-hidden="true">👉</span><a class="join" href="https://www.skool.com/strengthforlife-5963" target="_blank" rel="noopener" data-action="closeTT"><span class="jt">Join the Tribe <b>FREE</b> on <img src="/images/skool.svg" alt="Skool"></span></a></div>
+</div>
+</div>
+</div>
+</div>

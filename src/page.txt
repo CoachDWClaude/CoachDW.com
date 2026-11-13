@@ -1,0 +1,18 @@
+# Page order. One file per line, top to bottom. "BREAK" = Join the tribe button on black.
+sections/01-header.html
+sections/02-hero.html
+sections/03-triple-whammy.html
+BREAK
+sections/04-join-the-tribe.html
+BREAK
+sections/05-membership.html
+BREAK
+sections/06-books-carousel.html
+BREAK
+# sections/07-testimonial.html   (hidden until real testimonials are in)
+sections/08-about.html
+sections/09-final-cta.html
+sections/10-footer.html
+popups/floating-buttons.html
+popups/welcome.html
+popups/triple-whammy-popups.html
