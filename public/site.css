@@ -273,3 +273,7 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .hx .sfl{padding-top:var(--sflg,12px);padding-bottom:var(--sflg,12px)}
 .hx .sfl span{margin:var(--sflt,-.12em) -.08em var(--sflb,-.2em) 0;line-height:1;padding:0}
 @media (min-width:380px){.hx .sfl{padding-top:calc(var(--sflg,12px) + 3px);padding-bottom:calc(var(--sflg,12px) - 3px)}}
+/* Gentle section snap: when you stop scrolling near the top of a section it settles neatly under the header; long sections scroll freely */
+html{scroll-snap-type:y proximity}
+#top,#triple,#free,#membership,#articles,#about,#join,footer{scroll-snap-align:start}
+footer{scroll-margin-top:var(--hdr,120px)}

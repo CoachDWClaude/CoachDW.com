@@ -448,3 +448,11 @@ function cdwReveal(el, onIn, onOut) {
     cdwReveal(sec, function () {}, function () { sec.classList.remove('in'); });
   });
 })();
+
+/* Keep --hdr equal to the sticky header's real height (it changes when the STRENGTH FOR LIFE band refits), so jump links and section snapping land exactly under it */
+(function () {
+  var h = document.querySelector('header.hx'); if (!h) return;
+  function set() { document.documentElement.style.setProperty('--hdr', h.offsetHeight + 'px'); }
+  set();
+  if (window.ResizeObserver) new ResizeObserver(set).observe(h); else window.addEventListener('resize', set);
+})();
