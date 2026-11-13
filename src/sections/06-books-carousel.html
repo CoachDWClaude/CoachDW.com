@@ -19,7 +19,9 @@
 .bk .cover .cl{width:30%;height:2px;margin:6% 0}
 .bk .c-sfl{background:#0b0b0b;color:#fff}.bk .c-sfl .ct{color:#cc0000}.bk .c-sfl .cl{background:#cc0000}
 .bk .c-tff{background:#0b0b0b;color:#fff}.bk .c-tff .ct{color:#ff8a00}.bk .c-tff .cl{background:#ff8a00}
-.bk .c-ten{background:#cc0000;color:#fff}.bk .c-ten .ct b{font-weight:400;-webkit-text-stroke:.03em currentColor}.bk .c-ten .cl{background:#fff}
+.bk .c-ten{background:#0b0b0b;color:#fff}.bk .c-ten .ct{color:#fff}.bk .c-ten .ct b{font-weight:400;-webkit-text-stroke:.045em currentColor;color:#cc0000}.bk .c-ten .cl{background:#cc0000}
+.bk .cover>span{display:block;width:100%}.bk .cover .ct{display:block;text-transform:none;letter-spacing:0}.bk .cover .fl{display:block;white-space:nowrap;line-height:1.02;width:max-content}
+.bk .cover .amp{display:block;text-align:center;color:#cc0000;font-size:20cqw;line-height:.95}
 .bk .book .bn{font-size:clamp(12px,1.7vw,18px);line-height:1.2;color:#555}
 .bk .books.picked .book{opacity:.5;transform:scale(.94)}
 .bk .books.picked .book[aria-pressed=true]{opacity:1;transform:translateY(-6px)}
@@ -60,16 +62,16 @@
 
   <div class="books" role="group" aria-label="Choose a book">
     <button class="book" type="button" data-book="sfl" aria-pressed="true">
-      <span class="cover c-sfl" aria-hidden="true"><span><span class="ct">Strength For Life</span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
+      <span class="cover c-sfl" aria-hidden="true"><span><span class="ct"><span class="fl">STRENGTH</span><span class="fl">FOR LIFE</span></span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
       <span class="bn">Strength For Life</span>
     </button>
     <button class="book" type="button" data-book="tff" aria-pressed="false">
-      <span class="cover c-tff" aria-hidden="true"><span><span class="ct">Thought For Food</span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
+      <span class="cover c-tff" aria-hidden="true"><span><span class="ct"><span class="fl">THOUGHT</span><span class="fl">FOR FOOD</span></span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
       <span class="bn">Thought For Food</span>
     </button>
     <button class="book" type="button" data-book="ten" aria-pressed="false">
-      <span class="cover c-ten" aria-hidden="true"><span><span class="ct"><b>TEN</b>ets Of Health &amp; Fitness</span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
-      <span class="bn">TENets Of Health &amp; Fitness</span>
+      <span class="cover c-ten" aria-hidden="true"><span><span class="ct"><span class="fl"><b>TEN</b>ets of</span><span class="fl">HEALTH</span><span class="amp">&amp;</span><span class="fl">FITNESS</span></span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
+      <span class="bn">TENets of Health &amp; Fitness</span>
     </button>
   </div>
 
@@ -100,7 +102,7 @@
       ['Oldest in the Gym', 'Why it is never too late to get strong.']] },
     tff: { name: 'Thought For Food', ch: [
       ['The Toxin That Feels Like Fuel', 'The one thing in your glass your body is trying to get rid of.']] },
-    ten: { name: 'TENets Of Health & Fitness', ch: [] }
+    ten: { name: 'TENets of Health & Fitness', ch: [] }
   };
   var ARTICLES = [
     ['TRAINING', 'The Deload Is an Insurance Policy', 'If your programme needs a week off every month, the programme is the problem.', '/articles/the-deload-is-an-insurance-policy/'],
@@ -142,6 +144,14 @@
   }
 
   var root = document.currentScript ? document.currentScript.closest('section') : document.getElementById('articles');
+
+  /* each title line sized so it spans the cover's full width */
+  function fitTitles(){ root.querySelectorAll('.cover .ct').forEach(function(ct){
+    var w=ct.clientWidth; if(!w) return;
+    ct.querySelectorAll('.fl').forEach(function(l){ l.style.fontSize='100px'; var lw=l.getBoundingClientRect().width; if(lw) l.style.fontSize=(100*w/lw).toFixed(2)+'px'; });
+  }); }
+  fitTitles(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitTitles);
+  window.addEventListener('resize',fitTitles);
   var bTrack = root.querySelector('#bk-track'), aTrack = root.querySelector('#ar-track');
   var shelves = root.querySelectorAll('.shelf');
   var chapters = carousel(bTrack, root.querySelector('#bk-dots'), Array.prototype.slice.call(shelves[0].querySelectorAll('[data-go]')));
