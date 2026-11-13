@@ -19,14 +19,14 @@
 .bk .cover .cl{width:30%;height:2px;margin:6% 0}
 .bk .c-sfl{background:#0b0b0b;color:#fff}.bk .c-sfl .ct{color:#cc0000}.bk .c-sfl .cl{background:#cc0000}
 .bk .c-tff{background:#0b0b0b;color:#fff}.bk .c-tff .ct{color:#ff8a00}.bk .c-tff .cl{background:#ff8a00}
-.bk .c-ten{background:#0b0b0b;color:#fff}.bk .c-ten .ct{color:#fff}.bk .c-ten .ct b{font-weight:400;-webkit-text-stroke:.045em currentColor;color:#cc0000}.bk .c-ten .cl{background:#cc0000}
+.bk .c-ten{background:#fff;color:#111}.bk .c-ten .ct{color:#111}.bk .c-ten.cover{box-shadow:0 10px 22px rgba(0,0,0,.28),inset 4px 0 0 rgba(0,0,0,.08),inset 0 0 0 1px #ddd}.bk .c-ten .ct b{font-weight:400;-webkit-text-stroke:.045em currentColor;color:#cc0000}.bk .c-ten .cl{background:#cc0000}
 .bk .cover>span{display:block;width:100%}.bk .cover .ct{display:block;text-transform:none;letter-spacing:0}.bk .cover .fl{display:block;white-space:nowrap;line-height:1.02;width:max-content}
 .bk .cover .amp{display:block;text-align:center;color:#cc0000;font-size:20cqw;line-height:.95}
-.bk .book .bn{font-size:clamp(12px,1.7vw,18px);line-height:1.2;color:#555}
+.bk .book .bn{font-size:clamp(14px,2vw,21px);line-height:1.2;color:#111}
+.bk .book[data-book=sfl] .bn{color:#cc0000}.bk .book[data-book=tff] .bn{color:#e67700}.bk .book[data-book=ten] .bn{color:#111}.bk .book .bn b{font-weight:400;-webkit-text-stroke:.04em currentColor;color:#cc0000}
 .bk .books.picked .book{opacity:.5;transform:scale(.94)}
 .bk .books.picked .book[aria-pressed=true]{opacity:1;transform:translateY(-6px)}
 .bk .book[aria-pressed=true] .cover{box-shadow:0 16px 30px rgba(0,0,0,.35),0 0 0 3px #cc0000}
-.bk .book[aria-pressed=true] .bn{color:#cc0000}
 /* carousel */
 .bk .shelf{display:flex;flex-direction:column;gap:10px}
 .bk .shelf-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
@@ -68,7 +68,7 @@
     </button>
     <button class="book" type="button" data-book="ten" aria-pressed="false">
       <span class="cover c-ten" aria-hidden="true"><span><span class="ct"><span class="fl"><b>TEN</b>ets of</span><span class="fl">HEALTH</span><span class="amp">&amp;</span><span class="fl">FITNESS</span></span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
-      <span class="bn">TENets of Health &amp; Fitness</span>
+      <span class="bn"><b>TEN</b>ets of Health &amp; Fitness</span>
     </button>
   </div>
 
