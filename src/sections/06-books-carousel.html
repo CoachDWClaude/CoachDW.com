@@ -32,12 +32,9 @@
 .bk .shelf-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
 .bk .shelf-h h3{margin:0;font-weight:400;font-size:clamp(22px,3vw,40px);line-height:1.1}
 .bk .shelf-h p{margin:2px 0 0;font-size:clamp(15px,1.8vw,20px);color:#cc0000}
-.bk .nav{display:flex;gap:8px;flex:none}
-.bk .nav button{all:unset;cursor:pointer;width:42px;height:42px;border-radius:50%;border:2px solid #111;display:flex;align-items:center;justify-content:center;font-size:18px;background:#fff}
-.bk .nav button:hover{background:#111;color:#fff}.bk .nav button:focus-visible{outline:3px solid #cc0000;outline-offset:2px}
 .bk .track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 2px 14px;margin:0 -2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab}
 .bk .track::-webkit-scrollbar{display:none}
-.bk .track.drag{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+.bk .track.drag,.bk .track.flow{scroll-snap-type:none;scroll-behavior:auto}.bk .track.drag{cursor:grabbing}
 .bk .slide{flex:0 0 min(82%,360px);scroll-snap-align:start;background:#fff;border:1px solid #ded7c4;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-height:220px}
 .bk .slide .k{font-size:13px;letter-spacing:2px;color:#cc0000;text-transform:uppercase}
 .bk .slide .t{font-size:clamp(22px,2.4vw,28px);line-height:1.15;color:#111}
@@ -77,14 +74,14 @@
 
   <div class="shelf" id="chapters">
     <div class="shelf-h"><div><h3 id="bk-title">Strength For Life</h3><p id="bk-sub">Chapters</p></div>
-      <div class="nav"><button type="button" data-go="-1" aria-label="Previous chapter">&larr;</button><button type="button" data-go="1" aria-label="Next chapter">&rarr;</button></div></div>
+</div>
     <div class="track" id="bk-track" tabindex="0" aria-label="Chapters, scroll sideways" aria-live="polite"></div>
     <div class="dots" id="bk-dots" aria-label="Choose a chapter"></div>
   </div>
 
   <div class="shelf" id="all-articles">
     <div class="shelf-h"><div><h3>Articles</h3><p>Danny&rsquo;s Health &amp; Fitness Articles</p></div>
-      <div class="nav"><button type="button" data-go="-1" aria-label="Previous article">&larr;</button><button type="button" data-go="1" aria-label="Next article">&rarr;</button></div></div>
+</div>
     <div class="track" id="ar-track" tabindex="0" aria-label="Articles, scroll sideways"></div>
     <div class="dots" id="ar-dots" aria-label="Choose an article"></div>
   </div>
@@ -116,16 +113,33 @@
 
   // One carousel: auto-advance, stops on any touch/drag/arrow/key/hover, resumes after a pause
   function carousel(track, dots, prevNext) {
-    var timer = null, resumeAt = 0, AUTO = 3800, IDLE = 6000;
-    function slides() { return Array.prototype.slice.call(track.children); }
-    function index() { var s = slides(), x = track.scrollLeft, best = 0; s.forEach(function (el, i) { if (Math.abs(el.offsetLeft - track.offsetLeft - x) < Math.abs(s[best].offsetLeft - track.offsetLeft - x)) best = i; }); return best; }
-    function go(i) { var s = slides(); if (!s.length) return; i = (i + s.length) % s.length; track.scrollTo({ left: s[i].offsetLeft - track.offsetLeft, behavior: reduce ? 'auto' : 'smooth' }); }
-    function atEnd() { return track.scrollLeft + track.clientWidth >= track.scrollWidth - 4; }
+    /* Smooth continuous drift: slides glide past at a steady pace and loop seamlessly (copies of the slides follow the originals).
+       Any touch, swipe, drag, wheel, hover or arrow press takes over; drifting resumes a few seconds after you stop. */
+    var raf = 0, on = false, resumeAt = 0, IDLE = 5000, SPEED = 32, pos = 0, last = 0, flowing = false;
+    function slides() { return Array.prototype.slice.call(track.querySelectorAll(':scope > .slide:not(.clone)')); }
+    function all() { return Array.prototype.slice.call(track.children); }
+    function loopW() { var c = track.querySelector(':scope > .clone'), s = slides(); return c && s.length ? c.offsetLeft - s[0].offsetLeft : 0; }
+    function index() { var s = all(), n = slides().length, x = track.scrollLeft, best = 0; if (!n) return 0; s.forEach(function (el, i) { if (Math.abs(el.offsetLeft - track.offsetLeft - x) < Math.abs(s[best].offsetLeft - track.offsetLeft - x)) best = i; }); return best % n; }
+    function setFlow(f) { if (f === flowing) return; flowing = f; track.classList.toggle('flow', f); }
+    function go(i) { var s = slides(); if (!s.length) return; setFlow(false); i = (i + s.length) % s.length; track.scrollTo({ left: s[i].offsetLeft - track.offsetLeft, behavior: reduce ? 'auto' : 'smooth' }); }
     function paint() { var i = index(); Array.prototype.forEach.call(dots.children, function (d, j) { d.setAttribute('aria-current', j === i); }); }
-    function hold() { resumeAt = Date.now() + IDLE; }
-    function tick() { if (reduce || Date.now() < resumeAt || document.hidden) return; var s = slides(); if (s.length < 2) return; atEnd() ? go(0) : go(index() + 1); }
-    function start() { stop(); timer = setInterval(tick, AUTO); }
-    function stop() { if (timer) clearInterval(timer); timer = null; }
+    function hold() { resumeAt = Date.now() + IDLE; setFlow(false); }
+    function frame(t) {
+      raf = on ? requestAnimationFrame(frame) : 0;
+      var dt = last ? Math.min(t - last, 50) : 0; last = t;
+      if (reduce || document.hidden || Date.now() < resumeAt || slides().length < 2) return;
+      if (!flowing || Math.abs(track.scrollLeft - pos) > 3) { pos = track.scrollLeft; setFlow(true); }
+      pos += SPEED * dt / 1000;
+      var L = loopW(); if (L && pos >= L) pos -= L;
+      track.scrollLeft = pos;
+    }
+    function start() { if (on) return; on = true; last = 0; raf = requestAnimationFrame(frame); }
+    function stop() { on = false; if (raf) cancelAnimationFrame(raf); raf = 0; setFlow(false); }
+    function cloneSet() {
+      Array.prototype.forEach.call(track.querySelectorAll(':scope > .clone'), function (c) { c.remove(); });
+      var s = slides(); if (s.length < 2) return;
+      s.forEach(function (el) { var c = el.cloneNode(true); c.classList.add('clone'); c.setAttribute('aria-hidden', 'true'); Array.prototype.forEach.call(c.querySelectorAll('a,button'), function (x) { x.tabIndex = -1; }); track.appendChild(c); });
+    }
     function buildDots() { dots.innerHTML = slides().map(function (_, i) { return '<button type="button" aria-label="Go to ' + (i + 1) + '"></button>'; }).join(''); paint(); }
     dots.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; hold(); go(Array.prototype.indexOf.call(dots.children, b)); });
     prevNext.forEach(function (b) { b.addEventListener('click', function () { hold(); go(index() + (+b.dataset.go)); }); });
@@ -136,11 +150,12 @@
     var down = false, sx = 0, sl = 0, moved = false;
     track.addEventListener('mousedown', function (e) { down = true; moved = false; sx = e.pageX; sl = track.scrollLeft; track.classList.add('drag'); });
     window.addEventListener('mousemove', function (e) { if (!down) return; var dx = e.pageX - sx; if (Math.abs(dx) > 4) moved = true; track.scrollLeft = sl - dx; });
-    window.addEventListener('mouseup', function () { if (!down) return; down = false; track.classList.remove('drag'); hold(); go(index()); });
+    window.addEventListener('mouseup', function () { if (!down) return; down = false; track.classList.remove('drag'); hold(); });
     track.addEventListener('click', function (e) { if (moved) { e.preventDefault(); moved = false; } }, true);
     // only run while on screen
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { e.isIntersecting ? start() : stop(); }); }, { threshold: .35 }).observe(track); else start();
-    return { rebuild: function () { track.scrollLeft = 0; buildDots(); hold(); resumeAt = Date.now() + 1500; } };
+    cloneSet(); buildDots();
+    return { rebuild: function () { setFlow(false); cloneSet(); track.scrollLeft = 0; pos = 0; buildDots(); resumeAt = Date.now() + 1500; } };
   }
 
   var root = document.currentScript ? document.currentScript.closest('section') : document.getElementById('articles');
