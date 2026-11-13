@@ -267,3 +267,9 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .bnf.from-below .bnf-i{transform:translateY(60px)}
 .bnf.from-below.in .bnf-i{transform:none}
 .bnf.from-below:not(.in) .bnf-i{transition:none}
+
+/* Strength For Life band: thin line above and below, equal space each side, the whole band stays in the sticky header */
+.hx .rule{height:0;border-top:.5px solid rgba(204,0,0,.85);background:none}
+.hx .sfl{padding-top:var(--sflg,12px);padding-bottom:var(--sflg,12px)}
+.hx .sfl span{margin:var(--sflt,-.12em) -.08em var(--sflb,-.2em) 0;line-height:1;padding:0}
+@media (min-width:380px){.hx .sfl{padding-top:calc(var(--sflg,12px) + 3px);padding-bottom:calc(var(--sflg,12px) - 3px)}}

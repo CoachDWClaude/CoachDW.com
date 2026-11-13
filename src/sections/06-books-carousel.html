@@ -1,0 +1,170 @@
+<!-- CHAPTERS & ARTICLES: three book covers; tap one to load its chapters into the carousel below. Articles get their own carousel underneath.
+     Carousels auto-scroll and stop the moment someone touches, swipes, drags or uses the arrows, then pick up again a few seconds later.
+     Book covers are drawn placeholders until the real cover images arrive: swap the .cover contents for <img src="/images/cover-sfl.jpg" alt="..."> -->
+<section id="articles" class="bk" style="background: #f4f0e5; color: #111111">
+<style>
+.bk .in{max-width:1200px;margin:0 auto;padding:26px 16px 56px;display:flex;flex-direction:column;gap:22px}
+.bk h2{margin:0;line-height:1.1;font-weight:400;color:#cc0000;font-size:clamp(20px,5.6vw,70px);-webkit-text-stroke:.025em currentColor;white-space:nowrap}
+.bk .sub{margin:4px 0 0;font-size:clamp(17px,2.2vw,26px);color:#3d3d3d}
+/* the three books */
+.bk .books{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2.4vw,28px);margin-top:6px}
+.bk .book{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;transition:transform .25s,opacity .25s}
+.bk .book:focus-visible .cover{outline:3px solid #cc0000;outline-offset:4px}
+.bk .cover{position:relative;width:100%;aspect-ratio:2/3;border-radius:3px 7px 7px 3px;overflow:hidden;box-shadow:0 10px 22px rgba(0,0,0,.28),inset 4px 0 0 rgba(255,255,255,.12);display:flex;flex-direction:column;justify-content:space-between;padding:12% 9% 9% 13%;box-sizing:border-box;container-type:inline-size;text-align:left}
+.bk .cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6%;background:linear-gradient(90deg,rgba(0,0,0,.35),transparent)}
+.bk .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bk .cover .ct{font-size:15cqw;line-height:.98;text-transform:uppercase;letter-spacing:.01em}
+.bk .cover .cs{font-size:6.4cqw;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.bk .cover .ca{font-size:7cqw;letter-spacing:.08em;text-transform:uppercase}
+.bk .cover .cl{width:30%;height:2px;margin:6% 0}
+.bk .c-sfl{background:#0b0b0b;color:#fff}.bk .c-sfl .ct{color:#cc0000}.bk .c-sfl .cl{background:#cc0000}
+.bk .c-tff{background:#0b0b0b;color:#fff}.bk .c-tff .ct{color:#ff8a00}.bk .c-tff .cl{background:#ff8a00}
+.bk .c-ten{background:#cc0000;color:#fff}.bk .c-ten .ct b{font-weight:400;-webkit-text-stroke:.03em currentColor}.bk .c-ten .cl{background:#fff}
+.bk .book .bn{font-size:clamp(12px,1.7vw,18px);line-height:1.2;color:#555}
+.bk .books.picked .book{opacity:.5;transform:scale(.94)}
+.bk .books.picked .book[aria-pressed=true]{opacity:1;transform:translateY(-6px)}
+.bk .book[aria-pressed=true] .cover{box-shadow:0 16px 30px rgba(0,0,0,.35),0 0 0 3px #cc0000}
+.bk .book[aria-pressed=true] .bn{color:#cc0000}
+/* carousel */
+.bk .shelf{display:flex;flex-direction:column;gap:10px}
+.bk .shelf-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.bk .shelf-h h3{margin:0;font-weight:400;font-size:clamp(22px,3vw,40px);line-height:1.1}
+.bk .shelf-h p{margin:2px 0 0;font-size:clamp(15px,1.8vw,20px);color:#cc0000}
+.bk .nav{display:flex;gap:8px;flex:none}
+.bk .nav button{all:unset;cursor:pointer;width:42px;height:42px;border-radius:50%;border:2px solid #111;display:flex;align-items:center;justify-content:center;font-size:18px;background:#fff}
+.bk .nav button:hover{background:#111;color:#fff}.bk .nav button:focus-visible{outline:3px solid #cc0000;outline-offset:2px}
+.bk .track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 2px 14px;margin:0 -2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab}
+.bk .track::-webkit-scrollbar{display:none}
+.bk .track.drag{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+.bk .slide{flex:0 0 min(82%,360px);scroll-snap-align:start;background:#fff;border:1px solid #ded7c4;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px;box-sizing:border-box;min-height:220px}
+.bk .slide .k{font-size:13px;letter-spacing:2px;color:#cc0000;text-transform:uppercase}
+.bk .slide .t{font-size:clamp(22px,2.4vw,28px);line-height:1.15;color:#111}
+.bk .slide .d{font-size:16px;line-height:1.45;color:#555;flex:1}
+.bk .slide a{display:inline-flex;align-items:center;gap:.35em;flex-wrap:wrap;align-self:flex-start;color:#111;text-decoration:none;border:2px solid #cc0000;border-radius:10px;padding:10px 14px;font-size:15px;line-height:1.25;background:#fff}
+.bk .slide a:hover{background:#fff5f5}.bk .slide a img{height:1.1em;width:auto}.bk .slide a b{font-weight:400;color:#cc0000}
+.bk .slide.soon{background:transparent;border-style:dashed;justify-content:center;text-align:center}
+.bk .slide.soon .t{color:#777}
+.bk .dots{display:flex;justify-content:center;gap:8px}
+.bk .dots button{all:unset;cursor:pointer;width:9px;height:9px;border-radius:50%;background:#c9c3b4;transition:width .25s,background .25s}
+.bk .dots button[aria-current=true]{width:24px;border-radius:5px;background:#cc0000}
+.bk .swap{animation:bkIn .45s ease-out}
+@keyframes bkIn{from{opacity:0;transform:translateX(-24px)}}
+@media (prefers-reduced-motion:reduce){.bk .swap{animation:none}.bk .track{scroll-behavior:auto}.bk .book{transition:none}}
+@media (min-width:900px){.bk .slide{flex-basis:calc((100% - 28px)/3)}}
+</style>
+<div class="in">
+  <div>
+    <h2>Chapters &amp; Articles</h2>
+    <p class="sub">Tap a book for its chapters. Read the opening, get the full book FREE on Skool.</p>
+  </div>
+
+  <div class="books" role="group" aria-label="Choose a book">
+    <button class="book" type="button" data-book="sfl" aria-pressed="true">
+      <span class="cover c-sfl" aria-hidden="true"><span><span class="ct">Strength For Life</span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
+      <span class="bn">Strength For Life</span>
+    </button>
+    <button class="book" type="button" data-book="tff" aria-pressed="false">
+      <span class="cover c-tff" aria-hidden="true"><span><span class="ct">Thought For Food</span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
+      <span class="bn">Thought For Food</span>
+    </button>
+    <button class="book" type="button" data-book="ten" aria-pressed="false">
+      <span class="cover c-ten" aria-hidden="true"><span><span class="ct"><b>TEN</b>ets Of Health &amp; Fitness</span><span class="cl" style="display:block"></span><span class="cs">The book</span></span><span class="ca">Danny Williams</span></span>
+      <span class="bn">TENets Of Health &amp; Fitness</span>
+    </button>
+  </div>
+
+  <div class="shelf" id="chapters">
+    <div class="shelf-h"><div><h3 id="bk-title">Strength For Life</h3><p id="bk-sub">Chapters</p></div>
+      <div class="nav"><button type="button" data-go="-1" aria-label="Previous chapter">&larr;</button><button type="button" data-go="1" aria-label="Next chapter">&rarr;</button></div></div>
+    <div class="track" id="bk-track" tabindex="0" aria-label="Chapters, scroll sideways" aria-live="polite"></div>
+    <div class="dots" id="bk-dots" aria-label="Choose a chapter"></div>
+  </div>
+
+  <div class="shelf" id="all-articles">
+    <div class="shelf-h"><div><h3>Articles</h3><p>Danny&rsquo;s Health &amp; Fitness Articles</p></div>
+      <div class="nav"><button type="button" data-go="-1" aria-label="Previous article">&larr;</button><button type="button" data-go="1" aria-label="Next article">&rarr;</button></div></div>
+    <div class="track" id="ar-track" tabindex="0" aria-label="Articles, scroll sideways"></div>
+    <div class="dots" id="ar-dots" aria-label="Choose an article"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var SKOOL = 'https://www.skool.com/strengthforlife-5963';
+  var skoolBtn = '<a href="' + SKOOL + '" target="_blank" rel="noopener">Read the full chapter on <img src="/images/skool.svg" alt="Skool"> <b aria-hidden="true">&rarr;</b></a>';
+  var BOOKS = {
+    sfl: { name: 'Strength For Life', ch: [
+      ['The Program', 'Phase 1, start to finish. Two sessions, four lifts, three sets, one number to chase.'],
+      ['The Magnificent 7', 'The one number that runs the whole program.'],
+      ['The Dynamic Duo', 'Push and Pull, and why two sessions are all you need.'],
+      ['Oldest in the Gym', 'Why it is never too late to get strong.']] },
+    tff: { name: 'Thought For Food', ch: [
+      ['The Toxin That Feels Like Fuel', 'The one thing in your glass your body is trying to get rid of.']] },
+    ten: { name: 'TENets Of Health & Fitness', ch: [] }
+  };
+  var ARTICLES = [
+    ['TRAINING', 'The Deload Is an Insurance Policy', 'If your programme needs a week off every month, the programme is the problem.', '/articles/the-deload-is-an-insurance-policy/'],
+    ['NUTRITION', 'The Great Calorie Con', 'The calorie is a real unit of energy. The trouble is what it was asked to do.', '/articles/the-great-calorie-con/'],
+    ['TRAINING', 'Hyrox (Not Bollox) Training', 'How to train for Hyrox without wrecking the strength you’ve built.', '/articles/hyrox-not-bollox-training/'],
+    ['NUTRITION', 'Peptides: the evidence, not the hype', 'Everyone online is selling them. Very few are reading the research.', '/articles/peptides-the-evidence-not-the-hype/'],
+    ['INJURY', 'Strength vs contact sports: who really gets hurt?', 'People call lifting dangerous. So I put the injury data side by side.', '/articles/strength-vs-contact-sports/']
+  ];
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // One carousel: auto-advance, stops on any touch/drag/arrow/key/hover, resumes after a pause
+  function carousel(track, dots, prevNext) {
+    var timer = null, resumeAt = 0, AUTO = 3800, IDLE = 6000;
+    function slides() { return Array.prototype.slice.call(track.children); }
+    function index() { var s = slides(), x = track.scrollLeft, best = 0; s.forEach(function (el, i) { if (Math.abs(el.offsetLeft - track.offsetLeft - x) < Math.abs(s[best].offsetLeft - track.offsetLeft - x)) best = i; }); return best; }
+    function go(i) { var s = slides(); if (!s.length) return; i = (i + s.length) % s.length; track.scrollTo({ left: s[i].offsetLeft - track.offsetLeft, behavior: reduce ? 'auto' : 'smooth' }); }
+    function atEnd() { return track.scrollLeft + track.clientWidth >= track.scrollWidth - 4; }
+    function paint() { var i = index(); Array.prototype.forEach.call(dots.children, function (d, j) { d.setAttribute('aria-current', j === i); }); }
+    function hold() { resumeAt = Date.now() + IDLE; }
+    function tick() { if (reduce || Date.now() < resumeAt || document.hidden) return; var s = slides(); if (s.length < 2) return; atEnd() ? go(0) : go(index() + 1); }
+    function start() { stop(); timer = setInterval(tick, AUTO); }
+    function stop() { if (timer) clearInterval(timer); timer = null; }
+    function buildDots() { dots.innerHTML = slides().map(function (_, i) { return '<button type="button" aria-label="Go to ' + (i + 1) + '"></button>'; }).join(''); paint(); }
+    dots.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; hold(); go(Array.prototype.indexOf.call(dots.children, b)); });
+    prevNext.forEach(function (b) { b.addEventListener('click', function () { hold(); go(index() + (+b.dataset.go)); }); });
+    track.addEventListener('scroll', function () { clearTimeout(track._p); track._p = setTimeout(paint, 80); }, { passive: true });
+    ['pointerdown', 'touchstart', 'wheel', 'keydown', 'mouseenter', 'focusin'].forEach(function (ev) { track.addEventListener(ev, hold, { passive: true }); });
+    track.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') { e.preventDefault(); go(index() + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(index() - 1); } });
+    // mouse drag on desktop
+    var down = false, sx = 0, sl = 0, moved = false;
+    track.addEventListener('mousedown', function (e) { down = true; moved = false; sx = e.pageX; sl = track.scrollLeft; track.classList.add('drag'); });
+    window.addEventListener('mousemove', function (e) { if (!down) return; var dx = e.pageX - sx; if (Math.abs(dx) > 4) moved = true; track.scrollLeft = sl - dx; });
+    window.addEventListener('mouseup', function () { if (!down) return; down = false; track.classList.remove('drag'); hold(); go(index()); });
+    track.addEventListener('click', function (e) { if (moved) { e.preventDefault(); moved = false; } }, true);
+    // only run while on screen
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { e.isIntersecting ? start() : stop(); }); }, { threshold: .35 }).observe(track); else start();
+    return { rebuild: function () { track.scrollLeft = 0; buildDots(); hold(); resumeAt = Date.now() + 1500; } };
+  }
+
+  var root = document.currentScript ? document.currentScript.closest('section') : document.getElementById('articles');
+  var bTrack = root.querySelector('#bk-track'), aTrack = root.querySelector('#ar-track');
+  var shelves = root.querySelectorAll('.shelf');
+  var chapters = carousel(bTrack, root.querySelector('#bk-dots'), Array.prototype.slice.call(shelves[0].querySelectorAll('[data-go]')));
+  var articles = carousel(aTrack, root.querySelector('#ar-dots'), Array.prototype.slice.call(shelves[1].querySelectorAll('[data-go]')));
+
+  function showBook(id) {
+    var b = BOOKS[id];
+    root.querySelectorAll('.book').forEach(function (el) { el.setAttribute('aria-pressed', el.dataset.book === id); });
+    root.querySelector('.books').classList.add('picked');
+    root.querySelector('#bk-title').textContent = b.name;
+    root.querySelector('#bk-sub').textContent = b.ch.length ? b.ch.length + ' chapter' + (b.ch.length === 1 ? '' : 's') + ' so far' : 'Chapters coming soon';
+    var html = b.ch.map(function (c) { return '<article class="slide"><span class="k">' + esc(b.name) + '</span><span class="t">' + esc(c[0]) + '</span><span class="d">' + esc(c[1]) + '</span>' + skoolBtn + '</article>'; }).join('');
+    html += '<article class="slide soon"><span class="k">' + esc(b.name) + '</span><span class="t">' + (b.ch.length ? 'More chapters coming' : 'Chapters coming soon') + '</span><span class="d">Join the tribe FREE on Skool to get them first.</span><a href="' + SKOOL + '" target="_blank" rel="noopener">Join FREE on <img src="/images/skool.svg" alt="Skool"> <b aria-hidden="true">&rarr;</b></a></article>';
+    bTrack.innerHTML = html;
+    bTrack.classList.remove('swap'); void bTrack.offsetWidth; bTrack.classList.add('swap');
+    chapters.rebuild();
+  }
+  root.querySelector('.books').addEventListener('click', function (e) { var b = e.target.closest('.book'); if (b) showBook(b.dataset.book); });
+
+  aTrack.innerHTML = ARTICLES.map(function (a) { return '<article class="slide"><span class="k">' + a[0] + '</span><span class="t">' + esc(a[1]) + '</span><span class="d">' + esc(a[2]) + '</span><a href="' + a[3] + '">Read the article <b aria-hidden="true">&rarr;</b></a></article>'; }).join('');
+  articles.rebuild();
+  showBook('sfl');
+  root.querySelector('.books').classList.remove('picked');   // nothing dimmed until someone picks a book
+})();
+</script>
+</section>
