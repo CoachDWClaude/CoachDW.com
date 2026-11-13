@@ -31,6 +31,7 @@
 .bk .shelf{display:flex;flex-direction:column;gap:10px}
 .bk .shelf-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
 .bk .shelf-h h3{margin:0;font-weight:400;font-size:clamp(22px,3vw,40px);line-height:1.1}
+#bk-title{font-size:clamp(26px,3.6vw,46px)}#bk-title[data-b=sfl]{color:#cc0000}#bk-title[data-b=tff]{color:#ff8a00}#bk-title[data-b=ten]{color:#111;background:#fff;display:inline-block;padding:.08em .3em;border-radius:4px;box-shadow:0 1px 0 #ded7c4}#bk-title b{font-weight:400;-webkit-text-stroke:.04em currentColor}
 .bk .shelf-h p{margin:2px 0 0;font-size:clamp(15px,1.8vw,20px);color:#cc0000}
 .bk .track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 2px 14px;margin:0 -2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab}
 .bk .track::-webkit-scrollbar{display:none}
@@ -176,7 +177,7 @@
     var b = BOOKS[id];
     root.querySelectorAll('.book').forEach(function (el) { el.setAttribute('aria-pressed', el.dataset.book === id); });
     root.querySelector('.books').classList.add('picked');
-    root.querySelector('#bk-title').textContent = b.name;
+    var tt = root.querySelector('#bk-title'); tt.dataset.b = id; tt.innerHTML = id === 'ten' ? '<b>TEN</b>ets of Health &amp; Fitness' : esc(b.name);
     root.querySelector('#bk-sub').textContent = b.ch.length ? b.ch.length + ' chapter' + (b.ch.length === 1 ? '' : 's') + ' so far' : 'Chapters coming soon';
     var html = b.ch.map(function (c) { return '<article class="slide"><span class="k">' + esc(b.name) + '</span><span class="t">' + esc(c[0]) + '</span><span class="d">' + esc(c[1]) + '</span>' + skoolBtn + '</article>'; }).join('');
     html += '<article class="slide soon"><span class="k">' + esc(b.name) + '</span><span class="t">' + (b.ch.length ? 'More chapters coming' : 'Chapters coming soon') + '</span><span class="d">Join the tribe FREE on Skool to get them first.</span><a href="' + SKOOL + '" target="_blank" rel="noopener">Join FREE on <img src="/images/skool.svg" alt="Skool"> <b aria-hidden="true">&rarr;</b></a></article>';
