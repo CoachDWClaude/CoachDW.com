@@ -7,7 +7,7 @@ sections/04-join-the-tribe.html
 BREAK
 sections/05-membership.html
 BREAK
-sections/06-articles.html
+sections/06-books-carousel.html
 BREAK
 # sections/07-testimonial.html   (hidden until real testimonials are in)
 sections/08-about.html

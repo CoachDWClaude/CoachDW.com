@@ -112,7 +112,7 @@
   function carousel(track, dots, prevNext) {
     /* Smooth continuous drift: slides glide past at a steady pace and loop seamlessly (copies of the slides follow the originals).
        Any touch, swipe, drag, wheel, hover or arrow press takes over; drifting resumes a few seconds after you stop. */
-    var raf = 0, on = false, resumeAt = 0, IDLE = 5000, SPEED = 32, pos = 0, last = 0, flowing = false;
+    var raf = 0, on = false, resumeAt = 0, IDLE = 5000, SPEED = 46, pos = 0, last = 0, flowing = false;
     function slides() { return Array.prototype.slice.call(track.querySelectorAll(':scope > .slide:not(.clone)')); }
     function all() { return Array.prototype.slice.call(track.children); }
     function loopW() { var c = track.querySelector(':scope > .clone'), s = slides(); return c && s.length ? c.offsetLeft - s[0].offsetLeft : 0; }
@@ -141,7 +141,14 @@
     dots.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; hold(); go(Array.prototype.indexOf.call(dots.children, b)); });
     prevNext.forEach(function (b) { b.addEventListener('click', function () { hold(); go(index() + (+b.dataset.go)); }); });
     track.addEventListener('scroll', function () { clearTimeout(track._p); track._p = setTimeout(paint, 80); }, { passive: true });
-    ['pointerdown', 'touchstart', 'wheel', 'keydown', 'mouseenter', 'focusin'].forEach(function (ev) { track.addEventListener(ev, hold, { passive: true }); });
+    ['keydown', 'mouseenter'].forEach(function (ev) { track.addEventListener(ev, hold, { passive: true }); });
+    track.addEventListener('focusin', function (e) { try { if (e.target.matches(':focus-visible')) hold(); } catch (x) {} });
+    // only a sideways swipe takes over; scrolling the page up/down past the carousel does not stop it
+    var tx = 0, ty = 0;
+    track.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+    track.addEventListener('touchmove', function (e) { var dx = Math.abs(e.touches[0].clientX - tx), dy = Math.abs(e.touches[0].clientY - ty); if (dx > 6 && dx > dy) hold(); }, { passive: true });
+    track.addEventListener('pointerdown', function (e) { if (e.pointerType === 'mouse') hold(); }, { passive: true });
+    track.addEventListener('wheel', function (e) { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) hold(); }, { passive: true });
     track.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') { e.preventDefault(); go(index() + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(index() - 1); } });
     // mouse drag on desktop
     var down = false, sx = 0, sl = 0, moved = false;
