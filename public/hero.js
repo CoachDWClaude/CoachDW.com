@@ -35,3 +35,27 @@ while(true){
 }})();
 
 })();
+
+/* First screen: size the hero photo so the Join the Tribe button sits at the bottom of the screen on load */
+(function () {
+  var lastW = 0;
+  function fitHero(force) {
+    var img = document.getElementById('p1'), j = document.querySelector('.hero .jwrap');
+    if (!img || !j) return;
+    var w = window.innerWidth;
+    if (!force && w === lastW) return; // ignore phone address-bar height changes
+    lastW = w;
+    var vh = window.innerHeight, root = document.documentElement;
+    root.style.removeProperty('--phh');
+    var cur = img.offsetHeight;
+    var bottom = j.getBoundingClientRect().bottom + window.scrollY;
+    var want = cur + (vh - 12 - bottom);
+    want = Math.max(180, vh * 0.38, Math.min(want, w * 1.6));
+    root.style.setProperty('--phh', Math.round(want) + 'px');
+  }
+  function all() { fitHero(true); }
+  if (document.readyState === 'complete') all(); else window.addEventListener('load', all);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(all, 50); });
+  window.addEventListener('resize', function () { fitHero(false); });
+  window.addEventListener('orientationchange', function () { setTimeout(all, 300); });
+})();
