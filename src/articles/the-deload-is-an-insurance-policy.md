@@ -3,12 +3,13 @@ kicker: CoachDW Article · Training
 tagline: If your programme needs a week off every month to stop you falling apart, the programme is the problem. The deload is the bill for it.
 format: Deep Dive
 date: 18 October 2026
+share: share-deload.jpg
 ---
 ## Paying the Premium on a Bad Policy
 > A deload is an insurance policy taken out by poor PTs and coaches against poor programming and recovery management.
 You pay the premium every fourth, fifth or sixth week, and what you are insured against is the programme itself.
 That is the uncomfortable truth most coaches skip. If the training is built right and moved right, recovery happens inside the week, inside the session order, inside the decisions you make every morning. There is no debt piling up, so there is nothing to pay off.
-I have been training for 40 years and coaching for 35... beginners, front row forwards, fighters cutting weight, World Championship and Olympic medallists. The athletes who needed a scheduled week off were almost always the ones whose plan had been dug into a hole by somebody else. Fix the plan and the hole stops appearing.
+I have been training for 40 years and coaching for 35, training people at all levels from beginners and recreational trainees simply wanting to get and stay in shape to elite athletes and sportspeople up to World Championship and Olympic medal winners and everyone in between. The athletes who needed a scheduled week off were almost always the ones whose plan had been dug into a hole by somebody else. Fix the plan and the hole stops appearing.
 This article lays out why. Where the deload came from, what overreaching and overtraining actually are, what the research says when somebody finally tested it, why so much of the muscle high-volume training appears to build is swelling, and how the Strength For Life Protocol recovers as it goes with no deload needed.
 ## Where the Deload Came From
 The deload is a habit, not a law. It rests on Hans Selye's **general adaptation syndrome**, a 1936 description of how rats responded to harmful stressors... alarm, resistance, then exhaustion if the stress kept coming [1]. Coaches borrowed that curve and built training calendars around it.

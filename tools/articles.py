@@ -109,7 +109,16 @@ def build(path):
                    f'  <div class="item-meta">{html.escape(meta.get("format", "Article"))} &middot; {mins} minute read &middot; {html.escape(meta.get("date", ""))}</div>\n</div>')
 
     page = TPL
-    page = re.sub(r'<title>.*?</title>', f'<title>{html.escape(meta["title"])} | CoachDW</title>\n<meta name="description" content="{html.escape(meta["tagline"])}">', page, flags=re.S)
+    url = f'https://coachdw.com/articles/{slug}/'
+    img = 'https://coachdw.com/images/share/' + meta.get('share', 'share-home.jpg')   # share card: "share: file.jpg" in the article, else the home card
+    e = lambda t: html.escape(t, quote=True)
+    head_tags = (f'<title>{e(meta["title"])} | CoachDW</title>\n<meta name="description" content="{e(meta["tagline"])}">\n'
+                 f'<link rel="canonical" href="{url}">\n<meta property="og:type" content="article">\n<meta property="og:site_name" content="CoachDW">\n'
+                 f'<meta property="og:title" content="{e(meta["title"])}">\n<meta property="og:description" content="{e(meta["tagline"])}">\n'
+                 f'<meta property="og:url" content="{url}">\n<meta property="og:image" content="{img}">\n'
+                 '<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta property="og:locale" content="en_GB">\n'
+                 f'<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="{img}">')
+    page = re.sub(r'<title>.*?</title>', lambda m: head_tags, page, count=1, flags=re.S)
     page = page.replace('</style>', EXTRA_CSS + '</style>', 1)
     # header images link home
     page = re.sub(r'(<div class="header">)(.*?)(</div>)', lambda m: m.group(1) + '<a href="/" aria-label="CoachDW.com home">' + m.group(2) + '</a>' + m.group(3), page, count=1, flags=re.S)

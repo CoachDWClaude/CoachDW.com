@@ -3,6 +3,7 @@ kicker: CoachDW Article · Nutrition
 tagline: The calorie is a real unit of energy. The trouble is what it was asked to do.
 format: Quick Read
 date: 11 October 2026
+share: share-calorie-con.jpg
 ---
 ## The calorie is real
 The calorie is a real unit of energy, and energy balance is real physics. Eat more than you use and you store the difference; eat less and you draw on what you have stored. Nothing here disputes that.

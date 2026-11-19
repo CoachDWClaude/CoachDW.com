@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /modules/
+
+Sitemap: https://coachdw.com/sitemap.xml
