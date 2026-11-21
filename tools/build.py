@@ -52,7 +52,8 @@ if __name__ == '__main__':
         head_extra, body_extra = extra.split('<!-- BODY -->')
         html = html.replace('</head>', head_extra + '</head>', 1)
         html = html.replace('<div style="background: #0b0b0b; color: #ffffff; font-family:', '<div data-wrap style="background: #0b0b0b; color: #ffffff; font-family:', 1)
-        html = html.replace('<script src="site.js"></script>', body_extra + '<script src="site.js"></script>', 1)
+        if os.environ.get('CDW_PICKER', '1') != '0':  # CDW_PICKER=0 builds a clean preview with no section picker
+            html = html.replace('<script src="site.js"></script>', body_extra + '<script src="site.js"></script>', 1)
         os.makedirs(out, exist_ok=True)
         with open(os.path.join(out, 'index.html'), 'w', encoding='utf-8') as f: f.write(html)
         for fn in ('site.css', 'site.js', 'hero.js'):
