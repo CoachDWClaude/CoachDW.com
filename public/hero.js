@@ -73,17 +73,17 @@ while(true){
     svg.setAttribute('viewBox', '0 0 ' + b.width + ' ' + b.height);
     var words = [].slice.call(sflt.querySelectorAll('i')).map(function (w) { var r = w.getBoundingClientRect(); return { el: w, cx: (r.left + r.right) / 2 - b.left }; });
     var top = 2, bot = b.height - 2, base = (t.top + t.bottom) / 2 - b.top, amp = base - top, fs = parseFloat(getComputedStyle(sflt).fontSize), u = Math.min(fs * 0.11, 9);
-    var d = 'M0 ' + base.toFixed(1), pts = [];
+    var d = '', pts = [];
     words.forEach(function (w) {
       var c = w.cx, L = function (dx, dy) { d += ' L' + (c + dx * u).toFixed(1) + ' ' + (base - dy).toFixed(1); };
+      d += ' M' + (c - 7 * u).toFixed(1) + ' ' + base.toFixed(1);
       // P wave, Q dip, tall R spike, deep S, back to baseline, T wave
       L(-4.6, 0); L(-3.8, amp * .12); L(-3.0, 0);
       L(-1.2, 0); L(-0.6, -amp * .14); L(0, amp); L(0.7, -(bot - base)); L(1.3, 0);
-      L(2.6, 0); L(3.6, amp * .22); L(4.6, 0);
+      L(2.6, 0); L(3.6, amp * .22); L(4.6, 0); L(7, 0);
       pts.push({ el: w.el, x: c });
     });
-    d += ' L' + b.width.toFixed(1) + ' ' + base.toFixed(1);
-    path.setAttribute('d', d);
+    path.setAttribute('d', d.trim());
     return { width: b.width, words: pts };
   }
   function pulse() {
@@ -91,9 +91,6 @@ while(true){
     var g = build(), len = path.getTotalLength(), dur = 1400;
     path.style.strokeDasharray = len; path.style.opacity = 1;
     var a = path.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: dur, easing: 'linear', fill: 'forwards' });
-    g.words.forEach(function (w) {
-      setTimeout(function () { w.el.classList.add('beat'); setTimeout(function () { w.el.classList.remove('beat'); }, 160); }, dur * w.x / g.width);
-    });
     a.onfinish = function () {
       var f = path.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, easing: 'ease-out', fill: 'forwards' });
       f.onfinish = function () { running = false; };
