@@ -107,6 +107,10 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .mnav.open .acts,.mnav.open li{opacity:1;transform:none;transition:opacity .35s,transform .45s cubic-bezier(.2,.9,.3,1.25)}
 .mnav.open .acts{transition-delay:.15s}
 .mnav.open li:nth-child(1){transition-delay:.22s}.mnav.open li:nth-child(2){transition-delay:.27s}.mnav.open li:nth-child(3){transition-delay:.32s}.mnav.open li:nth-child(4){transition-delay:.37s}.mnav.open li:nth-child(5){transition-delay:.42s}
+/* Shimmer sweeping across STRENGTH FOR LIFE: a faint pale-red sheen (the red heartbeat runs behind it) */
+#sflt{background:linear-gradient(105deg,var(--red) 0%,var(--red) 42%,#de2e2e 47%,#f26a6a 50%,#de2e2e 53%,var(--red) 58%,var(--red) 100%);background-size:300% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#sflt.shine{animation:shine 1.4s cubic-bezier(.45,0,.55,1)}
+@keyframes shine{from{background-position:100% 0}to{background-position:0 0}}
 /* STRENGTH FOR LIFE heartbeat: a faint red ECG blip behind the middle of each word, drawn left to right */
 #sflt i{font-style:normal;display:inline-block;transition:text-shadow .5s ease-out,color .5s ease-out}
 .hx .sfl{position:relative}
