@@ -72,7 +72,7 @@ while(true){
     var b = band.getBoundingClientRect(), t = sflt.getBoundingClientRect();
     svg.setAttribute('viewBox', '0 0 ' + b.width + ' ' + b.height);
     var words = [].slice.call(sflt.querySelectorAll('i')).map(function (w) { var r = w.getBoundingClientRect(); return { el: w, cx: (r.left + r.right) / 2 - b.left }; });
-    var top = 2, bot = b.height - 2, base = (t.top + t.bottom) / 2 - b.top, amp = base - top, fs = parseFloat(getComputedStyle(sflt).fontSize), u = Math.min(fs * 0.11, 9);
+    var top = 2, bot = b.height - 2, base = (t.top + t.bottom) / 2 - b.top, amp = base - top, fs = parseFloat(getComputedStyle(sflt).fontSize), u = Math.min(fs * 0.14, 11);
     var d = '', pts = [];
     words.forEach(function (w) {
       var c = w.cx, L = function (dx, dy) { d += ' L' + (c + dx * u).toFixed(1) + ' ' + (base - dy).toFixed(1); };
@@ -92,7 +92,7 @@ while(true){
     path.style.strokeDasharray = len; path.style.opacity = 1;
     var a = path.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: dur, easing: 'linear', fill: 'forwards' });
     a.onfinish = function () {
-      var f = path.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, easing: 'ease-out', fill: 'forwards' });
+      var f = path.animate([{ opacity: 1 }, { opacity: 1, offset: .5 }, { opacity: 0 }], { duration: 1600, easing: 'ease-out', fill: 'forwards' });
       f.onfinish = function () { running = false; };
     };
   }

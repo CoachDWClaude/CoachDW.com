@@ -112,7 +112,7 @@ header.hx{position:sticky;top:0;z-index:10;background:#000}
 .hx .sfl{position:relative}
 .hx .sfl span{position:relative;z-index:1}
 .sfl .ecg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
-.sfl .ecg path{fill:none;stroke:rgba(255,40,40,.45);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.sfl .ecg path{fill:none;stroke:#ff2a2a;stroke-opacity:.8;stroke-width:2.25;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(255,30,30,.7))}
 .wbody-join .jwrap{width:100%;margin:22px 0 0}
 @media (prefers-reduced-motion:reduce){.hx *,.jwrap *{animation:none!important;transition:none!important}}
 
