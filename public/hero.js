@@ -60,41 +60,40 @@ while(true){
   window.addEventListener('orientationchange', function () { setTimeout(all, 300); });
 })();
 
-/* ECG pulse across STRENGTH FOR LIFE: runs each time the hero adds the 'shine' class (just before each typed line) */
+/* ECG pulse behind STRENGTH FOR LIFE: runs each time the hero adds the 'shine' class (just before each typed line).
+   One heartbeat at a time, left to right: it draws behind STRENGTH and fades, then FOR, then LIFE. */
 (function () {
   var sflt = document.getElementById('sflt'); if (!sflt) return;
   var band = sflt.parentElement, NS = 'http://www.w3.org/2000/svg';
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var svg = document.createElementNS(NS, 'svg'); svg.setAttribute('class', 'ecg'); svg.setAttribute('aria-hidden', 'true');
-  var path = document.createElementNS(NS, 'path'); svg.appendChild(path); band.appendChild(svg);
-  var running = false;
+  band.appendChild(svg);
+  var words = [].slice.call(sflt.querySelectorAll('i'));
+  var paths = words.map(function () { var p = document.createElementNS(NS, 'path'); p.style.opacity = 0; svg.appendChild(p); return p; });
+  var running = false, DRAW = 450, HOLD = 150, FADE = 450, GAP = 120;
   function build() {
     var b = band.getBoundingClientRect(), t = sflt.getBoundingClientRect();
     svg.setAttribute('viewBox', '0 0 ' + b.width + ' ' + b.height);
-    var words = [].slice.call(sflt.querySelectorAll('i')).map(function (w) { var r = w.getBoundingClientRect(); return { el: w, cx: (r.left + r.right) / 2 - b.left }; });
     var top = 2, bot = b.height - 2, base = (t.top + t.bottom) / 2 - b.top, amp = base - top, fs = parseFloat(getComputedStyle(sflt).fontSize), u = Math.min(fs * 0.14, 11);
-    var d = '', pts = [];
-    words.forEach(function (w) {
-      var c = w.cx, L = function (dx, dy) { d += ' L' + (c + dx * u).toFixed(1) + ' ' + (base - dy).toFixed(1); };
-      d += ' M' + (c - 7 * u).toFixed(1) + ' ' + base.toFixed(1);
+    words.forEach(function (w, k) {
+      var r = w.getBoundingClientRect(), c = (r.left + r.right) / 2 - b.left, d = 'M' + (c - 7 * u).toFixed(1) + ' ' + base.toFixed(1);
+      var L = function (dx, dy) { d += ' L' + (c + dx * u).toFixed(1) + ' ' + (base - dy).toFixed(1); };
       // P wave, Q dip, tall R spike, deep S, back to baseline, T wave
       L(-4.6, 0); L(-3.8, amp * .12); L(-3.0, 0);
       L(-1.2, 0); L(-0.6, -amp * .14); L(0, amp); L(0.7, -(bot - base)); L(1.3, 0);
       L(2.6, 0); L(3.6, amp * .22); L(4.6, 0); L(7, 0);
-      pts.push({ el: w.el, x: c });
+      paths[k].setAttribute('d', d);
     });
-    path.setAttribute('d', d.trim());
-    return { width: b.width, words: pts };
   }
-  function pulse() {
-    if (running || !path.animate) return; running = true;
-    var g = build(), len = path.getTotalLength(), dur = 1400;
-    path.style.strokeDasharray = len; path.style.opacity = 1;
-    var a = path.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: dur, easing: 'linear', fill: 'forwards' });
-    a.onfinish = function () {
-      var f = path.animate([{ opacity: 1 }, { opacity: 1, offset: .5 }, { opacity: 0 }], { duration: 1600, easing: 'ease-out', fill: 'forwards' });
-      f.onfinish = function () { running = false; };
+  function beat(k) {
+    if (k >= paths.length) { running = false; return; }
+    var p = paths[k], len = p.getTotalLength();
+    p.style.strokeDasharray = len; p.style.opacity = 1;
+    p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: DRAW, easing: 'linear', fill: 'forwards' }).onfinish = function () {
+      p.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE, delay: HOLD, easing: 'ease-out', fill: 'forwards' }).onfinish = function () { p.style.opacity = 0; };
+      setTimeout(function () { beat(k + 1); }, HOLD + FADE + GAP);   // next word only once this one has gone
     };
   }
+  function pulse() { if (running || !svg.animate && !paths[0].animate) return; running = true; build(); beat(0); }
   new MutationObserver(function () { if (sflt.classList.contains('shine')) pulse(); }).observe(sflt, { attributes: true, attributeFilter: ['class'] });
 })();
